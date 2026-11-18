@@ -137,7 +137,18 @@ class FrameSkip(gym.Wrapper):
         self.skip = skip
 
     def step(self, action):
-        raise NotImplementedError("TODO: FrameSkip.step")
+        total = None
+        prev = last = None
+        for _ in range(self.skip):
+            obs, reward, terminated, truncated, info = self.env.step(action)
+            reward = np.asarray(reward, dtype=np.float32)
+            total = reward.copy() if total is None else total + reward
+            prev, last = last, obs
+            if terminated or truncated:
+                break
+        # max theo điểm ảnh của hai khung cuối; chỉ có một khung thì trả khung đó
+        obs = last if prev is None else np.maximum(prev, last)
+        return obs, total, terminated, truncated, info
 
 
 class GrayResize(gym.ObservationWrapper):
@@ -151,10 +162,11 @@ class GrayResize(gym.ObservationWrapper):
     def __init__(self, env, size=84):
         super().__init__(env)
         self.size = size
-        raise NotImplementedError("TODO: GrayResize.__init__ (đặt self.observation_space)")
+        self.observation_space = gym.spaces.Box(0, 255, (size, size), np.uint8)
 
     def observation(self, obs):
-        raise NotImplementedError("TODO: GrayResize.observation")
+        gray = cv2.cvtColor(obs, cv2.COLOR_RGB2GRAY)
+        return cv2.resize(gray, (self.size, self.size), interpolation=cv2.INTER_AREA)
 
 
 class ScalarizeReward(gym.Wrapper):
@@ -168,10 +180,17 @@ class ScalarizeReward(gym.Wrapper):
 
     def __init__(self, env, weights):
         super().__init__(env)
-        raise NotImplementedError("TODO: ScalarizeReward.__init__")
+        reward_space = getattr(env.unwrapped, "reward_space", None)
+        n_objectives = reward_space.shape[0] if reward_space is not None else 5
+        self.weights = np.asarray(weights, dtype=np.float32)
+        if self.weights.shape != (n_objectives,):
+            raise ValueError(f"cần {n_objectives} trọng số, nhận {self.weights.size}")
 
     def step(self, action):
-        raise NotImplementedError("TODO: ScalarizeReward.step")
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        vector = np.asarray(reward, dtype=np.float32)
+        info = dict(info, vector_reward=vector)
+        return obs, float(np.dot(self.weights, vector)), terminated, truncated, info
 
 
 # ---------------------------------------------------------------------------------------------------------
