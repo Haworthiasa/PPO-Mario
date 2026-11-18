@@ -3,7 +3,17 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
-runs/
-checkpoints/
 .claude/distill/
 .claude/
+
+# Kết quả huấn luyện: giữ config.yaml, progress.csv, evals.csv, biểu đồ và JSON đánh giá;
+# bỏ checkpoint, video và nhật ký vì nặng.
+checkpoints/
+runs/**/videos/
+runs/**/*.log
+*.pt
+*.mp4
+*.bak
+
+# Bản mã cũ trước khi chuyển sang kho mã của thầy
+ban-cu/

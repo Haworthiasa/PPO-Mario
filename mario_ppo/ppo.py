@@ -28,21 +28,18 @@ def compute_gae(rewards, values, terminated, truncated, final_values, last_value
       - Truy hồi lùi: A_t = delta_t + gamma * lam * (1 - terminated_t) * (1 - truncated_t) * A_{t+1}
         (sau khi kết thúc hoặc bị cắt, bước kế trong bộ đệm thuộc lượt khác).
     """
-    T = rewards.shape[0]
+    steps = rewards.shape[0]
     advantages = torch.zeros_like(rewards)
-    next_adv = torch.zeros_like(last_value)
-    for t in reversed(range(T)):
-        term_t, trunc_t, v_next = terminated[t], truncated[t], None
-        if t == T - 1:
-            # cuối đoạn thu, lượt chưa kết thúc / chưa bị cắt: coi như bị cắt, bootstrap bằng last_value
-            boundary = (1.0 - term_t) * (1.0 - trunc_t)
-            v_next = torch.where(trunc_t > 0, final_values[t], last_value)
-            trunc_t = trunc_t + boundary
-        else:
-            v_next = torch.where(trunc_t > 0, final_values[t], values[t + 1])
-        delta = rewards[t] + gamma * (1.0 - term_t) * v_next - values[t]
-        next_adv = delta + gamma * lam * (1.0 - term_t) * (1.0 - trunc_t) * next_adv
-        advantages[t] = next_adv
+    following_value = last_value        # v(S_{t+1}) khi bước t không bị cắt; ở t = T-1 là last_value
+    next_advantage = torch.zeros_like(last_value)
+    for t in reversed(range(steps)):
+        alive = 1.0 - terminated[t]     # 0 nếu lượt kết thúc thật: không còn tương lai
+        cut = truncated[t]
+        v_next = cut * final_values[t] + (1.0 - cut) * following_value
+        delta = rewards[t] + gamma * alive * v_next - values[t]
+        next_advantage = delta + gamma * lam * alive * (1.0 - cut) * next_advantage
+        advantages[t] = next_advantage
+        following_value = values[t]
     return advantages, advantages + values
 
 
@@ -62,11 +59,11 @@ def value_loss(values, returns, old_values=None, clip=None):
     Biến thể cắt (khi old_values và clip khác None): v_clip = old_values + clamp(values - old_values, -clip, clip),
     mất mát = mean(max((values - returns)^2, (v_clip - returns)^2)).
     """
-    loss = (values - returns) ** 2
-    if old_values is not None and clip is not None:
-        v_clip = old_values + torch.clamp(values - old_values, -clip, clip)
-        loss = torch.max(loss, (v_clip - returns) ** 2)
-    return loss.mean()
+    squared = (values - returns) ** 2
+    if old_values is None or clip is None:
+        return squared.mean()
+    v_clip = old_values + torch.clamp(values - old_values, -clip, clip)
+    return torch.max(squared, (v_clip - returns) ** 2).mean()
 
 
 def approx_kl_and_clipfrac(log_ratio, clip):
@@ -76,7 +73,7 @@ def approx_kl_and_clipfrac(log_ratio, clip):
     Mục đích: theo dõi chính sách thay đổi bao nhiêu sau mỗi lần cập nhật (approx_kl quá lớn = bước quá dài).
     """
     with torch.no_grad():
-        ratio = log_ratio.exp()
+        ratio = torch.exp(log_ratio)
         approx_kl = ((ratio - 1.0) - log_ratio).mean().item()
         clipfrac = ((ratio - 1.0).abs() > clip).float().mean().item()
     return approx_kl, clipfrac
@@ -95,17 +92,18 @@ def ppo_loss(new_logp, entropy, values, batch, cfg):
     advantages = batch["advantages"]
     if cfg.norm_adv:
         advantages = (advantages - advantages.mean()) / (advantages.std(unbiased=False) + 1e-8)
+
     log_ratio = new_logp - batch["old_logp"]
-    ratio = log_ratio.exp()
-    pg_loss = clipped_policy_loss(ratio, advantages, cfg.clip_coef)
+    policy = clipped_policy_loss(torch.exp(log_ratio), advantages, cfg.clip_coef)
     if cfg.clip_vloss:
-        v_loss = value_loss(values, batch["returns"], batch["old_values"], cfg.clip_coef)
+        critic = value_loss(values, batch["returns"], old_values=batch["old_values"], clip=cfg.clip_coef)
     else:
-        v_loss = value_loss(values, batch["returns"])
-    ent = entropy.mean()
-    loss = pg_loss + cfg.vf_coef * v_loss - cfg.ent_coef * ent
-    approx_kl, clipfrac = approx_kl_and_clipfrac(log_ratio.detach(), cfg.clip_coef)
-    stats = {"policy_loss": pg_loss.item(), "value_loss": v_loss.item(), "entropy": ent.item(),
+        critic = value_loss(values, batch["returns"])
+    mean_entropy = entropy.mean()
+    loss = policy + cfg.vf_coef * critic - cfg.ent_coef * mean_entropy
+
+    approx_kl, clipfrac = approx_kl_and_clipfrac(log_ratio, cfg.clip_coef)
+    stats = {"policy_loss": policy.item(), "value_loss": critic.item(), "entropy": mean_entropy.item(),
              "approx_kl": approx_kl, "clipfrac": clipfrac}
     return loss, stats
 
@@ -125,31 +123,46 @@ def ppo_update(model, optimizer, batch, cfg):
         gọi ppo_loss; zero_grad, backward, clip_grad_norm_(..., cfg.max_grad_norm), optimizer.step();
       - nếu cfg.target_kl khác None và approx_kl trung bình của epoch vừa xong > target_kl: dừng các epoch còn lại.
     Đầu ra: dict trung bình các stats của ppo_loss trên mọi mini-batch, thêm "minibatch_updates" (số bước gradient).
+
+    Nhóm ghi thêm hai đại lượng chẩn đoán vào dict (thành cột trong progress.csv):
+      explained_var  phần phương sai của returns mà critic lúc thu dữ liệu giải thích được (tối đa 1);
+      grad_norm      chuẩn gradient trung bình trước khi cắt.
     """
-    n = batch["actions"].shape[0]
-    device = batch["actions"].device
-    sums, count = {}, 0
+    n_samples = batch["obs"].shape[0]
+    device = batch["obs"].device
+    target_kl = getattr(cfg, "target_kl", None)
+    totals, updates = {}, 0
+    grad_norm_total = 0.0
+
     for _ in range(cfg.update_epochs):
-        perm = torch.randperm(n, device=device)
+        order = torch.randperm(n_samples, device=device)
         epoch_kl = []
-        for idx in torch.tensor_split(perm, cfg.num_minibatches):
-            mb = {k: v[idx] for k, v in batch.items()}
-            logits, values = model(mb["obs"])
+        for indices in torch.tensor_split(order, cfg.num_minibatches):
+            minibatch = {key: value[indices] for key, value in batch.items()}
+            logits, values = model(minibatch["obs"])
             dist = torch.distributions.Categorical(logits=logits)
-            loss, stats = ppo_loss(dist.log_prob(mb["actions"]), dist.entropy(), values, mb, cfg)
+            loss, stats = ppo_loss(dist.log_prob(minibatch["actions"]), dist.entropy(), values, minibatch, cfg)
+
             optimizer.zero_grad()
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.max_grad_norm)
+            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.max_grad_norm)
             optimizer.step()
-            for k, v in stats.items():
-                sums[k] = sums.get(k, 0.0) + v
+
+            for key, value in stats.items():
+                totals[key] = totals.get(key, 0.0) + value
+            grad_norm_total += float(grad_norm)
             epoch_kl.append(stats["approx_kl"])
-            count += 1
-        if cfg.target_kl is not None and sum(epoch_kl) / len(epoch_kl) > cfg.target_kl:
+            updates += 1
+        if target_kl is not None and sum(epoch_kl) / len(epoch_kl) > target_kl:
             break
-    out = {k: v / count for k, v in sums.items()}
-    out["minibatch_updates"] = count
-    return out
+
+    result = {key: value / updates for key, value in totals.items()}
+    returns, old_values = batch["returns"], batch["old_values"]
+    variance = returns.var(unbiased=False)
+    result["explained_var"] = float(1.0 - (returns - old_values).var(unbiased=False) / variance) if variance > 0 else 0.0
+    result["grad_norm"] = grad_norm_total / updates
+    result["minibatch_updates"] = updates
+    return result
 
 
 def linear_schedule(start, step, total):

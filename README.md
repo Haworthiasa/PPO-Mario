@@ -67,3 +67,24 @@ python -m mario_ppo.evaluate --ckpt runs/1-1/<run>/checkpoints/step_003000000.pt
 3. Thêm khóa tương ứng vào mục `env:` của cấu hình, ví dụ `env.max_no_progress_steps=200`.
 
 Mẹo đặt trong khối này không chạy khi đánh giá, nên không ảnh hưởng đến kết quả chấm.
+
+## Phần nhóm thêm
+
+Các tệp có sẵn của thầy (`train.py`, `evaluate.py`, phần `eval_mode` của `env.py`, `tests/`) giữ nguyên.
+
+| Tệp | Nội dung |
+|---|---|
+| `configs/nhom-1-1.yaml` | cấu hình của nhóm cho màn 1-1; `configs/default.yaml` là mặc định của thầy, không sửa |
+| `mario_ppo/wrappers.py` (cuối tệp) | hai mẹo huấn luyện: `NoProgressTruncation` (`env.max_no_progress_steps`), `FlagBonus` (`env.flag_bonus`) |
+| `mario_ppo/plot.py` | vẽ đồ thị từ `progress.csv` và `evals.csv`; cần thêm `pip install matplotlib` |
+| `tests_nhom/` | kiểm tra hai mẹo trên trình giả lập thật: `python -m pytest -q tests_nhom` |
+| `ban-cu/` | bản mã nhóm tự viết trước khi có kho mã của thầy, cùng các lần chạy cũ; **không nộp** |
+
+```bash
+python -m mario_ppo.train --config configs/nhom-1-1.yaml          # huấn luyện 1-1 theo cấu hình của nhóm
+python -m mario_ppo.plot runs/1-1/<run>                            # ghi runs/1-1/<run>/curves.png
+python -m mario_ppo.evaluate --ckpt <ckpt> --level 1-1 --episodes 100 --seed 7   # đánh giá kỹ để chọn checkpoint
+```
+
+Checkpoint trong `ban-cu/runs/` được huấn luyện với khung hình xử lý khác (không lấy max hai khung cuối), nên
+chấm bằng `evaluate.py` của thầy chỉ đạt 0/20 ở màn 1-1. Mọi checkpoint nộp phải huấn luyện lại bằng kho mã này.

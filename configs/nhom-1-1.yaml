@@ -1,0 +1,46 @@
+# Cấu hình của nhóm cho màn 1-1. Chạy: python -m mario_ppo.train --config configs/nhom-1-1.yaml
+# Các giá trị khác mặc định của thầy (configs/default.yaml) đều có ghi lý do bên cạnh.
+level: "1-1"
+seed: 1
+device: auto
+run_dir: null
+resume: null
+torch_threads: 6        # máy 12 lõi; mạng và trình giả lập chạy xen kẽ nên không tranh lõi
+checkpoint_every: 100_000   # dày hơn mặc định (500k) để có nhiều checkpoint mà chọn bản nộp
+eval_episodes: 5
+eval_max_steps: 3000
+video: true
+
+env:
+  actions: simple
+  frame_skip: 4
+  frame_stack: 4
+  size: 84
+  # [x_pos, time, death, coin, enemy]: chỉ học "tiến sang phải, nhanh, đừng chết"; xu và hạ địch không tính
+  weights: [1.0, 1.0, 2.0, 0.0, 0.0]
+  noop_max: 30
+  normalize_reward: false     # phần thưởng đã ở cỡ nhỏ (hệ số 5/150 của môi trường), không cần chuẩn hóa
+  # ---- mẹo huấn luyện của nhóm (chỉ chạy khi eval_mode=False) ----
+  max_no_progress_steps: 200  # cắt lượt nếu 200 bước tác tử liền không tiến thêm
+  flag_bonus: 2.0             # cộng vào thành phần x_pos ở bước chạm cờ
+
+model: {}
+
+algo:
+  num_envs: 8
+  num_steps: 512          # 8 x 512 = 4096 mẫu mỗi lần cập nhật
+  num_minibatches: 16     # mini-batch 256 mẫu
+  update_epochs: 10
+  total_steps: 2_000_000
+  lr: 1.5e-4
+  anneal_lr: true         # giảm tuyến tính về 0 khi hết total_steps
+  adam_eps: 1e-5
+  gamma: 0.9
+  gae_lambda: 1.0
+  clip_coef: 0.15
+  clip_vloss: false
+  norm_adv: true
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: 0.03

@@ -135,20 +135,26 @@ class FrameSkip(gym.Wrapper):
     def __init__(self, env, skip=4):
         super().__init__(env)
         self.skip = skip
+        # Hai khung gần nhất. Phải sao chép vì khung của trình giả lập trỏ thẳng vào bộ nhớ của nó,
+        # khung sau ghi đè lên khung trước.
+        self._last_two = np.zeros((2, *env.observation_space.shape), dtype=env.observation_space.dtype)
 
     def step(self, action):
         total = None
-        prev = last = None
+        frames = 0
         for _ in range(self.skip):
             obs, reward, terminated, truncated, info = self.env.step(action)
-            reward = np.asarray(reward, dtype=np.float32)
-            total = reward.copy() if total is None else total + reward
-            prev, last = last, obs
+            np.copyto(self._last_two[frames % 2], obs)
+            frames += 1
+            reward = np.asarray(reward, dtype=np.float64)
+            total = reward if total is None else total + reward
             if terminated or truncated:
                 break
-        # max theo điểm ảnh của hai khung cuối; chỉ có một khung thì trả khung đó
-        obs = last if prev is None else np.maximum(prev, last)
-        return obs, total, terminated, truncated, info
+        if frames >= 2:
+            obs = np.maximum(self._last_two[0], self._last_two[1])
+        else:
+            obs = self._last_two[0].copy()
+        return obs, total.astype(np.float32), terminated, truncated, info
 
 
 class GrayResize(gym.ObservationWrapper):
@@ -163,9 +169,13 @@ class GrayResize(gym.ObservationWrapper):
         super().__init__(env)
         self.size = size
         self.observation_space = gym.spaces.Box(0, 255, (size, size), np.uint8)
+        # Mỗi môi trường chạy trong một tiến trình riêng; để OpenCV tự mở thêm luồng thì các tiến trình
+        # tranh lõi CPU với nhau và thu dữ liệu chậm đi.
+        cv2.setNumThreads(0)
 
     def observation(self, obs):
-        gray = cv2.cvtColor(obs, cv2.COLOR_RGB2GRAY)
+        gray = cv2.cvtColor(np.ascontiguousarray(obs), cv2.COLOR_RGB2GRAY)
+        # INTER_AREA lấy trung bình vùng điểm ảnh gốc ứng với mỗi điểm ảnh mới, nên vật nhỏ không bị bỏ sót.
         return cv2.resize(gray, (self.size, self.size), interpolation=cv2.INTER_AREA)
 
 
@@ -182,13 +192,13 @@ class ScalarizeReward(gym.Wrapper):
         super().__init__(env)
         reward_space = getattr(env.unwrapped, "reward_space", None)
         n_objectives = reward_space.shape[0] if reward_space is not None else 5
-        self.weights = np.asarray(weights, dtype=np.float32)
-        if self.weights.shape != (n_objectives,):
-            raise ValueError(f"cần {n_objectives} trọng số, nhận {self.weights.size}")
+        self.weights = np.asarray(weights, dtype=np.float64).reshape(-1)
+        if self.weights.shape[0] != n_objectives:
+            raise ValueError(f"cần {n_objectives} trọng số, nhận {self.weights.shape[0]}")
 
     def step(self, action):
-        obs, reward, terminated, truncated, info = self.env.step(action)
-        vector = np.asarray(reward, dtype=np.float32)
+        obs, vector, terminated, truncated, info = self.env.step(action)
+        vector = np.asarray(vector, dtype=np.float32)
         info = dict(info, vector_reward=vector)
         return obs, float(np.dot(self.weights, vector)), terminated, truncated, info
 
@@ -196,3 +206,58 @@ class ScalarizeReward(gym.Wrapper):
 # ---------------------------------------------------------------------------------------------------------
 # Wrapper bổ sung của nhóm (tùy chọn) - thêm ở đây
 # ---------------------------------------------------------------------------------------------------------
+# Hai wrapper dưới đây chỉ được bật trong khối `if not eval_mode:` của make_env, tức chỉ khi huấn luyện.
+# Trong chuỗi wrapper chúng đứng trước ScalarizeReward, nên phần thưởng đi qua chúng còn là véc-tơ.
+
+class NoProgressTruncation(gym.Wrapper):
+    """Cắt lượt khi vị trí x xa nhất không tăng trong `max_steps` bước tác tử liên tiếp.
+
+    Mục đích: Mario kẹt trước ống hay đứng yên thì lượt kết thúc sớm, không tốn hàng nghìn bước vô ích.
+    Lượt bị cắt báo truncated=True (không phải terminated) để GAE vẫn bootstrap từ quan sát cuối.
+    """
+
+    def __init__(self, env, max_steps):
+        super().__init__(env)
+        self.max_steps = int(max_steps)
+        self._best_x = None
+        self._stalled = 0
+
+    def reset(self, **kwargs):
+        self._best_x = None
+        self._stalled = 0
+        return self.env.reset(**kwargs)
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        x = int(info.get("x_pos", 0))
+        if self._best_x is None or x > self._best_x:
+            self._best_x = x
+            self._stalled = 0
+        else:
+            self._stalled += 1
+        if self._stalled >= self.max_steps and not terminated:
+            truncated = True
+            info = dict(info, stalled=True)
+        return obs, reward, terminated, truncated, info
+
+
+class FlagBonus(gym.Wrapper):
+    """Cộng `bonus` vào thành phần x_pos của phần thưởng ở bước Mario chạm cờ.
+
+    Mục đích: môi trường gốc không thưởng gì cho việc chạm cờ, nên về đích và chết ngay trước đích gần như
+    bằng nhau. Cộng vào thành phần x_pos (trọng số 1 trong cấu hình của nhóm) để "tới đích" là một phần
+    của mục tiêu "tiến sang phải".
+    """
+
+    X_POS_INDEX = 0
+
+    def __init__(self, env, bonus):
+        super().__init__(env)
+        self.bonus = float(bonus)
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        if info.get("flag_get", False):
+            reward = np.array(reward, dtype=np.float32, copy=True)
+            reward[self.X_POS_INDEX] += self.bonus
+        return obs, reward, terminated, truncated, info
