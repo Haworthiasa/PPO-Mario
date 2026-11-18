@@ -2,6 +2,17 @@
 
 Đề bài đầy đủ: `de-bai.md`.
 
+## Kết quả của nhóm
+
+Tác tử PPO sau 1,2 triệu bước ở mỗi màn, chấm bằng lệnh ở Mục 4 của đề (20 lượt, seed 2026, lấy mẫu hành động).
+
+| Màn 1-1: chạm cờ 19/20 | Màn 4-1 (màn thưởng): chạm cờ 20/20 |
+|:---:|:---:|
+| ![Mario vượt màn 1-1](docs/1-1.gif) | ![Mario vượt màn 4-1](docs/4-1.gif) |
+| [video gốc](nop/1-1.mp4) · [kết quả](nop/ket-qua-1-1.json) · [cấu hình](configs/nhom-1-1.yaml) | [video gốc](nop/4-1.mp4) · [kết quả](nop/ket-qua-4-1.json) · [cấu hình](configs/nhom-4-1.yaml) |
+
+Hai ảnh động được tạo từ video do `evaluate.py` ghi lại (`nop/1-1.mp4`, `nop/4-1.mp4`).
+
 ## Cài đặt
 
 Cần Python 3.10–3.12 và trình biên dịch C++ (để cài `nes-py`).
