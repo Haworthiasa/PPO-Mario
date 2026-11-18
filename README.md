@@ -70,11 +70,16 @@ Mẹo đặt trong khối này không chạy khi đánh giá, nên không ảnh 
 
 ## Phần nhóm thêm
 
-Các tệp có sẵn của thầy (`train.py`, `evaluate.py`, phần `eval_mode` của `env.py`, `tests/`) giữ nguyên.
+Các tệp có sẵn của thầy (`evaluate.py`, phần `eval_mode` của `env.py`, `tests/`) giữ nguyên. `train.py` chỉ thêm
+một khóa tùy chọn (dòng dưới); cấu hình không có khóa đó thì chạy y như bản của thầy.
 
 | Tệp | Nội dung |
 |---|---|
 | `configs/nhom-1-1.yaml` | cấu hình của nhóm cho màn 1-1; `configs/default.yaml` là mặc định của thầy, không sửa |
+| `configs/nhom-4-1.yaml` | cấu hình của nhóm cho màn thưởng 4-1, học từ đầu 1,2 triệu bước (lượt chạy `runs/4-1/tu-dau`) |
+| `configs/nhom-4-1-chuyen-giao.yaml` | thí nghiệm so sánh: 4-1 khởi tạo từ checkpoint 1-1 (lượt chạy `runs/4-1/chuyen-giao`) |
+| `mario_ppo/train.py` | thêm khóa `algo.ent_coef_final`: hệ số entropy giảm tuyến tính từ `ent_coef` về giá trị này khi hết `total_steps` |
+| `nop/` | checkpoint nộp: `1-1.pt` (từ `runs/1-1/lan-1`, bước 1.200.128) và `4-1.pt` (từ `runs/4-1/tu-dau`, bước 1.200.128) |
 | `mario_ppo/wrappers.py` (cuối tệp) | hai mẹo huấn luyện: `NoProgressTruncation` (`env.max_no_progress_steps`), `FlagBonus` (`env.flag_bonus`) |
 | `mario_ppo/plot.py` | vẽ đồ thị từ `progress.csv` và `evals.csv`; cần thêm `pip install matplotlib` |
 | `tests_nhom/` | kiểm tra hai mẹo trên trình giả lập thật: `python -m pytest -q tests_nhom` |
@@ -82,6 +87,7 @@ Các tệp có sẵn của thầy (`train.py`, `evaluate.py`, phần `eval_mode`
 
 ```bash
 python -m mario_ppo.train --config configs/nhom-1-1.yaml          # huấn luyện 1-1 theo cấu hình của nhóm
+python -m mario_ppo.train --config configs/nhom-4-1.yaml run_dir=runs/4-1/tu-dau   # huấn luyện 4-1 từ đầu
 python -m mario_ppo.plot runs/1-1/<run>                            # ghi runs/1-1/<run>/curves.png
 python -m mario_ppo.evaluate --ckpt <ckpt> --level 1-1 --episodes 100 --seed 7   # đánh giá kỹ để chọn checkpoint
 ```

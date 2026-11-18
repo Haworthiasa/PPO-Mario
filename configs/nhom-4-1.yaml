@@ -1,0 +1,55 @@
+# Cấu hình của nhóm cho màn thưởng 4-1, học TỪ ĐẦU (không nạp checkpoint nào), 1,2 triệu bước tác tử.
+# Chạy: python -m mario_ppo.train --config configs/nhom-4-1.yaml run_dir=runs/4-1/tu-dau
+# Đây là cấu hình sinh ra checkpoint nộp cho màn thưởng (runs/4-1/tu-dau, bước 1.200.128).
+# Khác configs/nhom-1-1.yaml ở: level, total_steps, lr, và khóa mới ent_coef_final.
+level: "4-1"
+seed: 1
+device: auto
+run_dir: null
+resume: null
+torch_threads: 6
+checkpoint_every: 100_000
+eval_episodes: 5
+eval_max_steps: 3000
+video: true
+
+env:
+  actions: simple
+  frame_skip: 4
+  frame_stack: 4
+  size: 84
+  weights: [1.0, 1.0, 2.0, 0.0, 0.0]
+  noop_max: 30
+  normalize_reward: false
+  # ---- mẹo huấn luyện của nhóm (chỉ chạy khi eval_mode=False) ----
+  max_no_progress_steps: 200
+  flag_bonus: 2.0
+
+model: {}
+
+algo:
+  num_envs: 8
+  num_steps: 512
+  num_minibatches: 16
+  update_epochs: 10
+  # Bằng đúng số bước định chạy, để tốc độ học giảm tuyến tính về 0 ở cuối lượt. Hai lượt trước dừng khi tốc độ
+  # học còn 40-60% mức đầu, chính sách vẫn đổi mạnh giữa các checkpoint (4-1: 74-84/100 ở năm checkpoint cuối).
+  total_steps: 1_200_000
+  # Cao hơn 1.5e-4 của cấu hình 1-1 để tốc độ học trung bình cả lượt vẫn khoảng 1.0e-4 dù lịch giảm nhanh hơn.
+  # Đầu lượt 1-1 mỗi lần cập nhật chỉ có approx_kl 0,005 (trần target_kl 0,03) nên còn chỗ cho bước dài hơn.
+  lr: 2.0e-4
+  anneal_lr: true
+  adam_eps: 1e-5
+  gamma: 0.9
+  gae_lambda: 1.0
+  clip_coef: 0.15
+  clip_vloss: false
+  norm_adv: true
+  # Hệ số entropy giảm tuyến tính 0.01 -> 0.002 theo total_steps (train.py, khóa ent_coef_final của nhóm).
+  # Đề chấm bằng cách lấy mẫu hành động; ở hai lượt trước entropy dừng quanh 0,6-0,7 cùng lúc tỉ lệ chạm cờ dừng
+  # quanh 85%, và checkpoint 4-1 đạt 95/100 khi chọn hành động xác suất cao nhất nhưng 81/100 khi lấy mẫu.
+  ent_coef: 0.01
+  ent_coef_final: 0.002
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: 0.03
