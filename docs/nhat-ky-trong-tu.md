@@ -158,7 +158,7 @@ Phân tích chỗ chết ở checkpoint cuối (100 lượt seed 7, 19 lượt t
 
 Câu hỏi đặt ra: sau khi học 4-1, checkpoint có còn chơi được 1-1 không, để nộp một mạng cho cả hai màn?
 
-Cho mọi checkpoint của lượt chuyển giao chơi 1-1 (20 lượt, seed 2026):
+Cho mọi checkpoint của lượt chuyển giao chơi 1-1 (20 lượt, seed 2026; kết quả ở `runs/4-1/chuyen-giao/danh-gia/eval-on-1-1/`):
 
 | Bước trên 4-1 | 0 | 100k | 200k | 300k | 400k | 500k | 600k | 700k | 800k | 900k | 1,0M | 1,1M | 1,2M | 1,3M |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -202,11 +202,11 @@ So với lượt chuyển giao ở cùng số bước trên 4-1: chậm hơn tro
 - Tạo bằng đúng lệnh ở Mục 4 của đề, có `--out` và `--video`: `nop/ket-qua-1-1.json` (19/20, lượt hỏng dừng ở x = 1673), `nop/1-1.mp4`, `nop/ket-qua-4-1.json` (20/20), `nop/4-1.mp4`. Vị trí x từng lượt trùng với lần đánh giá 20 lượt trước đó trên cùng checkpoint. Máy của thầy có thể cho kết quả lệch nhẹ; chưa kiểm tra trên máy khác.
 - `nop/1-1.pt` và `nop/4-1.pt` là bản sao của hai checkpoint nộp.
 - Các lượt chạy được đổi tên cho dễ nhớ: `runs/4-1/lan-1` → `runs/4-1/chuyen-giao`, `runs/4-1/lan-2` → `runs/4-1/tu-dau`. Tệp `config.yaml` và JSON bên trong vẫn ghi tên cũ.
-- Nhánh `daylabranchcuaDung` trên kho của nhóm đã có mã, cấu hình, kết quả 1-1 và 4-1, README kèm hai ảnh động (`docs/1-1.gif`, `docs/4-1.gif`). Chưa đưa lên: các tệp JSON của kết quả khảo sát ở Mục 13 và của đường cong quên ở Mục 10 (chỉ có trên máy đã chạy).
+- Nhánh `daylabranchcuaDung` trên kho của nhóm đã có mã, cấu hình, kết quả 1-1 và 4-1, README kèm hai ảnh động (`docs/1-1.gif`, `docs/4-1.gif`). Các tệp JSON của kết quả khảo sát ở Mục 8, Mục 13 và của đường cong quên ở Mục 10 cũng đã có trên nhánh; checkpoint và video huấn luyện thì không.
 
 ## 13. Khảo sát màn ngoài danh sách (cho điểm thưởng +10)
 
-Cho hai checkpoint nộp chơi thử 23 màn ngoài danh sách khi chưa học (20 lượt, seed 2026). Không màn nào chạm cờ. Kết quả ở `runs/1-1/lan-1/danh-gia/thu-<màn>/` và `runs/4-1/tu-dau/danh-gia/thu-<màn>/`.
+Cho hai checkpoint nộp chơi thử 23 màn ngoài danh sách khi chưa học (20 lượt, seed 2026). Không màn nào chạm cờ. Kết quả ở `runs/1-1/lan-1/danh-gia/eval-on-<màn>/` và `runs/4-1/tu-dau/danh-gia/eval-on-<màn>/`.
 
 | Màn | Checkpoint 1-1: x trung bình / xa nhất | Checkpoint 4-1: x trung bình / xa nhất |
 |---|---|---|
@@ -280,7 +280,7 @@ Câu hỏi còn để ngỏ cho thầy: nộp mã mốc tuần 1 ở đâu; nộ
 | Tệp nộp theo Mục 4 của đề | `nop/` |
 | Số liệu huấn luyện từng lượt | `runs/<màn>/<lượt>/progress.csv`, `evals.csv`, `config.yaml`, `curves.png` |
 | Đánh giá từng checkpoint | `runs/<màn>/<lượt>/danh-gia/100-seed7_<bước>.json`, `20-seed2026_<bước>.json` |
-| Chơi thử màn khác | `runs/<màn>/<lượt>/danh-gia/thu-<màn khác>/` |
+| Chơi thử màn khác | `runs/<màn>/<lượt>/danh-gia/eval-on-<màn khác>/` |
 | Ảnh phân tích chỗ chết | `runs/1-1/lan-1/danh-gia/phan-tich-001200128/`, `runs/4-1/chuyen-giao/danh-gia/phan-tich-002502656/` |
 | Bản tự viết cũ, không nộp | `ban-cu/` (không có trên GitHub) |
 
