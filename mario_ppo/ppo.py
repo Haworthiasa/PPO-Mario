@@ -2,6 +2,8 @@
 
 Quy ước mảng của đoạn thu: shape (T, N), hàng là bước thời gian t = 0..T-1, cột là môi trường song song.
 """
+from types import SimpleNamespace
+
 import torch
 
 
@@ -108,6 +110,25 @@ def ppo_loss(new_logp, entropy, values, batch, cfg):
     return loss, stats
 
 
+def scheduled_ent_coef(cfg, optimizer):
+    """Bổ sung của nhóm: hệ số entropy dùng cho lần cập nhật này.
+
+    Cấu hình không có khóa ent_coef_final: trả cfg.ent_coef, hệ số cố định như bản gốc.
+    Có khóa ent_coef_final: hệ số giảm tuyến tính từ ent_coef về ent_coef_final khi hết cfg.total_steps, cùng dạng
+    lịch với tốc độ học. train.py không truyền số bước cho ppo_update, nên số bước được suy ngược từ tốc độ học
+    hiện tại của optimizer, vốn được train.py đặt bằng linear_schedule(cfg.lr, global_step, cfg.total_steps) ngay
+    trước mỗi lần cập nhật. Vì vậy lịch này cần anneal_lr: true.
+    """
+    final = getattr(cfg, "ent_coef_final", None)
+    if final is None:
+        return cfg.ent_coef
+    if not cfg.anneal_lr:
+        raise ValueError("ent_coef_final cần anneal_lr: true (số bước được suy từ tốc độ học đang giảm)")
+    remaining = optimizer.param_groups[0]["lr"] / cfg.lr
+    step = round((1.0 - remaining) * cfg.total_steps)  # global_step là số nguyên, làm tròn để khôi phục đúng giá trị
+    return cfg.ent_coef + (final - cfg.ent_coef) * min(1.0, step / cfg.total_steps)
+
+
 def ppo_update(model, optimizer, batch, cfg):
     """Một lần cập nhật PPO trên toàn bộ dữ liệu của đoạn thu vừa thu.
 
@@ -127,10 +148,17 @@ def ppo_update(model, optimizer, batch, cfg):
     Nhóm ghi thêm hai đại lượng chẩn đoán vào dict (thành cột trong progress.csv):
       explained_var  phần phương sai của returns mà critic lúc thu dữ liệu giải thích được (tối đa 1);
       grad_norm      chuẩn gradient trung bình trước khi cắt.
+    Nếu cấu hình có ent_coef_final, hệ số entropy lấy từ scheduled_ent_coef và được ghi thêm vào dict (ent_coef).
     """
     n_samples = batch["obs"].shape[0]
     device = batch["obs"].device
     target_kl = getattr(cfg, "target_kl", None)
+    loss_cfg = cfg
+    ent_scheduled = getattr(cfg, "ent_coef_final", None) is not None
+    if ent_scheduled:
+        ent_coef = scheduled_ent_coef(cfg, optimizer)
+        loss_cfg = SimpleNamespace(clip_coef=cfg.clip_coef, vf_coef=cfg.vf_coef, ent_coef=ent_coef,
+                                   norm_adv=cfg.norm_adv, clip_vloss=cfg.clip_vloss)
     totals, updates = {}, 0
     grad_norm_total = 0.0
 
@@ -141,7 +169,7 @@ def ppo_update(model, optimizer, batch, cfg):
             minibatch = {key: value[indices] for key, value in batch.items()}
             logits, values = model(minibatch["obs"])
             dist = torch.distributions.Categorical(logits=logits)
-            loss, stats = ppo_loss(dist.log_prob(minibatch["actions"]), dist.entropy(), values, minibatch, cfg)
+            loss, stats = ppo_loss(dist.log_prob(minibatch["actions"]), dist.entropy(), values, minibatch, loss_cfg)
 
             optimizer.zero_grad()
             loss.backward()
@@ -162,6 +190,8 @@ def ppo_update(model, optimizer, batch, cfg):
     result["explained_var"] = float(1.0 - (returns - old_values).var(unbiased=False) / variance) if variance > 0 else 0.0
     result["grad_norm"] = grad_norm_total / updates
     result["minibatch_updates"] = updates
+    if ent_scheduled:
+        result["ent_coef"] = ent_coef
     return result
 
 

@@ -81,15 +81,15 @@ Mẹo đặt trong khối này không chạy khi đánh giá, nên không ảnh 
 
 ## Phần nhóm thêm
 
-Các tệp có sẵn của thầy (`evaluate.py`, phần `eval_mode` của `env.py`, `tests/`) giữ nguyên. `train.py` chỉ thêm
-một khóa tùy chọn (dòng dưới); cấu hình không có khóa đó thì chạy y như bản của thầy.
+Các tệp có sẵn của thầy (`train.py`, `evaluate.py`, phần `eval_mode` của `env.py`, `tests/`) giữ nguyên. Lịch giảm
+hệ số entropy của nhóm nằm trong `ppo.py` (dòng dưới); cấu hình không có khóa đó thì hệ số cố định như bản của thầy.
 
 | Tệp | Nội dung |
 |---|---|
 | `configs/group-1-1.yaml` | cấu hình của nhóm cho màn 1-1; `configs/default.yaml` là mặc định của thầy, không sửa |
 | `configs/group-4-1.yaml` | cấu hình của nhóm cho màn thưởng 4-1, học từ đầu 1,2 triệu bước (lượt chạy `runs/4-1/from-scratch`) |
 | `configs/group-4-1-transfer.yaml` | thí nghiệm so sánh: 4-1 khởi tạo từ checkpoint 1-1 (lượt chạy `runs/4-1/transfer`) |
-| `mario_ppo/train.py` | thêm khóa `algo.ent_coef_final`: hệ số entropy giảm tuyến tính từ `ent_coef` về giá trị này khi hết `total_steps` |
+| `mario_ppo/ppo.py` (`scheduled_ent_coef`) | khóa tùy chọn `algo.ent_coef_final`: hệ số entropy giảm tuyến tính từ `ent_coef` về giá trị này khi hết `total_steps`; cần `anneal_lr: true` vì số bước được suy từ tốc độ học hiện tại |
 | `submission/` | checkpoint nộp: `1-1.pt` (từ `runs/1-1/run-1`, bước 1.200.128) và `4-1.pt` (từ `runs/4-1/from-scratch`, bước 1.200.128) |
 | `mario_ppo/wrappers.py` (cuối tệp) | hai mẹo huấn luyện: `NoProgressTruncation` (`env.max_no_progress_steps`), `FlagBonus` (`env.flag_bonus`) |
 | `mario_ppo/plot.py` | vẽ đồ thị từ `progress.csv` và `evals.csv`; cần thêm `pip install matplotlib` |

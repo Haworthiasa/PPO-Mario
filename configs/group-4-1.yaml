@@ -45,7 +45,7 @@ algo:
   clip_coef: 0.15
   clip_vloss: false
   norm_adv: true
-  # Hệ số entropy giảm tuyến tính 0.01 -> 0.002 theo total_steps (train.py, khóa ent_coef_final của nhóm).
+  # Hệ số entropy giảm tuyến tính 0.01 -> 0.002 theo total_steps (ppo.py, khóa ent_coef_final của nhóm).
   # Đề chấm bằng cách lấy mẫu hành động; ở hai lượt trước entropy dừng quanh 0,6-0,7 cùng lúc tỉ lệ chạm cờ dừng
   # quanh 85%, và checkpoint 4-1 đạt 95/100 khi chọn hành động xác suất cao nhất nhưng 81/100 khi lấy mẫu.
   ent_coef: 0.01

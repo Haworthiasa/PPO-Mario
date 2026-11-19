@@ -67,7 +67,7 @@ Bản này không nộp được: khi đổi sang định dạng của kho thầ
 - Phần nhóm thêm:
   - `wrappers.py`: hai wrapper chỉ dùng khi huấn luyện, `NoProgressTruncation` (cắt lượt khi không tiến) và `FlagBonus` (thưởng khi chạm cờ).
   - `env.py`: hai dòng gọi chúng, đặt trong khối `if not eval_mode:` như Quy định 3.5 yêu cầu.
-  - `train.py`: một khóa tùy chọn `algo.ent_coef_final` (thêm ở Mục 10). Cấu hình không có khóa này chạy y như bản của thầy.
+  - `ppo.py`: một khóa tùy chọn `algo.ent_coef_final` (lịch giảm hệ số entropy, dùng từ Mục 11). Cấu hình không có khóa này thì hệ số cố định như bản của thầy. Lúc chạy 4-1 và 2-3, 10 dòng của lịch này nằm trong `train.py`; ngày 20/11/2026 chúng được chuyển sang hàm `scheduled_ent_coef` trong `ppo.py` và `train.py` được trả về đúng bản của thầy (trùng mã băm với lần commit đầu). Hàm mới suy số bước từ tốc độ học hiện tại của optimizer nên cần `anneal_lr: true`. Đã đối chiếu: hệ số tính theo cách mới trùng từng bit với công thức cũ ở cả 293 lần cập nhật của lượt 4-1 và 293 lần của lượt 2-3, nên hai checkpoint vẫn tái lập được từ cùng cấu hình.
   - `mario_ppo/plot.py` (vẽ `curves.png`), `tests_group/`, các tệp `configs/group-*.yaml`.
 - Đối chiếu Quy định 3.5: mẹo huấn luyện chỉ nằm trong khối cho phép; `info` chỉ dùng để tính phần thưởng và cắt lượt, không đưa vào mạng. Đây là cách nhóm hiểu quy định 2, nên hỏi lại thầy nếu cần chắc chắn.
 
@@ -177,7 +177,7 @@ Lý do thử: lượt chuyển giao tốn 1,2M bước ở 1-1 rồi 1,3M bướ
 |---|---|---|
 | `total_steps` | 1.200.000, bằng đúng số bước chạy | để tốc độ học giảm về 0 ở cuối lượt; hai lượt trước dừng khi tốc độ học còn 40–60% và kết quả còn dao động mạnh giữa các checkpoint |
 | `lr` | 2,0e-4 thay cho 1,5e-4 | giữ tốc độ học trung bình cả lượt quanh 1,0e-4 dù lịch giảm nhanh hơn; đầu lượt 1-1 approxKL chỉ 0,005 nên còn chỗ cho bước dài hơn |
-| `ent_coef_final` (khóa mới trong `train.py`) | hệ số entropy giảm tuyến tính 0,01 → 0,002 | đề chấm bằng lấy mẫu; ở hai lượt trước entropy đứng yên cùng lúc tỉ lệ chạm cờ đứng yên, và chọn hành động xác suất cao nhất luôn tốt hơn lấy mẫu |
+| `ent_coef_final` (khóa mới của nhóm; lúc chạy nằm trong `train.py`, nay ở `ppo.py`, xem Mục 5) | hệ số entropy giảm tuyến tính 0,01 → 0,002 | đề chấm bằng lấy mẫu; ở hai lượt trước entropy đứng yên cùng lúc tỉ lệ chạm cờ đứng yên, và chọn hành động xác suất cao nhất luôn tốt hơn lấy mẫu |
 
 Chạy một mạch 1.200.128 bước, 2 giờ 59 phút, trung bình 112 bước mỗi giây. Đầu lượt chỉ được 83 bước mỗi giây, thấp hơn mức 109–120 của lượt 1-1 ở cùng giai đoạn; nguyên nhân chưa xác định, có thể do máy bận việc khác. Lượt chuyển giao nhanh hơn cả hai (142–162) vì các lần dừng sớm cắt bớt bước gradient.
 

@@ -102,9 +102,6 @@ def train(cfg):
     b_logp, b_val, b_rew, b_term, b_trunc, b_final = (torch.zeros((T, N)) for _ in range(6))
     recent = deque(maxlen=100)  # (lợi tức thô, độ dài, x_pos, chạm cờ) của 100 lượt gần nhất
     next_ckpt = (global_step // cfg.checkpoint_every + 1) * cfg.checkpoint_every
-    # Bổ sung của nhóm: nếu cấu hình có algo.ent_coef_final thì hệ số entropy giảm tuyến tính từ ent_coef về
-    # ent_coef_final khi hết total_steps (cùng dạng lịch với tốc độ học). Thiếu khóa này thì hệ số cố định như cũ.
-    ent_final = a.get("ent_coef_final", None)
 
     def checkpoint():
         tag = f"step_{global_step:09d}"
@@ -129,10 +126,6 @@ def train(cfg):
             lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
             for g in opt.param_groups:
                 g["lr"] = lr
-            update_cfg = a
-            if ent_final is not None:
-                ent_coef = a.ent_coef + (ent_final - a.ent_coef) * min(1.0, global_step / a.total_steps)
-                update_cfg = OmegaConf.merge(a, {"ent_coef": ent_coef})
 
             # ---- thu một đoạn T bước trên N môi trường ----
             model.eval()
@@ -166,7 +159,7 @@ def train(cfg):
                      "old_logp": b_logp.reshape(-1), "old_values": b_val.reshape(-1),
                      "advantages": adv.reshape(-1), "returns": ret.reshape(-1)}
             batch = {k: v.to(device) for k, v in batch.items()}
-            stats = ppo_update(model, opt, batch, update_cfg)
+            stats = ppo_update(model, opt, batch, a)
 
             # ---- ghi nhật ký ----
             sps = (global_step - step_start) / (time.perf_counter() - t_start)
@@ -176,8 +169,6 @@ def train(cfg):
                    "episodes": len(recent), "ep_return": round(float(ep[:, 0].mean()), 3),
                    "ep_length": round(float(ep[:, 1].mean()), 1), "x_pos": round(float(ep[:, 2].mean()), 1),
                    "flag_rate": round(float(ep[:, 3].mean()), 3)}
-            if ent_final is not None:  # cột thêm chỉ có ở lượt chạy dùng lịch entropy
-                row["ent_coef"] = round(float(ent_coef), 6)
             progress.write(row)
             print(f"step {global_step:>9d}  sps {sps:6.1f}  return {row['ep_return']:8.2f}  "
                   f"x {row['x_pos']:7.1f}  flag {row['flag_rate']:.2f}  kl {row.get('approx_kl', 0):.4f}", flush=True)
