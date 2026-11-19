@@ -1,6 +1,6 @@
 """Kiểm tra của nhóm cho hai mẹo huấn luyện (không thuộc bộ kiểm tra công khai của thầy).
 
-    python -m pytest -q tests_nhom
+    python -m pytest -q tests_group
 
 Dùng trình giả lập thật. Tệp actions_1-1.json là một chuỗi hành động (tập `simple`, frame_skip 4) đưa Mario
 tới cờ màn 1-1; trình giả lập tất định nên phát lại chuỗi này luôn tới cờ.

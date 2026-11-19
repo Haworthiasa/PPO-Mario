@@ -1,6 +1,6 @@
 {
  "level": "1-1",
- "checkpoint": "nop/1-1.pt",
+ "checkpoint": "submission/1-1.pt",
  "global_step": 1200128,
  "seed": 2026,
  "episodes": 20,

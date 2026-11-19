@@ -1,7 +1,7 @@
 # Cấu hình của nhóm cho màn thưởng 4-1, học TỪ ĐẦU (không nạp checkpoint nào), 1,2 triệu bước tác tử.
-# Chạy: python -m mario_ppo.train --config configs/nhom-4-1.yaml run_dir=runs/4-1/tu-dau
-# Đây là cấu hình sinh ra checkpoint nộp cho màn thưởng (runs/4-1/tu-dau, bước 1.200.128).
-# Khác configs/nhom-1-1.yaml ở: level, total_steps, lr, và khóa mới ent_coef_final.
+# Chạy: python -m mario_ppo.train --config configs/group-4-1.yaml run_dir=runs/4-1/from-scratch
+# Đây là cấu hình sinh ra checkpoint nộp cho màn thưởng (runs/4-1/from-scratch, bước 1.200.128).
+# Khác configs/group-1-1.yaml ở: level, total_steps, lr, và khóa mới ent_coef_final.
 level: "4-1"
 seed: 1
 device: auto

@@ -1,14 +1,14 @@
 # Cấu hình của nhóm cho màn thưởng 4-1 (học chuyển giao từ checkpoint 1-1 của chính nhóm).
-# Thí nghiệm so sánh, KHÔNG phải cấu hình của checkpoint nộp (cấu hình nộp là configs/nhom-4-1.yaml).
-# Chạy: python -m mario_ppo.train --config configs/nhom-4-1-chuyen-giao.yaml run_dir=runs/4-1/chuyen-giao
-# Khác configs/nhom-1-1.yaml ở ba dòng: level, resume, total_steps.
+# Thí nghiệm so sánh, KHÔNG phải cấu hình của checkpoint nộp (cấu hình nộp là configs/group-4-1.yaml).
+# Chạy: python -m mario_ppo.train --config configs/group-4-1-transfer.yaml run_dir=runs/4-1/transfer
+# Khác configs/group-1-1.yaml ở ba dòng: level, resume, total_steps.
 level: "4-1"
 seed: 1
 device: auto
 run_dir: null
-# Khởi tạo từ checkpoint 1-1 ở 1.200.128 bước (sinh từ configs/nhom-1-1.yaml). `resume` của train.py nối tiếp cả
+# Khởi tạo từ checkpoint 1-1 ở 1.200.128 bước (sinh từ configs/group-1-1.yaml). `resume` của train.py nối tiếp cả
 # trọng số, trạng thái Adam và bộ đếm bước, nên bộ đếm của lượt chạy 4-1 bắt đầu từ 1.200.128.
-resume: runs/1-1/lan-1/checkpoints/step_001200128.pt
+resume: runs/1-1/run-1/checkpoints/step_001200128.pt
 torch_threads: 6
 checkpoint_every: 100_000
 eval_episodes: 5

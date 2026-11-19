@@ -9,9 +9,9 @@ Tác tử PPO sau 1,2 triệu bước ở mỗi màn, chấm bằng lệnh ở M
 | Màn 1-1: chạm cờ 19/20 | Màn 4-1 (màn thưởng): chạm cờ 20/20 |
 |:---:|:---:|
 | ![Mario vượt màn 1-1](docs/1-1.gif) | ![Mario vượt màn 4-1](docs/4-1.gif) |
-| [video gốc](nop/1-1.mp4) · [kết quả](nop/ket-qua-1-1.json) · [cấu hình](configs/nhom-1-1.yaml) | [video gốc](nop/4-1.mp4) · [kết quả](nop/ket-qua-4-1.json) · [cấu hình](configs/nhom-4-1.yaml) |
+| [video gốc](submission/1-1.mp4) · [kết quả](submission/ket-qua-1-1.json) · [cấu hình](configs/group-1-1.yaml) | [video gốc](submission/4-1.mp4) · [kết quả](submission/ket-qua-4-1.json) · [cấu hình](configs/group-4-1.yaml) |
 
-Hai ảnh động được tạo từ video do `evaluate.py` ghi lại (`nop/1-1.mp4`, `nop/4-1.mp4`).
+Hai ảnh động được tạo từ video do `evaluate.py` ghi lại (`submission/1-1.mp4`, `submission/4-1.mp4`).
 
 ## Cài đặt
 
@@ -86,22 +86,22 @@ một khóa tùy chọn (dòng dưới); cấu hình không có khóa đó thì 
 
 | Tệp | Nội dung |
 |---|---|
-| `configs/nhom-1-1.yaml` | cấu hình của nhóm cho màn 1-1; `configs/default.yaml` là mặc định của thầy, không sửa |
-| `configs/nhom-4-1.yaml` | cấu hình của nhóm cho màn thưởng 4-1, học từ đầu 1,2 triệu bước (lượt chạy `runs/4-1/tu-dau`) |
-| `configs/nhom-4-1-chuyen-giao.yaml` | thí nghiệm so sánh: 4-1 khởi tạo từ checkpoint 1-1 (lượt chạy `runs/4-1/chuyen-giao`) |
+| `configs/group-1-1.yaml` | cấu hình của nhóm cho màn 1-1; `configs/default.yaml` là mặc định của thầy, không sửa |
+| `configs/group-4-1.yaml` | cấu hình của nhóm cho màn thưởng 4-1, học từ đầu 1,2 triệu bước (lượt chạy `runs/4-1/from-scratch`) |
+| `configs/group-4-1-transfer.yaml` | thí nghiệm so sánh: 4-1 khởi tạo từ checkpoint 1-1 (lượt chạy `runs/4-1/transfer`) |
 | `mario_ppo/train.py` | thêm khóa `algo.ent_coef_final`: hệ số entropy giảm tuyến tính từ `ent_coef` về giá trị này khi hết `total_steps` |
-| `nop/` | checkpoint nộp: `1-1.pt` (từ `runs/1-1/lan-1`, bước 1.200.128) và `4-1.pt` (từ `runs/4-1/tu-dau`, bước 1.200.128) |
+| `submission/` | checkpoint nộp: `1-1.pt` (từ `runs/1-1/run-1`, bước 1.200.128) và `4-1.pt` (từ `runs/4-1/from-scratch`, bước 1.200.128) |
 | `mario_ppo/wrappers.py` (cuối tệp) | hai mẹo huấn luyện: `NoProgressTruncation` (`env.max_no_progress_steps`), `FlagBonus` (`env.flag_bonus`) |
 | `mario_ppo/plot.py` | vẽ đồ thị từ `progress.csv` và `evals.csv`; cần thêm `pip install matplotlib` |
-| `tests_nhom/` | kiểm tra hai mẹo trên trình giả lập thật: `python -m pytest -q tests_nhom` |
-| `ban-cu/` | bản mã nhóm tự viết trước khi có kho mã của thầy, cùng các lần chạy cũ; **không nộp** |
+| `tests_group/` | kiểm tra hai mẹo trên trình giả lập thật: `python -m pytest -q tests_group` |
+| `legacy/` | bản mã nhóm tự viết trước khi có kho mã của thầy, cùng các lần chạy cũ; **không nộp** |
 
 ```bash
-python -m mario_ppo.train --config configs/nhom-1-1.yaml          # huấn luyện 1-1 theo cấu hình của nhóm
-python -m mario_ppo.train --config configs/nhom-4-1.yaml run_dir=runs/4-1/tu-dau   # huấn luyện 4-1 từ đầu
+python -m mario_ppo.train --config configs/group-1-1.yaml          # huấn luyện 1-1 theo cấu hình của nhóm
+python -m mario_ppo.train --config configs/group-4-1.yaml run_dir=runs/4-1/from-scratch   # huấn luyện 4-1 từ đầu
 python -m mario_ppo.plot runs/1-1/<run>                            # ghi runs/1-1/<run>/curves.png
 python -m mario_ppo.evaluate --ckpt <ckpt> --level 1-1 --episodes 100 --seed 7   # đánh giá kỹ để chọn checkpoint
 ```
 
-Checkpoint trong `ban-cu/runs/` được huấn luyện với khung hình xử lý khác (không lấy max hai khung cuối), nên
+Checkpoint trong `legacy/runs/` được huấn luyện với khung hình xử lý khác (không lấy max hai khung cuối), nên
 chấm bằng `evaluate.py` của thầy chỉ đạt 0/20 ở màn 1-1. Mọi checkpoint nộp phải huấn luyện lại bằng kho mã này.

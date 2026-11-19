@@ -2,15 +2,15 @@
 
 Tệp này ghi lại theo thứ tự những gì nhóm đã tìm hiểu, đã chạy và đã quyết định, kèm số liệu và lý do. Nó dùng làm nguồn cho báo cáo (Mục 6 của `de-bai.md`) và để thành viên khác hiểu vì sao kho mã có hình dạng hiện tại.
 
-Mọi con số về kết quả trong tệp đều đọc lại từ các tệp trong `runs/`, `nop/` và `ban-cu/` (không chép theo trí nhớ). Chỗ nào là suy luận hoặc chưa kiểm chứng đều ghi rõ.
+Mọi con số về kết quả trong tệp đều đọc lại từ các tệp trong `runs/`, `submission/` và `legacy/` (không chép theo trí nhớ). Chỗ nào là suy luận hoặc chưa kiểm chứng đều ghi rõ.
 
 ## 1. Hiện trạng
 
 | Hạng mục của đề | Điểm | Trạng thái |
 |---|---|---|
-| A. Cài đặt | 30 | 35/35 bài kiểm tra công khai qua (`pytest -q tests`), thêm 3/3 bài của nhóm (`tests_nhom`) |
-| B. Màn 1-1 | 25 | `nop/1-1.pt`: 19/20 theo lệnh chấm (ngưỡng đủ điểm là 16/20) |
-| C. Màn thưởng 4-1 | 15 | `nop/4-1.pt`: 20/20 theo lệnh chấm |
+| A. Cài đặt | 30 | 35/35 bài kiểm tra công khai qua (`pytest -q tests`), thêm 3/3 bài của nhóm (`tests_group`) |
+| B. Màn 1-1 | 25 | `submission/1-1.pt`: 19/20 theo lệnh chấm (ngưỡng đủ điểm là 16/20) |
+| C. Màn thưởng 4-1 | 15 | `submission/4-1.pt`: 20/20 theo lệnh chấm |
 | D. Báo cáo | 25 | chưa viết |
 | E. Trình bày | 5 | chưa làm |
 | Điểm thưởng (màn ngoài danh sách) | +10 | chưa huấn luyện; đã khảo sát, ứng viên là 2-3 |
@@ -19,8 +19,8 @@ Hai checkpoint nộp đều ở bước 1.200.128 của lượt chạy tương �
 
 | Màn | Checkpoint | Cấu hình | Cách khởi tạo | 100 lượt, seed 7 | 20 lượt, seed 2026 (lệnh chấm) |
 |---|---|---|---|---|---|
-| 1-1 | `runs/1-1/lan-1/checkpoints/step_001200128.pt` | `configs/nhom-1-1.yaml` | từ đầu | 89/100 | 19/20 |
-| 4-1 | `runs/4-1/tu-dau/checkpoints/step_001200128.pt` | `configs/nhom-4-1.yaml` | từ đầu | 96/100 | 20/20 |
+| 1-1 | `runs/1-1/run-1/checkpoints/step_001200128.pt` | `configs/group-1-1.yaml` | từ đầu | 89/100 | 19/20 |
+| 4-1 | `runs/4-1/from-scratch/checkpoints/step_001200128.pt` | `configs/group-4-1.yaml` | từ đầu | 96/100 | 20/20 |
 
 Tệp `.pt` không nằm trên GitHub (bị `.gitignore` loại); thành viên khác cần nhận riêng.
 
@@ -40,11 +40,11 @@ Phần cứng và phần mềm của mọi lượt chạy: AMD Ryzen 5 4600H (6 
 - Thử cài trên Windows trước và bỏ: `nes-py` 9 và `gym-super-mario-bros` 9 (bản có sẵn cho Windows) không chạy được với mo-gymnasium 1.3.2. Chuyển sang WSL với bộ cũ hơn (gym-super-mario-bros 7.4.0, nes-py 8.2.1, numpy dưới 2).
 - Tốc độ đo được: riêng trình giả lập khoảng 860 bước mỗi giây với 8 môi trường; huấn luyện thật 110–160 bước mỗi giây tùy lượt.
 
-## 4. Bản tự viết trước khi có kho mã của thầy (`ban-cu/`)
+## 4. Bản tự viết trước khi có kho mã của thầy (`legacy/`)
 
 Lúc bắt đầu, kho mã khởi đầu chưa được phát, nên nhóm tự viết toàn bộ `mario_ppo/` theo mô tả trong đề (kể cả `train.py`, `env.py`, `evaluate.py`), có tham khảo hai kho công khai (vietnh1009/Super-mario-bros-PPO-pytorch và yumouwei/super-mario-bros-reinforcement-learning) về cấu hình, không lấy trọng số.
 
-Kết quả của bản này trên 1-1 (một lượt chạy 1.503.232 bước, `ban-cu/runs/thu-100k/`):
+Kết quả của bản này trên 1-1 (một lượt chạy 1.503.232 bước, `legacy/runs/trial-100k/`):
 
 | Bước | 803k | 852k | 901k | 950k | 1,00M | 1,05M | 1,10M | 1,15M | 1,20M | 1,25M | 1,30M | 1,35M | 1,40M | 1,45M | 1,50M |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -68,16 +68,16 @@ Bản này không nộp được: khi đổi sang định dạng của kho thầ
   - `wrappers.py`: hai wrapper chỉ dùng khi huấn luyện, `NoProgressTruncation` (cắt lượt khi không tiến) và `FlagBonus` (thưởng khi chạm cờ).
   - `env.py`: hai dòng gọi chúng, đặt trong khối `if not eval_mode:` như Quy định 3.5 yêu cầu.
   - `train.py`: một khóa tùy chọn `algo.ent_coef_final` (thêm ở Mục 10). Cấu hình không có khóa này chạy y như bản của thầy.
-  - `mario_ppo/plot.py` (vẽ `curves.png`), `tests_nhom/`, các tệp `configs/nhom-*.yaml`.
+  - `mario_ppo/plot.py` (vẽ `curves.png`), `tests_group/`, các tệp `configs/group-*.yaml`.
 - Đối chiếu Quy định 3.5: mẹo huấn luyện chỉ nằm trong khối cho phép; `info` chỉ dùng để tính phần thưởng và cắt lượt, không đưa vào mạng. Đây là cách nhóm hiểu quy định 2, nên hỏi lại thầy nếu cần chắc chắn.
 
 Xem xét số epoch trước khi chạy (đo trên một lô 8 × 512 thật, hai seed): so với 10 epoch, 4 epoch đạt 68% mức cải thiện mục tiêu chính sách, 6 epoch 84%, 8 epoch 94%; đổi lại tốc độ ước tính 174, 149, 130 so với 116 bước mỗi giây. Tính theo thời gian thì gần như hòa, nên giữ 10 epoch kèm `target_kl` 0,03.
 
 So với cấu hình mặc định của thầy (`configs/default.yaml`): nhóm dùng 8 môi trường × 512 bước thay cho 16 × 256, 10 epoch thay cho 4, lr 1,5e-4 thay cho 2,5e-4, λ 1,0 thay cho 0,95, ε 0,15 thay cho 0,2, hệ số critic 0,5 thay cho 0,25, có `target_kl`, không chuẩn hóa phần thưởng, không tính xu và hạ địch. Nhóm chưa chạy cấu hình mặc định của thầy nên không có số liệu so sánh.
 
-## 6. Huấn luyện màn 1-1 (`runs/1-1/lan-1`)
+## 6. Huấn luyện màn 1-1 (`runs/1-1/run-1`)
 
-Cấu hình `configs/nhom-1-1.yaml`, từ đầu, lịch tốc độ học tính cho 2 triệu bước. Lượt chạy gồm hai đoạn: 0 → 700.416 bước, rồi nối tiếp bằng `resume=` tới 1.200.128 bước và dừng ở đó. Tổng thời gian khoảng 2 giờ 35 phút (đoạn đầu 120 bước mỗi giây, đoạn sau 143).
+Cấu hình `configs/group-1-1.yaml`, từ đầu, lịch tốc độ học tính cho 2 triệu bước. Lượt chạy gồm hai đoạn: 0 → 700.416 bước, rồi nối tiếp bằng `resume=` tới 1.200.128 bước và dừng ở đó. Tổng thời gian khoảng 2 giờ 35 phút (đoạn đầu 120 bước mỗi giây, đoạn sau 143).
 
 | Bước | 500k | 600k | 700k | 800k | 900k | 1,0M | 1,1M | 1,2M |
 |---|---|---|---|---|---|---|---|---|
@@ -96,7 +96,7 @@ Checkpoint 1,2M được chọn nộp. Sau đó có thử chạy tiếp lên 1,5
 
 ## 7. Phân tích chỗ chết ở 1-1
 
-Checkpoint 1,2M, 100 lượt seed 7, 11 lượt thất bại. Ảnh từng trường hợp ở `runs/1-1/lan-1/danh-gia/phan-tich-001200128/`.
+Checkpoint 1,2M, 100 lượt seed 7, 11 lượt thất bại. Ảnh từng trường hợp ở `runs/1-1/run-1/eval/failure-analysis-001200128/`.
 
 | Vị trí x | Số lượt | Chuyện xảy ra (xem từ khung hình) |
 |---|---|---|
@@ -126,11 +126,11 @@ Cho checkpoint 1-1 (1,2M) chơi thử cả 8 màn trong danh sách khi chưa h�
 | 1-4 | lâu đài | 0,345 | 233 | 234 |
 | 1-2 | dưới lòng đất | 0,440 | 177 | 965 |
 
-4-1 vừa giống 1-1 nhất về hình ảnh, vừa đi xa gấp đôi màn đứng sau, nên được chọn. Ảnh so sánh các màn: `runs/1-1/lan-1/danh-gia/cac-man-thuong.png`.
+4-1 vừa giống 1-1 nhất về hình ảnh, vừa đi xa gấp đôi màn đứng sau, nên được chọn. Ảnh so sánh các màn: `runs/1-1/run-1/eval/bonus-levels.png`.
 
-## 9. Màn 4-1 bằng học chuyển giao (`runs/4-1/chuyen-giao`)
+## 9. Màn 4-1 bằng học chuyển giao (`runs/4-1/transfer`)
 
-Cấu hình `configs/nhom-4-1-chuyen-giao.yaml`: giống cấu hình 1-1, chỉ đổi màn, nạp checkpoint 1-1 ở 1,2M bằng `resume=` và đặt `total_steps` 6,2 triệu. `resume=` nối tiếp cả trọng số, trạng thái Adam và bộ đếm bước, nên tốc độ học lúc bắt đầu 4-1 là khoảng 1,2e-4.
+Cấu hình `configs/group-4-1-transfer.yaml`: giống cấu hình 1-1, chỉ đổi màn, nạp checkpoint 1-1 ở 1,2M bằng `resume=` và đặt `total_steps` 6,2 triệu. `resume=` nối tiếp cả trọng số, trạng thái Adam và bộ đếm bước, nên tốc độ học lúc bắt đầu 4-1 là khoảng 1,2e-4.
 
 Lượt chạy gồm ba đoạn nối tiếp nhau:
 
@@ -152,13 +152,13 @@ Chẩn đoán:
 - Trong 400 nghìn bước cuối, entropy đứng quanh 0,61–0,64 và tỉ lệ chạm cờ khi huấn luyện đứng ở 0,82–0,85.
 - Tốc độ học chỉ giảm từ 1,2e-4 xuống 0,9e-4.
 
-Phân tích chỗ chết ở checkpoint cuối (100 lượt seed 7, 19 lượt thất bại; ảnh ở `runs/4-1/chuyen-giao/danh-gia/phan-tich-002502656/`): 7 lượt đáp trúng cây ăn thịt trên ống, 7 lượt chết vì gai của Lakitu (hai lượt ở x≈1842 do kẹt trước một ống cao vì hành động lấy mẫu nhả nút nhảy sớm), 5 lượt rơi hố. Chọn hành động xác suất cao nhất: 95/100, so với 81/100 khi lấy mẫu.
+Phân tích chỗ chết ở checkpoint cuối (100 lượt seed 7, 19 lượt thất bại; ảnh ở `runs/4-1/transfer/eval/failure-analysis-002502656/`): 7 lượt đáp trúng cây ăn thịt trên ống, 7 lượt chết vì gai của Lakitu (hai lượt ở x≈1842 do kẹt trước một ống cao vì hành động lấy mẫu nhả nút nhảy sớm), 5 lượt rơi hố. Chọn hành động xác suất cao nhất: 95/100, so với 81/100 khi lấy mẫu.
 
 ## 10. Chuyển giao làm quên màn cũ
 
 Câu hỏi đặt ra: sau khi học 4-1, checkpoint có còn chơi được 1-1 không, để nộp một mạng cho cả hai màn?
 
-Cho mọi checkpoint của lượt chuyển giao chơi 1-1 (20 lượt, seed 2026; kết quả ở `runs/4-1/chuyen-giao/danh-gia/eval-on-1-1/`):
+Cho mọi checkpoint của lượt chuyển giao chơi 1-1 (20 lượt, seed 2026; kết quả ở `runs/4-1/transfer/eval/eval-on-1-1/`):
 
 | Bước trên 4-1 | 0 | 100k | 200k | 300k | 400k | 500k | 600k | 700k | 800k | 900k | 1,0M | 1,1M | 1,2M | 1,3M |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -169,9 +169,9 @@ Cho mọi checkpoint của lượt chuyển giao chơi 1-1 (20 lượt, seed 202
 - Một checkpoint không dùng được cho cả hai màn. Đề cũng yêu cầu nộp checkpoint riêng cho từng màn (Mục 7), nên điều này không mất điểm.
 - Một mạng cho nhiều màn cần huấn luyện đồng thời trên các màn đó (phải sửa `train.py`) và không được thêm điểm. LoRA (đóng băng mạng gốc, thêm lớp nhỏ cho từng màn) cũng tránh được quên nhưng không đem lại điểm, nên không làm.
 
-## 11. Màn 4-1 học từ đầu (`runs/4-1/tu-dau`) — bản nộp
+## 11. Màn 4-1 học từ đầu (`runs/4-1/from-scratch`) — bản nộp
 
-Lý do thử: lượt chuyển giao tốn 1,2M bước ở 1-1 rồi 1,3M bước ở 4-1 mà vẫn dừng quanh 81%. Cấu hình `configs/nhom-4-1.yaml` rút từ chẩn đoán của hai lượt trước, khác cấu hình 1-1 ở ba điểm:
+Lý do thử: lượt chuyển giao tốn 1,2M bước ở 1-1 rồi 1,3M bước ở 4-1 mà vẫn dừng quanh 81%. Cấu hình `configs/group-4-1.yaml` rút từ chẩn đoán của hai lượt trước, khác cấu hình 1-1 ở ba điểm:
 
 | Thay đổi | Giá trị | Lý do |
 |---|---|---|
@@ -199,14 +199,28 @@ So với lượt chuyển giao ở cùng số bước trên 4-1: chậm hơn tro
 
 ## 12. Tệp nộp và GitHub
 
-- Tạo bằng đúng lệnh ở Mục 4 của đề, có `--out` và `--video`: `nop/ket-qua-1-1.json` (19/20, lượt hỏng dừng ở x = 1673), `nop/1-1.mp4`, `nop/ket-qua-4-1.json` (20/20), `nop/4-1.mp4`. Vị trí x từng lượt trùng với lần đánh giá 20 lượt trước đó trên cùng checkpoint. Máy của thầy có thể cho kết quả lệch nhẹ; chưa kiểm tra trên máy khác.
-- `nop/1-1.pt` và `nop/4-1.pt` là bản sao của hai checkpoint nộp.
-- Các lượt chạy được đổi tên cho dễ nhớ: `runs/4-1/lan-1` → `runs/4-1/chuyen-giao`, `runs/4-1/lan-2` → `runs/4-1/tu-dau`. Tệp `config.yaml` và JSON bên trong vẫn ghi tên cũ.
+- Tạo bằng đúng lệnh ở Mục 4 của đề, có `--out` và `--video`: `submission/ket-qua-1-1.json` (19/20, lượt hỏng dừng ở x = 1673), `submission/1-1.mp4`, `submission/ket-qua-4-1.json` (20/20), `submission/4-1.mp4`. Vị trí x từng lượt trùng với lần đánh giá 20 lượt trước đó trên cùng checkpoint. Máy của thầy có thể cho kết quả lệch nhẹ; chưa kiểm tra trên máy khác.
+- `submission/1-1.pt` và `submission/4-1.pt` là bản sao của hai checkpoint nộp.
 - Nhánh `daylabranchcuaDung` trên kho của nhóm đã có mã, cấu hình, kết quả 1-1 và 4-1, README kèm hai ảnh động (`docs/1-1.gif`, `docs/4-1.gif`). Các tệp JSON của kết quả khảo sát ở Mục 8, Mục 13 và của đường cong quên ở Mục 10 cũng đã có trên nhánh; checkpoint và video huấn luyện thì không.
+
+Tên thư mục và tệp đã được đổi sang tiếng Anh sau khi chạy xong. Tệp `config.yaml` và các tệp JSON trong `runs/` là bản ghi của lúc chạy nên bên trong vẫn ghi tên cũ; bảng dưới đây để tra ngược.
+
+| Tên lúc chạy | Tên hiện tại |
+|---|---|
+| `runs/1-1/lan-1` | `runs/1-1/run-1` |
+| `runs/4-1/lan-1` (sau đó là `chuyen-giao`) | `runs/4-1/transfer` |
+| `runs/4-1/lan-2` (sau đó là `tu-dau`) | `runs/4-1/from-scratch` |
+| `danh-gia/`, `thu-<màn>/`, `phan-tich-<bước>/` | `eval/`, `eval-on-<màn>/`, `failure-analysis-<bước>/` |
+| `nop/` | `submission/` |
+| `configs/nhom-*.yaml` | `configs/group-*.yaml` |
+| `tests_nhom/` | `tests_group/` |
+| `ban-cu/` | `legacy/` |
+
+Giữ nguyên tên: `de-bai.md` (tệp của thầy), `ket-qua-1-1.json` và `ket-qua-4-1.json` (tên trong lệnh chấm của đề).
 
 ## 13. Khảo sát màn ngoài danh sách (cho điểm thưởng +10)
 
-Cho hai checkpoint nộp chơi thử 23 màn ngoài danh sách khi chưa học (20 lượt, seed 2026). Không màn nào chạm cờ. Kết quả ở `runs/1-1/lan-1/danh-gia/eval-on-<màn>/` và `runs/4-1/tu-dau/danh-gia/eval-on-<màn>/`.
+Cho hai checkpoint nộp chơi thử 23 màn ngoài danh sách khi chưa học (20 lượt, seed 2026). Không màn nào chạm cờ. Kết quả ở `runs/1-1/run-1/eval/eval-on-<màn>/` và `runs/4-1/from-scratch/eval/eval-on-<màn>/`.
 
 | Màn | Checkpoint 1-1: x trung bình / xa nhất | Checkpoint 4-1: x trung bình / xa nhất |
 |---|---|---|
@@ -276,18 +290,18 @@ Câu hỏi còn để ngỏ cho thầy: nộp mã mốc tuần 1 ở đâu; nộ
 
 | Cần gì | Ở đâu |
 |---|---|
-| Cấu hình nộp | `configs/nhom-1-1.yaml`, `configs/nhom-4-1.yaml` |
-| Tệp nộp theo Mục 4 của đề | `nop/` |
+| Cấu hình nộp | `configs/group-1-1.yaml`, `configs/group-4-1.yaml` |
+| Tệp nộp theo Mục 4 của đề | `submission/` |
 | Số liệu huấn luyện từng lượt | `runs/<màn>/<lượt>/progress.csv`, `evals.csv`, `config.yaml`, `curves.png` |
-| Đánh giá từng checkpoint | `runs/<màn>/<lượt>/danh-gia/100-seed7_<bước>.json`, `20-seed2026_<bước>.json` |
-| Chơi thử màn khác | `runs/<màn>/<lượt>/danh-gia/eval-on-<màn khác>/` |
-| Ảnh phân tích chỗ chết | `runs/1-1/lan-1/danh-gia/phan-tich-001200128/`, `runs/4-1/chuyen-giao/danh-gia/phan-tich-002502656/` |
-| Bản tự viết cũ, không nộp | `ban-cu/` (không có trên GitHub) |
+| Đánh giá từng checkpoint | `runs/<màn>/<lượt>/eval/100-seed7_<bước>.json`, `20-seed2026_<bước>.json` |
+| Chơi thử màn khác | `runs/<màn>/<lượt>/eval/eval-on-<màn khác>/` |
+| Ảnh phân tích chỗ chết | `runs/1-1/run-1/eval/failure-analysis-001200128/`, `runs/4-1/transfer/eval/failure-analysis-002502656/` |
+| Bản tự viết cũ, không nộp | `legacy/` (không có trên GitHub) |
 
 Lệnh dùng lại:
 
 ```bash
-python -m mario_ppo.train --config configs/nhom-4-1.yaml run_dir=runs/4-1/tu-dau     # huấn luyện
+python -m mario_ppo.train --config configs/group-4-1.yaml run_dir=runs/4-1/from-scratch     # huấn luyện
 python -m mario_ppo.evaluate --ckpt <checkpoint.pt> --level 4-1 --episodes 100 --seed 7 --out <tệp.json>   # chọn checkpoint
-python -m mario_ppo.plot runs/4-1/tu-dau                                              # vẽ lại curves.png
+python -m mario_ppo.plot runs/4-1/from-scratch                                              # vẽ lại curves.png
 ```

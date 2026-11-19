@@ -1,4 +1,4 @@
-# Cấu hình của nhóm cho màn 1-1. Chạy: python -m mario_ppo.train --config configs/nhom-1-1.yaml
+# Cấu hình của nhóm cho màn 1-1. Chạy: python -m mario_ppo.train --config configs/group-1-1.yaml
 # Các giá trị khác mặc định của thầy (configs/default.yaml) đều có ghi lý do bên cạnh.
 level: "1-1"
 seed: 1
