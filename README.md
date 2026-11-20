@@ -4,14 +4,14 @@
 
 ## Kết quả của nhóm
 
-Tác tử PPO sau 1,2 triệu bước ở mỗi màn, chấm bằng lệnh ở Mục 4 của đề (20 lượt, seed 2026, lấy mẫu hành động).
+Tác tử PPO sau 1,2 triệu bước ở 1-1 và 4-1, 2,8 triệu bước ở 2-3, chấm bằng lệnh ở Mục 4 của đề (20 lượt, seed 2026, lấy mẫu hành động).
 
-| Màn 1-1: chạm cờ 19/20 | Màn 4-1 (màn thưởng): chạm cờ 20/20 |
-|:---:|:---:|
-| ![Mario vượt màn 1-1](docs/1-1.gif) | ![Mario vượt màn 4-1](docs/4-1.gif) |
-| [video gốc](submission/1-1.mp4) · [kết quả](submission/ket-qua-1-1.json) · [cấu hình](configs/group-1-1.yaml) | [video gốc](submission/4-1.mp4) · [kết quả](submission/ket-qua-4-1.json) · [cấu hình](configs/group-4-1.yaml) |
+| Màn 1-1: chạm cờ 19/20 | Màn 4-1 (màn thưởng): chạm cờ 20/20 | Màn 2-3 (ngoài danh sách): chạm cờ 18/20 |
+|:---:|:---:|:---:|
+| ![Mario vượt màn 1-1](docs/1-1.gif) | ![Mario vượt màn 4-1](docs/4-1.gif) | ![Mario vượt màn 2-3](docs/2-3.gif) |
+| [video gốc](submission/1-1.mp4) · [kết quả](submission/ket-qua-1-1.json) · [cấu hình](configs/group-1-1.yaml) | [video gốc](submission/4-1.mp4) · [kết quả](submission/ket-qua-4-1.json) · [cấu hình](configs/group-4-1.yaml) | [video gốc](submission/2-3.mp4) · [kết quả](submission/ket-qua-2-3.json) · [cấu hình](configs/group-2-3-3m.yaml) |
 
-Hai ảnh động được tạo từ video do `evaluate.py` ghi lại (`submission/1-1.mp4`, `submission/4-1.mp4`).
+Ba ảnh động được tạo từ video do `evaluate.py` ghi lại (`submission/1-1.mp4`, `submission/4-1.mp4`, `submission/2-3.mp4`).
 
 ## Cài đặt
 
@@ -90,7 +90,9 @@ hệ số entropy của nhóm nằm trong `ppo.py` (dòng dưới); cấu hình 
 | `configs/group-4-1.yaml` | cấu hình của nhóm cho màn thưởng 4-1, học từ đầu 1,2 triệu bước (lượt chạy `runs/4-1/from-scratch`) |
 | `configs/group-4-1-transfer.yaml` | thí nghiệm so sánh: 4-1 khởi tạo từ checkpoint 1-1 (lượt chạy `runs/4-1/transfer`) |
 | `mario_ppo/ppo.py` (`scheduled_ent_coef`) | khóa tùy chọn `algo.ent_coef_final`: hệ số entropy giảm tuyến tính từ `ent_coef` về giá trị này khi hết `total_steps`; cần `anneal_lr: true` vì số bước được suy từ tốc độ học hiện tại |
-| `submission/` | checkpoint nộp: `1-1.pt` (từ `runs/1-1/run-1`, bước 1.200.128) và `4-1.pt` (từ `runs/4-1/from-scratch`, bước 1.200.128) |
+| `configs/group-2-3.yaml` | màn 2-3 (ngoài danh sách), học từ đầu 1,2 triệu bước: giống `group-4-1.yaml`, chỉ khác `level` (lượt chạy `runs/2-3/from-scratch`, 55/100) |
+| `configs/group-2-3-3m.yaml` | cấu hình nộp cho 2-3: giống `group-2-3.yaml`, chỉ khác `total_steps: 3_000_000` (lượt chạy `runs/2-3/from-scratch-3m`, 86/100) |
+| `submission/` | checkpoint nộp: `1-1.pt` (từ `runs/1-1/run-1`, bước 1.200.128), `4-1.pt` (từ `runs/4-1/from-scratch`, bước 1.200.128) và `2-3.pt` (từ `runs/2-3/from-scratch-3m`, bước 2.801.664) |
 | `mario_ppo/wrappers.py` (cuối tệp) | hai mẹo huấn luyện: `NoProgressTruncation` (`env.max_no_progress_steps`), `FlagBonus` (`env.flag_bonus`) |
 | `mario_ppo/plot.py` | vẽ đồ thị từ `progress.csv` và `evals.csv`; cần thêm `pip install matplotlib` |
 | `mario_ppo/train_joint.py` | thí nghiệm bổ sung: một mạng học nhiều màn cùng lúc. Môi trường thứ i chơi màn `levels[i % số màn]`, nên mỗi lần cập nhật có dữ liệu của mọi màn; nhật ký và đánh giá tách theo màn. `train.py` của thầy không đổi |
@@ -101,6 +103,7 @@ hệ số entropy của nhóm nằm trong `ppo.py` (dòng dưới); cấu hình 
 ```bash
 python -m mario_ppo.train --config configs/group-1-1.yaml          # huấn luyện 1-1 theo cấu hình của nhóm
 python -m mario_ppo.train --config configs/group-4-1.yaml run_dir=runs/4-1/from-scratch   # huấn luyện 4-1 từ đầu
+python -m mario_ppo.train --config configs/group-2-3-3m.yaml run_dir=runs/2-3/from-scratch-3m   # huấn luyện 2-3 từ đầu
 python -m mario_ppo.plot runs/1-1/<run>                            # ghi runs/1-1/<run>/curves.png
 python -m mario_ppo.evaluate --ckpt <ckpt> --level 1-1 --episodes 100 --seed 7   # đánh giá kỹ để chọn checkpoint
 ```

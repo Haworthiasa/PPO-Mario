@@ -13,14 +13,17 @@ Mọi con số về kết quả trong tệp đều đọc lại từ các tệp 
 | C. Màn thưởng 4-1 | 15 | `submission/4-1.pt`: 20/20 theo lệnh chấm |
 | D. Báo cáo | 25 | chưa viết |
 | E. Trình bày | 5 | chưa làm |
-| Điểm thưởng (màn ngoài danh sách) | +10 | chưa huấn luyện; đã khảo sát, ứng viên là 2-3 |
+| Điểm thưởng (màn ngoài danh sách) | +10 | `submission/2-3.pt`: 18/20 theo lệnh chấm (ngưỡng đủ điểm là 16/20) |
 
-Hai checkpoint nộp đều ở bước 1.200.128 của lượt chạy tương ứng:
+Ba checkpoint nộp. Hai checkpoint 1-1 và 4-1 ở bước 1.200.128 của lượt chạy tương ứng; checkpoint 2-3 ở bước 2.801.664 của lượt 3 triệu bước:
 
 | Màn | Checkpoint | Cấu hình | Cách khởi tạo | 100 lượt, seed 7 | 20 lượt, seed 2026 (lệnh chấm) |
 |---|---|---|---|---|---|
 | 1-1 | `runs/1-1/run-1/checkpoints/step_001200128.pt` | `configs/group-1-1.yaml` | từ đầu | 89/100 | 19/20 |
 | 4-1 | `runs/4-1/from-scratch/checkpoints/step_001200128.pt` | `configs/group-4-1.yaml` | từ đầu | 96/100 | 20/20 |
+| 2-3 | `runs/2-3/from-scratch-3m/checkpoints/step_002801664.pt` | `configs/group-2-3-3m.yaml` | từ đầu | 86/100 | 18/20 |
+
+Màn 2-3 yếu hơn hai màn kia: tỉ lệ thật khoảng 0,81–0,91 (173/200 khi gộp seed 7 và seed 11), chỉ nhỉnh hơn ngưỡng 0,8 của đề. Chi tiết và nguyên nhân ở Mục 13.
 
 Thí nghiệm bổ sung, không nộp: một mạng học cả hai màn (`runs/1-1+4-1/from-scratch`, bước 2.904.064) đạt 99/100 ở 1-1 và 99/100 ở 4-1 (seed 7), 20/20 ở cả hai màn theo lệnh chấm. Chi tiết ở cuối Mục 10.
 
@@ -30,7 +33,7 @@ Tệp `.pt` không nằm trên GitHub (bị `.gitignore` loại); thành viên k
 
 - **Bước** là bước tác tử (một lần mạng chọn hành động, bằng 4 khung hình của trò chơi).
 - **Đánh giá 100 lượt, seed 7** dùng để chọn checkpoint và ra quyết định. **Đánh giá 20 lượt, seed 2026** là đúng lệnh chấm ở Mục 4 của đề, chỉ dùng để kiểm tra lần cuối. Cả hai đều lấy mẫu hành động như khi huấn luyện, không dùng mẹo huấn luyện.
-- Cờ của 1-1 ở x = 3161, của 4-1 ở x = 3593. Một lượt có x cuối bằng giá trị đó là lượt chạm cờ.
+- Cờ của 1-1 ở x = 3161, của 4-1 và 2-3 ở x = 3593. Một lượt có x cuối bằng giá trị đó là lượt chạm cờ.
 - Mỗi checkpoint trong `evals.csv` chỉ kèm 5 lượt đánh giá. Con số đó dao động quá mạnh để ra quyết định (xem Mục 6).
 - Ở lượt chuyển giao, bộ đếm bước nối tiếp từ checkpoint 1-1. "Bước trên 4-1" bằng bộ đếm trừ 1.200.128.
 
@@ -261,7 +264,8 @@ So với lượt chuyển giao ở cùng số bước trên 4-1: chậm hơn tro
 ## 12. Tệp nộp và GitHub
 
 - Tạo bằng đúng lệnh ở Mục 4 của đề, có `--out` và `--video`: `submission/ket-qua-1-1.json` (19/20, lượt hỏng dừng ở x = 1673), `submission/1-1.mp4`, `submission/ket-qua-4-1.json` (20/20), `submission/4-1.mp4`. Vị trí x từng lượt trùng với lần đánh giá 20 lượt trước đó trên cùng checkpoint. Máy của thầy có thể cho kết quả lệch nhẹ; chưa kiểm tra trên máy khác.
-- `submission/1-1.pt` và `submission/4-1.pt` là bản sao của hai checkpoint nộp.
+- Màn 2-3 tạo sau, cùng lệnh với `--level 2-3`: `submission/ket-qua-2-3.json` (18/20, hai lượt hỏng dừng ở x = 1989 và x = 3179), `submission/2-3.mp4`.
+- `submission/1-1.pt`, `submission/4-1.pt` và `submission/2-3.pt` là bản sao của ba checkpoint nộp.
 - Nhánh `daylabranchcuaDung` trên kho của nhóm đã có mã, cấu hình, kết quả 1-1 và 4-1, README kèm hai ảnh động (`docs/1-1.gif`, `docs/4-1.gif`). Các tệp JSON của kết quả khảo sát ở Mục 8, Mục 13 và của đường cong quên ở Mục 10 cũng đã có trên nhánh; checkpoint và video huấn luyện thì không.
 
 Tên thư mục và tệp đã được đổi sang tiếng Anh sau khi chạy xong. Tệp `config.yaml` và các tệp JSON trong `runs/` là bản ghi của lúc chạy nên bên trong vẫn ghi tên cũ; bảng dưới đây để tra ngược.
@@ -279,7 +283,7 @@ Tên thư mục và tệp đã được đổi sang tiếng Anh sau khi chạy x
 
 Giữ nguyên tên: `de-bai.md` (tệp của thầy), `ket-qua-1-1.json` và `ket-qua-4-1.json` (tên trong lệnh chấm của đề).
 
-## 13. Khảo sát màn ngoài danh sách (cho điểm thưởng +10)
+## 13. Màn ngoài danh sách (cho điểm thưởng +10): khảo sát và huấn luyện 2-3
 
 Cho hai checkpoint nộp chơi thử 23 màn ngoài danh sách khi chưa học (20 lượt, seed 2026). Không màn nào chạm cờ. Kết quả ở `runs/1-1/run-1/eval/eval-on-<màn>/` và `runs/4-1/from-scratch/eval/eval-on-<màn>/`.
 
@@ -309,20 +313,103 @@ Cho hai checkpoint nộp chơi thử 23 màn ngoài danh sách khi chưa học (
 | 8-4 | 147 / 147 | 238 / 1159 |
 | 4-4 | 123 / 133 | 108 / 147 |
 
-Đề xuất hiện tại là **2-3**: cả hai checkpoint đều đi xa (tới x≈1760–1790), lượt chơi ngắn, và các lượt chết dồn ở vài mốc rõ (x≈1079, 1335, 1571, 1790). 2-2 đứng thứ hai nhưng mỗi lượt dài gấp 2–4 lần về số bước. Tám màn lâu đài (x-4) đều kém.
+Đề xuất lúc đó là **2-3**: cả hai checkpoint đều đi xa (tới x≈1760–1790), lượt chơi ngắn, và các lượt chết dồn ở vài mốc rõ (x≈1079, 1335, 1571, 1790). 2-2 đứng thứ hai nhưng mỗi lượt dài gấp 2–4 lần về số bước. Tám màn lâu đài (x-4) đều kém.
 
-Lưu ý: tín hiệu lần này yếu hơn lần chọn 4-1, vì không màn nào vượt hẳn các màn còn lại. Nhận xét "2-2 là màn dưới nước, 2-3 là màn cầu có cá nhảy" đến từ hiểu biết chung về trò chơi, chưa mở khung hình ra kiểm tra. Chưa huấn luyện màn nào trong số này.
+Lưu ý: tín hiệu lần này yếu hơn lần chọn 4-1, vì không màn nào vượt hẳn các màn còn lại. Nhận xét "2-2 là màn dưới nước, 2-3 là màn cầu có cá nhảy" lúc đó đến từ hiểu biết chung về trò chơi. Sau này đã mở khung hình 2-3 (`runs/4-1/from-scratch/eval/eval-on-2-3/level-map.png`): đúng là một chuỗi cầu có khe hở, cá nhảy từ dưới lên, hai đoạn bệ xanh thấp ở x≈1760–1900 và x≈3080–3300, cờ ở x = 3593. Trong 23 màn này nhóm chỉ huấn luyện 2-3, qua hai lượt ghi ở ba mục con dưới đây.
+
+### Lượt 1,2 triệu bước (`runs/2-3/from-scratch`)
+
+Cấu hình `configs/group-2-3.yaml` giống hệt `configs/group-4-1.yaml`, chỉ khác `level`. Học từ đầu, seed 1, 1.200.128 bước, khoảng 2 giờ 25 phút, 138 bước mỗi giây.
+
+| Bước | 100k | 200k | 300k | 400k | 500k | 600k | 700k | 800k | 900k | 1,0M | 1,1M | 1,2M |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Chạm cờ /100 (seed 7) | 0 | 0 | 0 | 1 | 16 | 20 | 35 | 40 | 41 | 46 | 51 | **55** |
+| Chạm cờ /20 (seed 2026) | 0 | 0 | 0 | 1 | 4 | 3 | 8 | 10 | 10 | 6 | 8 | **9** |
+
+- **Kết quả.** Checkpoint cuối đạt 55/100 và 9/20, tức khoảng 5,6 trên 10 điểm thưởng (10 · 0,45 / 0,8). Cùng cấu hình và số bước, 4-1 đạt 96/100.
+- **Chưa bão hòa.** Bốn checkpoint cuối vẫn tăng (41, 46, 51, 55) trong khi tốc độ học đã về 0. Entropy trung bình 200 nghìn bước giảm từ 1,43 xuống 0,56; approxKL cao nhất 0,0166 ở 400–600 nghìn bước; chỉ 9 trên 293 lần cập nhật bị `target_kl` dừng sớm. Tỉ lệ chạm cờ khi huấn luyện trong 200 nghìn bước cuối là 0,41.
+- **Lấy mẫu và kỹ năng** (`eval/diagnostics-001200128/temperature.txt`, 100 lượt seed 7, chia logit cho nhiệt độ T): T = 1 đạt 55, T = 0,75 đạt 59, T = 0,5 đạt 63, T = 0,25 đạt 72, chọn hành động xác suất cao nhất đạt 76. Trong 45 lượt hỏng, 21 lượt mất vì lấy mẫu, 24 lượt còn lại là thiếu kỹ năng. Khi chọn xác suất cao nhất, các lượt hỏng dồn ở năm chỗ: x = 1081, 1483, 1979–1985, 2536–2557, 3304–3305.
+- **Chỗ chết khi lấy mẫu** (cùng tệp, dòng T = 1). Tỉ lệ chết trong số lượt tới được từng đoạn: x 1977–2027 là 13/94, x 2442–2562 là 9/81, x 2797–2918 là 7/72, x 3193–3308 là 9/64; trước x = 1900 chỉ 6/100. Trong 20 lượt seed 2026 có 10 lượt rơi hố và 1 lượt chạm quái (`eval/death-causes-001200128/`).
+- **Thu hẹp bộ hành động không giúp** (`eval/diagnostics-001200128/forbidden-actions.txt`, cấm hành động bằng cách đặt logit về âm vô cùng): cấm "trái" được 57/100, cấm "A" 41, cấm cả hai 34, cấm thêm NOOP 43. Chính sách chỉ dùng "trái" ở 0,4% số bước.
+- **Đối chiếu cấu hình với kho mã công khai.** `uvipen/Super-mario-bros-PPO-pytorch` (báo cáo qua 31/32 màn, có 2-3) dùng γ = 0,9, λ = 1,0, 8 tiến trình × 512 bước, 10 epoch, 16 minibatch, tốc độ học 1e-4, và 5 triệu bước cho mỗi màn. Cấu hình của nhóm gần như trùng ở các giá trị đó; khác biệt lớn nhất là số bước. Nhóm không lấy mã hay checkpoint từ kho này.
+- **Quyết định.** Học lại từ đầu với 3 triệu bước, chỉ đổi `total_steps`. Checkpoint 1,2 triệu bước được giữ làm phương án dự phòng.
+
+### Lượt 3 triệu bước (`runs/2-3/from-scratch-3m`) — bản nộp
+
+Cấu hình `configs/group-2-3-3m.yaml` giống hệt `configs/group-2-3.yaml`, chỉ khác `total_steps: 3_000_000`. Vì lịch tốc độ học và lịch hệ số entropy đều tính theo `total_steps`, cả hai lịch cùng dài ra. Học từ đầu, seed 1, 3.002.368 bước, khoảng 5 giờ 50 phút, 141 bước mỗi giây, 30 checkpoint. Tám checkpoint cuối được chấm thêm 100 lượt seed 11 để kiểm tra lựa chọn.
+
+| Bước | 100 lượt, seed 7 | 100 lượt, seed 11 | 20 lượt, seed 2026 |
+|---|---|---|---|
+| 102.400 | 0 | – | 0 |
+| 200.704 | 0 | – | 0 |
+| 303.104 | 7 | – | 3 |
+| 401.408 | 12 | – | 4 |
+| 503.808 | 30 | – | 2 |
+| 602.112 | 33 | – | 10 |
+| 700.416 | 49 | – | 4 |
+| 802.816 | 53 | – | 10 |
+| 901.120 | 36 | – | 9 |
+| 1.003.520 | 58 | – | 13 |
+| 1.101.824 | 61 | – | 12 |
+| 1.200.128 | 61 | – | 12 |
+| 1.302.528 | 57 | – | 16 |
+| 1.400.832 | 66 | – | 12 |
+| 1.503.232 | 72 | – | 14 |
+| 1.601.536 | 69 | – | 14 |
+| 1.703.936 | 57 | – | 10 |
+| 1.802.240 | 62 | – | 12 |
+| 1.900.544 | 68 | – | 14 |
+| 2.002.944 | 73 | – | 14 |
+| 2.101.248 | 75 | – | 16 |
+| 2.203.648 | 75 | – | 14 |
+| 2.301.952 | 80 | 80 | 16 |
+| 2.400.256 | 79 | 82 | 17 |
+| 2.502.656 | 82 | 86 | 18 |
+| 2.600.960 | 81 | 81 | 16 |
+| 2.703.360 | 79 | 84 | 14 |
+| **2.801.664** | **86** | **87** | **18** |
+| 2.904.064 | 80 | 84 | 17 |
+| 3.002.368 | 80 | 88 | 18 |
+
+- **Checkpoint được chọn: bước 2.801.664.** Cao nhất khi gộp hai lần chấm 100 lượt (173/200) và đạt 18/20 theo lệnh chấm, tức trọn 10 điểm thưởng. Chọn checkpoint cao nhất trong 30 theo một seed dễ chọn nhầm cái gặp may, nên mới chấm thêm seed 11: ở seed đó nó đạt 87, kém checkpoint cuối (88) một lượt. Gộp hai seed thì nó vẫn đứng đầu; checkpoint cuối và checkpoint 2.502.656 cùng đạt 168/200.
+- **So với lượt 1,2 triệu bước.** Ở cùng bước 1.003.520: 58 so với 46. Ở cùng bước 1.200.128: 61 so với 55. Cuối lượt: 86/100 và 18/20 so với 55/100 và 9/20. Hai lượt chỉ khác một dòng cấu hình, nên dùng được làm thí nghiệm so sánh của Mục 6.4 trong đề. Giới hạn: mỗi bên một seed.
+- **Chẩn đoán.** Entropy trung bình 200 nghìn bước giảm từ 1,38 xuống 0,36. Từ 400 nghìn đến 1,8 triệu bước approxKL đứng quanh 0,022–0,027 và `target_kl` cắt bớt bước gradient: 228 trên 733 lần cập nhật bị dừng sớm, thấp nhất trung bình 119/160 lần cập nhật minibatch ở 1,2–1,4 triệu bước; lần dừng sớm cuối cùng ở bước 2.654.208. Phương sai được giải thích 0,67 ở 200 nghìn bước đầu và 0,79 ở 200 nghìn bước cuối. Tỉ lệ chạm cờ khi huấn luyện trong 200 nghìn bước cuối là 0,85.
+- **Dao động giữa các checkpoint.** 53 rồi 36 ở 800–900 nghìn bước, 72 rồi 57 ở 1,5–1,7 triệu bước. Với 20 lượt còn mạnh hơn: checkpoint 2.703.360 được 14/20 dù hai checkpoint cạnh nó được 16 và 18. Đây là thêm một ví dụ cho điều 1 của Mục 14.
+- **Độ an toàn so với ngưỡng.** 173/200 cho tỉ lệ thật khoảng 0,81–0,91. Với seed 2026 trên máy này kết quả là 18/20; nếu chấm bằng seed khác, xác suất đạt từ 16/20 trở lên khoảng 85% (tính từ tỉ lệ 0,865). Máy của thầy có thể cho kết quả lệch nhẹ; chưa kiểm tra trên máy khác.
+
+### Vì sao 2-3 vẫn kém 4-1 (checkpoint 2.801.664)
+
+Kết quả chẩn đoán nằm ở `runs/2-3/from-scratch-3m/eval/failure-analysis-002801664/`. Các script chẩn đoán không nằm trong kho mã và không phải lệnh chấm; chúng chơi đúng giao thức của `evaluate.py` (cùng seed, cùng số bước NOOP đầu lượt) và chỉ đọc RAM, `info` để gắn nhãn cho báo cáo.
+
+| Cách chọn hành động (100 lượt, seed 7) | Chạm cờ |
+|---|---|
+| Lấy mẫu, như đề chấm (T = 1) | 86 |
+| T = 0,75 | 86 |
+| T = 0,5 | 88 |
+| T = 0,25 | 94 |
+| Luôn chọn xác suất cao nhất | 96 |
+
+1. **Lấy mẫu làm mất khoảng 10 điểm.** Mỗi lượt dài khoảng 283 quyết định và 14,2% số đó khác hành động xác suất cao nhất (`sampled-seed7.txt`). Màn 2-3 gần như toàn hố nên một lần lệch đúng lúc nhảy là rơi. Entropy cuối lượt 0,36, cao hơn mức 0,30 của lượt hai màn đạt 99/100.
+2. **Một điểm chết cố định ở x = 1989**, chỗ Mario nhảy từ bệ xanh thấp lên cầu. Khi luôn chọn xác suất cao nhất, cả 4 lượt hỏng đều chết ở x = 1989 đúng bước thứ 166 (`argmax-seed7.txt`). Trong 200 lượt lấy mẫu (seed 7 và seed 11) có 27 lượt hỏng, gồm 23 lượt rơi hố và 4 lượt chạm quái; 13 lượt trong số đó dừng ở x 1800–2060.
+3. **Điểm chết đó gắn với việc đạp trúng cá** (`enemy-hits.txt`; "đạp trúng" được nhận ra khi điểm số tăng mà số xu không tăng). Trong 200 lượt lấy mẫu: nếu có đạp trúng cá ở x 1800–2000 thì 11 trên 25 lượt chết ở x 1800–2060; nếu không thì 2 trên 167. Khi chọn xác suất cao nhất: 4 trên 16 so với 0 trên 84. Cách hiểu của nhóm là cú nảy sau khi đạp cá làm lệch quỹ đạo nhảy; khung hình trước lúc chết có chữ "200" của cú đạp (`deaths-argmax-seed7.png`), nhưng quan hệ nhân quả này chưa được kiểm chứng riêng.
+4. **Tình huống đó hiếm.** Chỉ 11–16% số lượt gặp nó, nên mỗi lần cập nhật có ít mẫu để học cách xử lý. Cá xuất hiện theo thời điểm, khác với 1-1 và 4-1 nơi chướng ngại gần như cố định. Đây là giải thích hợp lý, chưa có thí nghiệm kiểm chứng.
+5. **Phần còn lại rải rác.** 14 lượt hỏng khác nằm ở chín chỗ khác nhau. Riêng x≈1331 có 4 lượt ở seed 7, 0 lượt ở seed 11 và không xuất hiện khi chọn xác suất cao nhất, nên là do lấy mẫu.
+6. **So với checkpoint 1,2 triệu bước, ba đoạn sau đã gần hết chết.** Cùng 100 lượt seed 7, lấy mẫu: x 2442–2562 từ 9/81 xuống 0/88, x 2797–2918 từ 7/72 xuống 1/88, x 3193–3320 từ 9/64 xuống 1/87. Đoạn x 1950–2030 giảm ít nhất, từ 13/94 xuống 6/94.
+
+Chưa thử: cho một phần môi trường huấn luyện bắt đầu ngay trước x≈1800 để gặp tình huống cá nhiều hơn (mẹo chỉ dùng khi huấn luyện); hạ `ent_coef_final` xuống dưới 0,002.
 
 ## 14. Những điều đã học được
 
 1. **Ra quyết định bằng 100 lượt, không phải 5 hay 20.** Hai checkpoint cạnh nhau có thể chênh 10–20 điểm phần trăm, và 5 lượt trong `evals.csv` từng cho 2/5 ở checkpoint đạt 81/100.
-2. **Cho tốc độ học về 0 ở cuối lượt.** Hai lượt dừng giữa lịch đều kết thúc với kết quả dao động; lượt duy nhất chạy hết lịch kết thúc ổn định ở 96–98/100. Lượt một mạng hai màn (cuối Mục 10) cũng chạy hết lịch và kết thúc ở 96–100/100 trên cả hai màn. Đây là quan sát trên bốn lượt, chưa phải thí nghiệm tách riêng.
-3. **Đề chấm bằng lấy mẫu, nên độ ngẫu nhiên của chính sách ở cuối lượt quyết định điểm.** Ở cả bốn checkpoint đã so sánh (hai của bản cũ, 1-1 và 4-1 chuyển giao của bản mới), chọn hành động xác suất cao nhất đạt 95–100/100, còn lấy mẫu chỉ 79–96.
+2. **Cho tốc độ học về 0 ở cuối lượt.** Hai lượt dừng giữa lịch đều kết thúc với kết quả dao động; lượt duy nhất chạy hết lịch kết thúc ổn định ở 96–98/100. Lượt một mạng hai màn (cuối Mục 10) cũng chạy hết lịch và kết thúc ở 96–100/100 trên cả hai màn. Đây là quan sát trên bốn lượt, chưa phải thí nghiệm tách riêng. Hai lượt 2-3 (Mục 13) cũng chạy hết lịch nhưng yếu hơn: sáu checkpoint cuối của lượt 3 triệu bước nằm trong khoảng 79–86/100.
+3. **Đề chấm bằng lấy mẫu, nên độ ngẫu nhiên của chính sách ở cuối lượt quyết định điểm.** Ở cả bốn checkpoint đã so sánh (hai của bản cũ, 1-1 và 4-1 chuyển giao của bản mới), chọn hành động xác suất cao nhất đạt 95–100/100, còn lấy mẫu chỉ 79–96. Hai checkpoint 2-3 cũng vậy: 76 so với 55, và 96 so với 86.
 4. **Học chuyển giao giúp nhanh lúc đầu nhưng không giúp về đích.** Ở 4-1 nó nhanh hơn trong 500 nghìn bước đầu rồi dừng quanh 81%, đồng thời xóa khả năng chơi 1-1.
 5. **Quãng đường đi được khi chưa học là cách rẻ để chọn màn.** Nó đã chọn đúng 4-1; mỗi lần khảo sát cả danh sách chỉ mất vài phút.
 6. **Ghi rõ bộ đếm bước đang nói tới.** "2,5M" ở lượt chuyển giao là 1,2M ở 1-1 cộng 1,3M ở 4-1; nhầm chỗ này đã gây hiểu lầm nhiều lần.
 7. **Chỉ chạy đúng số bước đã thống nhất.** Một lần đặt nhầm mốc dừng làm lượt chuyển giao có một đoạn phải cắt bỏ.
 8. **Muốn một mạng chơi nhiều màn thì trộn các màn trong từng lần cập nhật.** Học lần lượt làm quên màn cũ sau 100–200 nghìn bước; chia đôi 8 môi trường cho hai màn thì mạng đạt 99/100 ở cả hai (Mục 10). Mới thử với một seed.
+9. **Tỉ lệ chạm cờ còn tăng khi tốc độ học đã về 0 là dấu hiệu thiếu bước, không phải thiếu mẹo.** Ở 2-3, chỉ đổi `total_steps` từ 1,2 lên 3 triệu đã đưa kết quả từ 55/100 lên 86/100 (Mục 13). Mới thử với một seed.
+10. **Tìm chỗ chết bằng số đo trước khi nghĩ cách sửa.** Ở 2-3, gần nửa số lượt hỏng nằm ở một đoạn dài 260 điểm ảnh và gắn với một tình huống cụ thể (đạp trúng cá); phần lớn các hố khác đã gần như không còn gây chết.
 
 Sự cố kỹ thuật đáng nhớ:
 
@@ -339,12 +426,12 @@ Cho báo cáo (Mục 6 của đề), so với những gì đã có:
 |---|---|---|
 | 1. Cài đặt, bảng `pytest` | mã, 35/35 và 6/6 bài qua | viết mô tả |
 | 2. Thiết lập huấn luyện | cấu hình, phần cứng, số bước, thời gian, tốc độ (Mục 2, 6, 9, 11 ở trên) | lập bảng |
-| 3. Đường cong học | `curves.png` của ba lượt chạy, `progress.csv` | viết nhận xét cho từng hình |
-| 4. Thí nghiệm so sánh | lượt chuyển giao so với lượt từ đầu, nhưng khác nhau bốn thứ | một thí nghiệm chỉ đổi một lựa chọn, ví dụ cấu hình 4-1 bỏ `ent_coef_final` |
-| 5. Phân tích thất bại | bảng chỗ chết và ảnh cho 1-1 và 4-1 chuyển giao | biểu đồ vị trí x cuối lượt của hai checkpoint nộp; xem khung hình 4 lượt hỏng của checkpoint 4-1 nộp |
+| 3. Đường cong học | `curves.png` của mọi lượt chạy, `progress.csv` | viết nhận xét cho từng hình |
+| 4. Thí nghiệm so sánh | hai lượt 2-3 chỉ khác `total_steps` (1,2 và 3 triệu bước; Mục 13); lượt chuyển giao so với lượt từ đầu ở 4-1, nhưng khác nhau bốn thứ | viết thành mục báo cáo; mỗi bên mới có một seed |
+| 5. Phân tích thất bại | bảng chỗ chết và ảnh cho 1-1 và 4-1 chuyển giao; phân tích chỗ chết của checkpoint 2-3 nộp (Mục 13) | biểu đồ vị trí x cuối lượt của ba checkpoint nộp; xem khung hình 4 lượt hỏng của checkpoint 4-1 nộp |
 | 6. Phân công | – | cả nhóm điền |
 
-Ngoài báo cáo: huấn luyện màn ngoài danh sách (nếu nhóm muốn lấy +10), tệp trình chiếu, đóng gói `nhom-<số>.zip` theo Mục 7 của đề.
+Ngoài báo cáo: tệp trình chiếu, đóng gói `nhom-<số>.zip` theo Mục 7 của đề. Màn ngoài danh sách đã xong (Mục 13).
 
 Câu hỏi còn để ngỏ cho thầy: nộp mã mốc tuần 1 ở đâu; nộp tệp zip thế nào khi ô nộp trên portal là ô nhập chữ; dùng `info` để tính phần thưởng và cắt lượt khi huấn luyện có đúng với Quy định 3.5 không.
 
@@ -352,13 +439,15 @@ Câu hỏi còn để ngỏ cho thầy: nộp mã mốc tuần 1 ở đâu; nộ
 
 | Cần gì | Ở đâu |
 |---|---|
-| Cấu hình nộp | `configs/group-1-1.yaml`, `configs/group-4-1.yaml` |
+| Cấu hình nộp | `configs/group-1-1.yaml`, `configs/group-4-1.yaml`, `configs/group-2-3-3m.yaml` |
 | Tệp nộp theo Mục 4 của đề | `submission/` |
 | Số liệu huấn luyện từng lượt | `runs/<màn>/<lượt>/progress.csv`, `evals.csv`, `config.yaml`, `curves.png` |
 | Đánh giá từng checkpoint | `runs/<màn>/<lượt>/eval/100-seed7_<bước>.json`, `20-seed2026_<bước>.json` |
 | Chơi thử màn khác | `runs/<màn>/<lượt>/eval/eval-on-<màn khác>/` |
 | Lượt một mạng hai màn | `runs/1-1+4-1/from-scratch/`; đánh giá từng màn ở `eval/1-1/` và `eval/4-1/`; mã `mario_ppo/train_joint.py`, cấu hình `configs/group-1-1-and-4-1.yaml` |
-| Ảnh phân tích chỗ chết | `runs/1-1/run-1/eval/failure-analysis-001200128/`, `runs/4-1/transfer/eval/failure-analysis-002502656/` |
+| Hai lượt 2-3 | `runs/2-3/from-scratch/` (1,2 triệu bước, `configs/group-2-3.yaml`) và `runs/2-3/from-scratch-3m/` (3 triệu bước, bản nộp); các tệp `eval/100-seed11_<bước>.json` là lần chấm kiểm tra của tám checkpoint cuối |
+| Ảnh phân tích chỗ chết | `runs/1-1/run-1/eval/failure-analysis-001200128/`, `runs/4-1/transfer/eval/failure-analysis-002502656/`, `runs/2-3/from-scratch-3m/eval/failure-analysis-002801664/` |
+| Chẩn đoán checkpoint 2-3 của lượt 1,2 triệu bước | `runs/2-3/from-scratch/eval/diagnostics-001200128/`, `runs/2-3/from-scratch/eval/death-causes-001200128/` |
 | Bản tự viết cũ, không nộp | `legacy/` (không có trên GitHub) |
 
 Lệnh dùng lại:
