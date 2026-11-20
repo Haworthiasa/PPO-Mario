@@ -1,0 +1,36 @@
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+=== 2-3 with runs/4-1/from-scratch/checkpoints/step_001200128.pt: 20 episodes, seed 2026 ===
+  x   125  steps   20  noop 11  pit
+  x   125  steps   24  noop  3  pit
+  x   398  steps  126  noop  9  enemy
+  x   399  steps  135  noop 24  enemy
+  x   404  steps   89  noop  2  enemy
+  x   746  steps  288  noop 25  enemy
+  x  1015  steps  239  noop 11  enemy
+  x  1079  steps  242  noop 19  pit
+  x  1079  steps  214  noop 19  pit
+  x  1079  steps  173  noop 28  pit
+  x  1082  steps  336  noop  5  pit
+  x  1082  steps  164  noop  0  pit
+  x  1104  steps  205  noop 20  pit
+  x  1335  steps  234  noop  5  pit
+  x  1336  steps  218  noop 26  pit
+  x  1358  steps  177  noop 21  pit
+  x  1571  steps  236  noop 26  pit
+  x  1573  steps  225  noop 22  pit
+  x  1790  steps  344  noop 14  pit
+  x  1792  steps  221  noop 11  pit
+  causes: {'pit': 15, 'enemy': 5} | mean x 1024
+  overview tiles: 9 farthest x 1792
+=== fixed actions on 2-3 (final x / cause) for start delays 0, 7, 15, 23, 30 NOOP steps ===
+  0 NOOP       | 40 stuck | 40 stuck | 40 stuck | 40 stuck | 40 stuck
+  1 right      | 146 stuck | 146 stuck | 146 stuck | 146 stuck | 146 stuck
+  2 right+A    | 146 stuck | 146 stuck | 146 stuck | 146 stuck | 146 stuck
+  3 right+B    | 146 stuck | 146 stuck | 146 stuck | 146 stuck | 146 stuck
+  4 right+A+B  | 146 stuck | 146 stuck | 146 stuck | 146 stuck | 146 stuck
+  5 A          | 40 stuck | 40 stuck | 40 stuck | 40 stuck | 40 stuck
+  6 left       | 0 stuck | 0 stuck | 0 stuck | 0 stuck | 0 stuck
+=== start observation of 2-3 vs 1-1: mean abs difference 0.044, mean brightness 0.556 (1-1: 0.550) ===
