@@ -1,0 +1,3 @@
+T=0.75 level 2-3 step_002801664.pt: flags 86/100, mean x 3426, mean entropy of trained policy on visited states 0.358, failures at x [1331, 1843, 1968, 1988, 1989, 1989, 1989, 2535, 2535, 2744, 2920, 3191, 3236, 3314]
+T=0.5 level 2-3 step_002801664.pt: flags 88/100, mean x 3456, mean entropy of trained policy on visited states 0.358, failures at x [1843, 1988, 1989, 1989, 1989, 1999, 2448, 2808, 2918, 2920, 3234, 3314]
+T=0.25 level 2-3 step_002801664.pt: flags 94/100, mean x 3510, mean entropy of trained policy on visited states 0.358, failures at x [1981, 1989, 1989, 1989, 1989, 3314]

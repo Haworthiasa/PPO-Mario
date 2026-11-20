@@ -1,0 +1,27 @@
+=== T=0 2-3 step_002801664.pt: flags 96/100 (seed 7) ===
+  sampled action differs from the most likely one on 0/29641 steps (0.0%)
+  causes: {'pit': 4}
+  failed episodes (sorted by x): x, cause, steps | in the last 12 steps: non-top actions, lowest prob of a taken action, mean entropy | last 8 actions (taken, (!top) when different)
+   1989 pit       166 | off  0 min_p 0.505 ent 0.37 | right+A right+A right+A right+A+B right+A+B right+B right+B right+B
+   1989 pit       166 | off  0 min_p 0.505 ent 0.37 | right+A right+A right+A right+A+B right+A+B right+B right+B right+B
+   1989 pit       166 | off  0 min_p 0.505 ent 0.37 | right+A right+A right+A right+A+B right+A+B right+B right+B right+B
+   1989 pit       166 | off  0 min_p 0.505 ent 0.37 | right+A right+A right+A right+A+B right+A+B right+B right+B right+B
+  zone (x from) | steps | mean entropy | non-top share | episodes reaching | deaths in zone | conditional death rate
+      0 |  1700 | 0.379 | 0.000 | 100 |  0 | 0.000
+    200 |  1700 | 0.710 | 0.000 | 100 |  0 | 0.000
+    400 |  1700 | 0.457 | 0.000 | 100 |  0 | 0.000
+    600 |  1600 | 0.452 | 0.000 | 100 |  0 | 0.000
+    800 |  1700 | 0.320 | 0.000 | 100 |  0 | 0.000
+   1000 |  1700 | 0.398 | 0.000 | 100 |  0 | 0.000
+   1200 |  1600 | 0.337 | 0.000 | 100 |  0 | 0.000
+   1400 |  1700 | 0.320 | 0.000 | 100 |  0 | 0.000
+   1600 |  1700 | 0.326 | 0.000 | 100 |  0 | 0.000
+   1800 |  1601 | 0.220 | 0.000 | 100 |  4 | 0.040
+   2000 |  1629 | 0.353 | 0.000 |  96 |  0 | 0.000
+   2200 |  1630 | 0.308 | 0.000 |  96 |  0 | 0.000
+   2400 |  1574 | 0.303 | 0.000 |  96 |  0 | 0.000
+   2600 |  1610 | 0.290 | 0.000 |  96 |  0 | 0.000
+   2800 |  1630 | 0.309 | 0.000 |  96 |  0 | 0.000
+   3000 |  1595 | 0.276 | 0.000 |  96 |  0 | 0.000
+   3200 |  1753 | 0.321 | 0.000 |  96 |  0 | 0.000
+   3400 |  1519 | 0.337 | 0.000 |  96 |  0 | 0.000

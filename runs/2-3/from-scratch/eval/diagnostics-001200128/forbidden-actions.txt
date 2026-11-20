@@ -1,0 +1,14 @@
+forbid [none] level 2-3 step_001200128.pt: flags 55/100, mean x 3062
+  action        | mean prob all steps | mean prob last 12 steps before death | taken all | taken before death
+  NOOP          | 0.083 | 0.053 | 0.082 | 0.057
+  right         | 0.056 | 0.042 | 0.056 | 0.044
+  right+A       | 0.168 | 0.224 | 0.171 | 0.222
+  right+B       | 0.330 | 0.246 | 0.327 | 0.254
+  right+A+B     | 0.240 | 0.192 | 0.241 | 0.194
+  A             | 0.118 | 0.208 | 0.119 | 0.206
+  left          | 0.004 | 0.033 | 0.004 | 0.022
+  steps: 26713 total, 540 before deaths
+forbid [left] level 2-3 step_001200128.pt: flags 57/100, mean x 3024
+forbid [A] level 2-3 step_001200128.pt: flags 41/100, mean x 2782
+forbid [A,left] level 2-3 step_001200128.pt: flags 34/100, mean x 2574
+forbid [NOOP,A,left] level 2-3 step_001200128.pt: flags 43/100, mean x 2847

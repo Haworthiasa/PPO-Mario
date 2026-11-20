@@ -1,0 +1,36 @@
+=== T=1 2-3 step_002801664.pt: flags 87/100 (seed 11) ===
+  sampled action differs from the most likely one on 4052/28770 steps (14.1%)
+  causes: {'pit': 10, 'enemy': 3}
+  failed episodes (sorted by x): x, cause, steps | in the last 12 steps: non-top actions, lowest prob of a taken action, mean entropy | last 8 actions (taken, (!top) when different)
+   1080 pit        93 | off  3 min_p 0.153 ent 0.62 | right+A right+A(!A) right+A+B(!A) right+A+B right+A+B right+B right+A+B right+A+B
+   1580 pit       136 | off  2 min_p 0.263 ent 0.37 | right+A+B right right A right+A+B right(!right+A+B) right right
+   1859 enemy     157 | off  3 min_p 0.081 ent 0.46 | right+A+B right+B left(!right+B) left right+A left right+B right+B
+   1968 pit       166 | off  0 min_p 0.508 ent 0.47 | right+A+B right+A right+B right+A A right right+B right+B
+   1987 pit       166 | off  2 min_p 0.046 ent 0.19 | right+A+B right+A right+A+B(!right+A) A right+A+B right right+B right+B(!right)
+   1987 pit       166 | off  1 min_p 0.174 ent 0.19 | right+A+B right+A right+A A right+A+B right right+B right+B(!right)
+   1989 pit       166 | off  4 min_p 0.119 ent 0.37 | right+A+B(!right+A) right+A right+A+B(!right+A) right+A+B right+A+B right(!right+B) right+B right+B
+   1989 pit       166 | off  1 min_p 0.262 ent 0.15 | right+A(!right+A+B) right+A right+A A A right right+B right
+   1989 pit       166 | off  1 min_p 0.441 ent 0.38 | right+A right+A right+A A(!right+A+B) right+A+B right+B right+B right+B
+   2426 enemy     204 | off  2 min_p 0.171 ent 0.44 | right+B right+B right+A+B(!right+B) right+A left left right+B right+B
+   2927 pit       249 | off  2 min_p 0.202 ent 0.17 | A right+A(!A) NOOP(!right+B) NOOP right+B right+B right+B right+B
+   3180 enemy     266 | off  1 min_p 0.144 ent 0.40 | right right+A NOOP right+B A right+B right+B right+B
+   3306 pit       285 | off  0 min_p 0.640 ent 0.33 | right+A right+A right+A right+A right+A right+A right+A right+A
+  zone (x from) | steps | mean entropy | non-top share | episodes reaching | deaths in zone | conditional death rate
+      0 |  1701 | 0.381 | 0.133 | 100 |  0 | 0.000
+    200 |  1699 | 0.658 | 0.267 | 100 |  0 | 0.000
+    400 |  1700 | 0.424 | 0.177 | 100 |  0 | 0.000
+    600 |  1601 | 0.439 | 0.184 | 100 |  0 | 0.000
+    800 |  1699 | 0.308 | 0.115 | 100 |  0 | 0.000
+   1000 |  1692 | 0.412 | 0.160 | 100 |  1 | 0.010
+   1200 |  1585 | 0.334 | 0.126 |  99 |  0 | 0.000
+   1400 |  1684 | 0.322 | 0.125 |  99 |  1 | 0.010
+   1600 |  1666 | 0.320 | 0.128 |  98 |  0 | 0.000
+   1800 |  1564 | 0.213 | 0.081 |  98 |  7 | 0.071
+   2000 |  1545 | 0.352 | 0.133 |  91 |  0 | 0.000
+   2200 |  1540 | 0.329 | 0.135 |  91 |  0 | 0.000
+   2400 |  1476 | 0.319 | 0.114 |  91 |  1 | 0.011
+   2600 |  1515 | 0.296 | 0.117 |  90 |  0 | 0.000
+   2800 |  1521 | 0.332 | 0.142 |  90 |  1 | 0.011
+   3000 |  1464 | 0.284 | 0.111 |  89 |  1 | 0.011
+   3200 |  1702 | 0.318 | 0.136 |  88 |  1 | 0.011
+   3400 |  1416 | 0.344 | 0.135 |  87 |  0 | 0.000

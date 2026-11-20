@@ -1,0 +1,37 @@
+=== T=1 2-3 step_002801664.pt: flags 86/100 (seed 7) ===
+  sampled action differs from the most likely one on 4005/28255 steps (14.2%)
+  causes: {'enemy': 1, 'pit': 13}
+  failed episodes (sorted by x): x, cause, steps | in the last 12 steps: non-top actions, lowest prob of a taken action, mean entropy | last 8 actions (taken, (!top) when different)
+   1331 pit       117 | off  1 min_p 0.280 ent 0.41 | right+A right+A right(!right+A) A A A right+B right+B
+   1331 pit       115 | off  4 min_p 0.192 ent 0.37 | NOOP A right+B right+A(!right+B) right+A right+A right(!right+A) right(!A)
+   1331 pit       115 | off  3 min_p 0.027 ent 0.37 | NOOP A right+B right+B right+A right+A right+A+B(!right+A) A
+   1333 pit       115 | off  2 min_p 0.340 ent 0.44 | NOOP A right+A right+A right+A A A right+B(!A)
+   1577 pit       137 | off  4 min_p 0.039 ent 0.38 | right right+A+B(!right) right+A+B(!right+A) right+A+B right+A+B(!right) right right right
+   1797 pit       151 | off  5 min_p 0.288 ent 0.45 | right+A(!right+A+B) right+A+B A right+A+B right+B right(!right+A) right right(!NOOP)
+   1956 pit       168 | off  2 min_p 0.008 ent 0.37 | right+A right+A+B A(!right+B) right+B right+B right+B right(!right+B) right+B
+   1960 pit       169 | off  1 min_p 0.030 ent 0.08 | right+A right+B right+B right+B right+B right+B right+B right+B
+   1979 enemy     166 | off  2 min_p 0.003 ent 0.13 | right+A right+A right+A right+A right+B right(!right+B) right+B(!left) right+A
+   1989 pit       166 | off  2 min_p 0.347 ent 0.38 | right+A right+A right+A A(!right+A+B) right+A+B right(!right+B) right+B right+B
+   1989 pit       166 | off  2 min_p 0.458 ent 0.37 | right+A+B(!right+A) right+A right+A right+A+B(!A) right+A+B right+B right+B right+B
+   2027 pit       175 | off  2 min_p 0.103 ent 0.28 | right+A right+A right+A right+A right+B right+A+B(!right+A) right+A(!right+A+B) right+A+B
+   2873 pit       244 | off  1 min_p 0.392 ent 0.27 | right+A right+A+B(!right+A) right+B right+A+B right+A+B right+A+B right+A+B right+A+B
+   3315 pit       284 | off  2 min_p 0.203 ent 0.33 | right+A right+A right+A right(!right+A) right+A right+A right+A right(!right+A)
+  zone (x from) | steps | mean entropy | non-top share | episodes reaching | deaths in zone | conditional death rate
+      0 |  1704 | 0.381 | 0.136 | 100 |  0 | 0.000
+    200 |  1698 | 0.664 | 0.273 | 100 |  0 | 0.000
+    400 |  1700 | 0.442 | 0.174 | 100 |  0 | 0.000
+    600 |  1609 | 0.442 | 0.180 | 100 |  0 | 0.000
+    800 |  1693 | 0.308 | 0.122 | 100 |  0 | 0.000
+   1000 |  1699 | 0.421 | 0.162 | 100 |  0 | 0.000
+   1200 |  1603 | 0.323 | 0.134 | 100 |  4 | 0.040
+   1400 |  1627 | 0.310 | 0.111 |  96 |  1 | 0.010
+   1600 |  1614 | 0.330 | 0.136 |  95 |  1 | 0.011
+   1800 |  1515 | 0.224 | 0.094 |  94 |  5 | 0.053
+   2000 |  1496 | 0.355 | 0.137 |  89 |  1 | 0.011
+   2200 |  1494 | 0.318 | 0.131 |  88 |  0 | 0.000
+   2400 |  1446 | 0.304 | 0.111 |  88 |  0 | 0.000
+   2600 |  1475 | 0.298 | 0.112 |  88 |  0 | 0.000
+   2800 |  1485 | 0.334 | 0.127 |  88 |  1 | 0.011
+   3000 |  1437 | 0.291 | 0.113 |  87 |  0 | 0.000
+   3200 |  1582 | 0.311 | 0.140 |  87 |  1 | 0.011
+   3400 |  1378 | 0.341 | 0.135 |  86 |  0 | 0.000
