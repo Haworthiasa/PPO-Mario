@@ -8,7 +8,7 @@ Mọi con số về kết quả trong tệp đều đọc lại từ các tệp 
 
 | Hạng mục của đề | Điểm | Trạng thái |
 |---|---|---|
-| A. Cài đặt | 30 | 35/35 bài kiểm tra công khai qua (`pytest -q tests`), thêm 3/3 bài của nhóm (`tests_group`) |
+| A. Cài đặt | 30 | 35/35 bài kiểm tra công khai qua (`pytest -q tests`), thêm 6/6 bài của nhóm (`tests_group`) |
 | B. Màn 1-1 | 25 | `submission/1-1.pt`: 19/20 theo lệnh chấm (ngưỡng đủ điểm là 16/20) |
 | C. Màn thưởng 4-1 | 15 | `submission/4-1.pt`: 20/20 theo lệnh chấm |
 | D. Báo cáo | 25 | chưa viết |
@@ -21,6 +21,8 @@ Hai checkpoint nộp đều ở bước 1.200.128 của lượt chạy tương �
 |---|---|---|---|---|---|
 | 1-1 | `runs/1-1/run-1/checkpoints/step_001200128.pt` | `configs/group-1-1.yaml` | từ đầu | 89/100 | 19/20 |
 | 4-1 | `runs/4-1/from-scratch/checkpoints/step_001200128.pt` | `configs/group-4-1.yaml` | từ đầu | 96/100 | 20/20 |
+
+Thí nghiệm bổ sung, không nộp: một mạng học cả hai màn (`runs/1-1+4-1/from-scratch`, bước 2.904.064) đạt 99/100 ở 1-1 và 99/100 ở 4-1 (seed 7), 20/20 ở cả hai màn theo lệnh chấm. Chi tiết ở cuối Mục 10.
 
 Tệp `.pt` không nằm trên GitHub (bị `.gitignore` loại); thành viên khác cần nhận riêng.
 
@@ -167,7 +169,66 @@ Cho mọi checkpoint của lượt chuyển giao chơi 1-1 (20 lượt, seed 202
 
 - Mạng quên 1-1 trong 100–200 nghìn bước đầu, trước cả khi học được 4-1. Nguyên nhân là dữ liệu huấn luyện chỉ còn 4-1, không phải do chạy ít bước.
 - Một checkpoint không dùng được cho cả hai màn. Đề cũng yêu cầu nộp checkpoint riêng cho từng màn (Mục 7), nên điều này không mất điểm.
-- Một mạng cho nhiều màn cần huấn luyện đồng thời trên các màn đó (phải sửa `train.py`) và không được thêm điểm. LoRA (đóng băng mạng gốc, thêm lớp nhỏ cho từng màn) cũng tránh được quên nhưng không đem lại điểm, nên không làm.
+- Một mạng cho nhiều màn cần huấn luyện đồng thời trên các màn đó và không được thêm điểm. LoRA (đóng băng mạng gốc, thêm lớp nhỏ cho từng màn) cũng tránh được quên nhưng không đem lại điểm, nên không làm.
+
+### Tiếp nối (20/11/2026): mã cho một mạng học hai màn cùng lúc
+
+Ý tưởng của nhóm: một mạng chơi được cả 1-1 và 4-1, tổng 3 triệu bước. Đây là thí nghiệm bổ sung cho báo cáo, không thay hai tệp nộp và không cộng điểm B, C.
+
+- Số liệu chéo mới đo: mạng chuyên 4-1 chơi 1-1 được 0/20, 19 lượt dừng ở x ≈ 680–713 (`runs/4-1/from-scratch/eval/eval-on-1-1/`). Chiều ngược lại là 0/20 (Mục 8). Hai màn không cho nhau kỹ năng sẵn.
+- Không luân phiên theo thời gian: bảng trên cho thấy 100–200 nghìn bước chỉ học một màn là đủ làm hỏng màn kia. Thay vào đó trộn hai màn trong từng lần cập nhật: 8 môi trường, 4 cái chơi 1-1 và 4 cái chơi 4-1.
+- Thang lợi tức hai màn gần nhau (khoảng 93–96 ở 1-1 và 110–116 ở 4-1 khi đã giỏi, lượt dài 260 và 295 bước), nên dùng chung chuẩn hóa lợi thế, không chuẩn hóa riêng từng màn.
+- Mã: `mario_ppo/train_joint.py` (tệp mới của nhóm; `train.py` của thầy không đổi). Vòng lặp chép theo `train.py`, khác ba chỗ: gán màn cho từng môi trường theo khóa `levels`, ghi nhật ký riêng từng màn, đánh giá từng màn ở mỗi checkpoint. Mạng không được báo đang ở màn nào; `info` chỉ dùng để ghi nhật ký và tự kiểm tra môi trường chơi đúng màn đã gán.
+- Cấu hình: `configs/group-1-1-and-4-1.yaml`, giống `configs/group-4-1.yaml`, chỉ khác `levels` và `total_steps` 3.000.000.
+- Kiểm tra (`tests_group/test_train_joint.py`, 3 bài): với một màn, `train_joint.py` cho đúng các con số và trọng số của `train.py`; với hai màn, nhật ký và đánh giá có đủ từng màn và `evaluate.py` nguyên bản chấm được checkpoint trên từng màn.
+- Chạy thử 12.288 bước với cấu hình thật: khoảng 145 bước mỗi giây, ghi đủ checkpoint, video và số liệu từng màn. `mario_ppo/plot.py` vẽ lần chạy nhiều màn với mỗi màn một màu.
+- Lượt 3 triệu bước đã chạy sau khi viết đoạn này; kết quả ở mục con ngay dưới.
+- Giới hạn khi đọc kết quả: mạng chung khác mạng chuyên 1-1 ở cả cấu hình (1-1 dùng tốc độ học 1,5e-4, không có lịch entropy) lẫn số bước mỗi màn (1,5 triệu so với 1,2 triệu), nên không phải thí nghiệm "đổi đúng một lựa chọn" của Mục 6.4 trong đề.
+
+### Kết quả lượt 3 triệu bước (`runs/1-1+4-1/from-scratch`)
+
+Chạy một mạch từ đầu, seed 1, 3.002.368 bước (1,5 triệu bước mỗi màn), 6 giờ 6 phút, 30 checkpoint. Mỗi checkpoint được chấm trên từng màn bằng `evaluate.py` nguyên bản với `--level` (kết quả ở `runs/1-1+4-1/from-scratch/eval/<màn>/`). Cột "màn yếu hơn" là số nhỏ hơn trong hai màn, dùng để chọn checkpoint.
+
+| Bước | 1-1 /100 (seed 7) | 4-1 /100 (seed 7) | Màn yếu hơn /100 | 1-1 /20 (seed 2026) | 4-1 /20 (seed 2026) |
+|---|---|---|---|---|---|
+| 102.400 | 0 | 0 | 0 | 0 | 0 |
+| 200.704 | 0 | 0 | 0 | 0 | 0 |
+| 303.104 | 4 | 0 | 0 | 1 | 0 |
+| 401.408 | 7 | 3 | 3 | 1 | 0 |
+| 503.808 | 22 | 9 | 9 | 2 | 1 |
+| 602.112 | 29 | 7 | 7 | 2 | 2 |
+| 700.416 | 28 | 16 | 16 | 6 | 2 |
+| 802.816 | 56 | 20 | 20 | 9 | 5 |
+| 901.120 | 64 | 34 | 34 | 13 | 9 |
+| 1.003.520 | 73 | 40 | 40 | 15 | 8 |
+| 1.101.824 | 78 | 55 | 55 | 15 | 11 |
+| 1.200.128 | 92 | 71 | 71 | 16 | 14 |
+| 1.302.528 | 82 | 66 | 66 | 18 | 16 |
+| 1.400.832 | 79 | 84 | 79 | 16 | 18 |
+| 1.503.232 | 88 | 84 | 84 | 15 | 16 |
+| 1.601.536 | 85 | 88 | 85 | 18 | 18 |
+| 1.703.936 | 92 | 87 | 87 | 19 | 18 |
+| 1.802.240 | 90 | 88 | 88 | 19 | 18 |
+| 1.900.544 | 94 | 94 | 94 | 18 | 16 |
+| 2.002.944 | 92 | 88 | 88 | 18 | 18 |
+| 2.101.248 | 91 | 94 | 91 | 19 | 19 |
+| 2.203.648 | 96 | 96 | 96 | 19 | 19 |
+| 2.301.952 | 93 | 95 | 93 | 20 | 20 |
+| 2.400.256 | 93 | 96 | 93 | 18 | 20 |
+| 2.502.656 | 97 | 97 | 97 | 20 | 20 |
+| 2.600.960 | 98 | 98 | 98 | 17 | 18 |
+| 2.703.360 | 97 | 99 | 97 | 19 | 20 |
+| 2.801.664 | 96 | 100 | 96 | 20 | 20 |
+| **2.904.064** | **99** | **99** | **99** | **20** | **20** |
+| 3.002.368 | 100 | 99 | 99 | 18 | 20 |
+
+- **Checkpoint được chọn: bước 2.904.064.** Nó và checkpoint cuối cùng có màn yếu hơn đạt 99/100; chọn nó vì ở seed 2026 nó đạt 20/20 cả hai màn, còn checkpoint cuối trượt 2 lượt ở 1-1 (x = 679 và 1792). Hai lượt thất bại của nó trong 200 lượt seed 7: x = 680 ở 1-1 và x = 2406 ở 4-1. Chưa xem khung hình các lượt này.
+- **Một mạng giữ được cả hai màn.** So với bảng quên ở đầu Mục 10 (1-1 rơi từ 19/20 xuống 2/20 sau 200 nghìn bước chỉ học 4-1), trộn hai màn trong từng lần cập nhật không làm màn nào tụt.
+- **So với hai mạng chuyên đang nộp** (1-1: 89/100 và 19/20; 4-1: 96/100 và 20/20): mạng chung cao hơn ở cả hai màn. Ở cùng số bước mỗi màn (bước 2.400.256, tức 1,2 triệu bước mỗi màn) mạng chung đạt 93 và 96, so với 89 và 96. Học chung không làm chậm màn nào tính theo số bước của riêng màn đó; phần hơn còn lại trùng với việc chạy dài hơn.
+- **Chẩn đoán.** Entropy trung bình 200 nghìn bước đầu là 1,52, 200 nghìn bước cuối là 0,30. Từ 400 nghìn đến 1,8 triệu bước approxKL đứng quanh 0,021 và `target_kl` cắt bớt bước gradient (thấp nhất trung bình 117/160 lần cập nhật minibatch mỗi vòng ở 800 nghìn–1 triệu bước); từ 2,2 triệu bước không còn lần dừng sớm nào và approxKL giảm về 0,002 theo tốc độ học. Phương sai được giải thích tăng từ 0,54 lên 0,93 (cũng là trung bình 200 nghìn bước đầu và cuối). Tỉ lệ chạm cờ khi huấn luyện lúc kết thúc: 0,99 ở 1-1 và 1,00 ở 4-1.
+- **Nếu dừng ở nửa lượt** (1,5 triệu bước) thì checkpoint tốt nhất khi đó là 88 và 84 trên 100, và 15/20 ở 1-1 với seed 2026. Mọi checkpoint từ 2,5 triệu bước đều đạt ít nhất 96/100 ở cả hai màn. Điều này khớp với điều 2 của Mục 14.
+- **Giới hạn.** Mỗi bên chỉ có một lượt chạy với một seed, nên chênh lệch vài điểm phần trăm chưa đủ để kết luận; thêm các khác biệt về cấu hình đã nêu ở cuối mục con trước.
+- **Trạng thái nộp.** `submission/` chưa đổi: hai tệp nộp vẫn là hai mạng chuyên. Checkpoint của mạng chung lưu cấu hình với `level: "1-1+4-1"` (chỉ là nhãn), nên khi chấm phải truyền `--level`, đúng như lệnh ở Mục 4 của đề.
 
 ## 11. Màn 4-1 học từ đầu (`runs/4-1/from-scratch`) — bản nộp
 
@@ -255,12 +316,13 @@ Lưu ý: tín hiệu lần này yếu hơn lần chọn 4-1, vì không màn nà
 ## 14. Những điều đã học được
 
 1. **Ra quyết định bằng 100 lượt, không phải 5 hay 20.** Hai checkpoint cạnh nhau có thể chênh 10–20 điểm phần trăm, và 5 lượt trong `evals.csv` từng cho 2/5 ở checkpoint đạt 81/100.
-2. **Cho tốc độ học về 0 ở cuối lượt.** Hai lượt dừng giữa lịch đều kết thúc với kết quả dao động; lượt duy nhất chạy hết lịch kết thúc ổn định ở 96–98/100. Đây là quan sát trên ba lượt, chưa phải thí nghiệm tách riêng.
+2. **Cho tốc độ học về 0 ở cuối lượt.** Hai lượt dừng giữa lịch đều kết thúc với kết quả dao động; lượt duy nhất chạy hết lịch kết thúc ổn định ở 96–98/100. Lượt một mạng hai màn (cuối Mục 10) cũng chạy hết lịch và kết thúc ở 96–100/100 trên cả hai màn. Đây là quan sát trên bốn lượt, chưa phải thí nghiệm tách riêng.
 3. **Đề chấm bằng lấy mẫu, nên độ ngẫu nhiên của chính sách ở cuối lượt quyết định điểm.** Ở cả bốn checkpoint đã so sánh (hai của bản cũ, 1-1 và 4-1 chuyển giao của bản mới), chọn hành động xác suất cao nhất đạt 95–100/100, còn lấy mẫu chỉ 79–96.
 4. **Học chuyển giao giúp nhanh lúc đầu nhưng không giúp về đích.** Ở 4-1 nó nhanh hơn trong 500 nghìn bước đầu rồi dừng quanh 81%, đồng thời xóa khả năng chơi 1-1.
 5. **Quãng đường đi được khi chưa học là cách rẻ để chọn màn.** Nó đã chọn đúng 4-1; mỗi lần khảo sát cả danh sách chỉ mất vài phút.
 6. **Ghi rõ bộ đếm bước đang nói tới.** "2,5M" ở lượt chuyển giao là 1,2M ở 1-1 cộng 1,3M ở 4-1; nhầm chỗ này đã gây hiểu lầm nhiều lần.
 7. **Chỉ chạy đúng số bước đã thống nhất.** Một lần đặt nhầm mốc dừng làm lượt chuyển giao có một đoạn phải cắt bỏ.
+8. **Muốn một mạng chơi nhiều màn thì trộn các màn trong từng lần cập nhật.** Học lần lượt làm quên màn cũ sau 100–200 nghìn bước; chia đôi 8 môi trường cho hai màn thì mạng đạt 99/100 ở cả hai (Mục 10). Mới thử với một seed.
 
 Sự cố kỹ thuật đáng nhớ:
 
@@ -275,7 +337,7 @@ Cho báo cáo (Mục 6 của đề), so với những gì đã có:
 
 | Mục báo cáo | Đã có | Còn thiếu |
 |---|---|---|
-| 1. Cài đặt, bảng `pytest` | mã, 35/35 và 3/3 bài qua | viết mô tả |
+| 1. Cài đặt, bảng `pytest` | mã, 35/35 và 6/6 bài qua | viết mô tả |
 | 2. Thiết lập huấn luyện | cấu hình, phần cứng, số bước, thời gian, tốc độ (Mục 2, 6, 9, 11 ở trên) | lập bảng |
 | 3. Đường cong học | `curves.png` của ba lượt chạy, `progress.csv` | viết nhận xét cho từng hình |
 | 4. Thí nghiệm so sánh | lượt chuyển giao so với lượt từ đầu, nhưng khác nhau bốn thứ | một thí nghiệm chỉ đổi một lựa chọn, ví dụ cấu hình 4-1 bỏ `ent_coef_final` |
@@ -295,6 +357,7 @@ Câu hỏi còn để ngỏ cho thầy: nộp mã mốc tuần 1 ở đâu; nộ
 | Số liệu huấn luyện từng lượt | `runs/<màn>/<lượt>/progress.csv`, `evals.csv`, `config.yaml`, `curves.png` |
 | Đánh giá từng checkpoint | `runs/<màn>/<lượt>/eval/100-seed7_<bước>.json`, `20-seed2026_<bước>.json` |
 | Chơi thử màn khác | `runs/<màn>/<lượt>/eval/eval-on-<màn khác>/` |
+| Lượt một mạng hai màn | `runs/1-1+4-1/from-scratch/`; đánh giá từng màn ở `eval/1-1/` và `eval/4-1/`; mã `mario_ppo/train_joint.py`, cấu hình `configs/group-1-1-and-4-1.yaml` |
 | Ảnh phân tích chỗ chết | `runs/1-1/run-1/eval/failure-analysis-001200128/`, `runs/4-1/transfer/eval/failure-analysis-002502656/` |
 | Bản tự viết cũ, không nộp | `legacy/` (không có trên GitHub) |
 

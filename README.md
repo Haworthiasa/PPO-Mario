@@ -93,7 +93,9 @@ hệ số entropy của nhóm nằm trong `ppo.py` (dòng dưới); cấu hình 
 | `submission/` | checkpoint nộp: `1-1.pt` (từ `runs/1-1/run-1`, bước 1.200.128) và `4-1.pt` (từ `runs/4-1/from-scratch`, bước 1.200.128) |
 | `mario_ppo/wrappers.py` (cuối tệp) | hai mẹo huấn luyện: `NoProgressTruncation` (`env.max_no_progress_steps`), `FlagBonus` (`env.flag_bonus`) |
 | `mario_ppo/plot.py` | vẽ đồ thị từ `progress.csv` và `evals.csv`; cần thêm `pip install matplotlib` |
-| `tests_group/` | kiểm tra hai mẹo trên trình giả lập thật: `python -m pytest -q tests_group` |
+| `mario_ppo/train_joint.py` | thí nghiệm bổ sung: một mạng học nhiều màn cùng lúc. Môi trường thứ i chơi màn `levels[i % số màn]`, nên mỗi lần cập nhật có dữ liệu của mọi màn; nhật ký và đánh giá tách theo màn. `train.py` của thầy không đổi |
+| `configs/group-1-1-and-4-1.yaml` | cấu hình cho một mạng học cả 1-1 và 4-1, 3 triệu bước (giống `group-4-1.yaml`, chỉ khác `levels` và `total_steps`): `python -m mario_ppo.train_joint --config configs/group-1-1-and-4-1.yaml run_dir=runs/1-1+4-1/from-scratch` |
+| `tests_group/` | kiểm tra hai mẹo và `train_joint.py` trên trình giả lập thật: `python -m pytest -q tests_group` |
 | `legacy/` | bản mã nhóm tự viết trước khi có kho mã của thầy, cùng các lần chạy cũ; **không nộp** |
 
 ```bash

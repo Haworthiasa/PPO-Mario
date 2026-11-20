@@ -2,6 +2,7 @@
 
     python -m mario_ppo.plot runs/1-1/<run>                    # ghi runs/1-1/<run>/curves.png
     python -m mario_ppo.plot runs/a runs/b --out so-sanh.png   # chồng nhiều lần chạy để so sánh
+    python -m mario_ppo.plot runs/1-1+4-1/<run>                # lần chạy nhiều màn (train_joint.py): mỗi màn một màu
 
 Mỗi ô là một đại lượng trên trục riêng của nó, trục ngang là số bước tác tử.
 Khi có nhiều điểm, đường mờ là giá trị từng lần cập nhật, đường đậm là trung
@@ -35,6 +36,8 @@ PANELS = [
     ("clipfrac", "Tỉ lệ cắt", "phần mẫu có tỉ số chính sách vượt ngưỡng cắt"),
     ("explained_var", "Phương sai được giải thích", "critic dự đoán lợi tức tốt đến đâu (tối đa 1)"),
 ]
+# Các đại lượng mà train_joint.py ghi riêng theo màn (cột <tên>_<màn>); các ô còn lại là của cả mạng.
+PER_LEVEL_KEYS = {"ep_return", "x_pos", "flag_rate", "ep_length"}
 
 
 def _read_csv(path):
@@ -101,6 +104,9 @@ def plot_runs(run_dirs, out_path):
     if not runs:
         raise SystemExit("Không có progress.csv nào có dữ liệu để vẽ.")
     single = len(runs) == 1
+    # Lần chạy nhiều màn: một lần chạy duy nhất có khóa `levels` từ hai màn trở lên trong config.yaml.
+    levels = [str(level) for level in (runs[0]["config"].get("levels") or [])] if single else []
+    joint = len(levels) > 1
 
     plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9})
     figure, axes = plt.subplots(2, 4, figsize=(16, 7.6), dpi=130, facecolor=SURFACE)
@@ -108,29 +114,42 @@ def plot_runs(run_dirs, out_path):
 
     for axis, (key, title, note) in zip(axes.flat, PANELS):
         axis.set_facecolor(SURFACE)
-        for index, run in enumerate(runs):
-            color = SERIES[index]
+        # Mỗi đường: (nhãn, màu, cột trong progress.csv, các dòng evals.csv đi kèm, lần chạy)
+        if joint and key in PER_LEVEL_KEYS:  # mỗi màn một màu, cố định theo thứ tự trong `levels`
+            lines = [(level, SERIES[index], f"{key}_{level}",
+                      [row for row in runs[0]["evals"] if row.get("level") == level], runs[0])
+                     for index, level in enumerate(levels[: len(SERIES)])]
+        elif joint:  # đại lượng của cả mạng, không thuộc màn nào: màu trung tính
+            lines = [(None, INK_SECONDARY, key, [], runs[0])]
+        else:
+            lines = [(run["name"], SERIES[index], key, run["evals"], run) for index, run in enumerate(runs)]
+        ends = []
+        for label, color, column, eval_rows, run in lines:
             steps = _column(run["progress"], "global_step")
-            values = _column(run["progress"], key)
+            values = _column(run["progress"], column)
             if len(values) > 50:
                 axis.plot(steps, values, color=color, linewidth=1, alpha=0.3)
                 smooth = _rolling(values, max(5, len(values) // 50))
-                axis.plot(steps, smooth, color=color, linewidth=2, label=run["name"])
+                axis.plot(steps, smooth, color=color, linewidth=2, label=label)
                 last = smooth[-1]
             else:
-                axis.plot(steps, values, color=color, linewidth=2, label=run["name"])
+                axis.plot(steps, values, color=color, linewidth=2, label=label)
                 last = values[-1]
-            if single:
-                axis.annotate(
-                    _number(last), (steps[-1], last), xytext=(5, 0), textcoords="offset points",
-                    va="center", fontsize=9, color=INK_SECONDARY, annotation_clip=False,
-                )
-            if key == "flag_rate" and run["evals"]:
+            ends.append((last, steps[-1]))
+            if key == "flag_rate" and eval_rows:
                 axis.plot(
-                    _column(run["evals"], "global_step"), _column(run["evals"], "flag_rate"),
-                    linestyle="none", marker="o", markersize=7, color=SERIES[1] if single else color,
-                    markeredgecolor=SURFACE, markeredgewidth=1.5, label="đánh giá" if single else None,
+                    _column(eval_rows, "global_step"), _column(eval_rows, "flag_rate"),
+                    linestyle="none", marker="o", markersize=7, color=SERIES[1] if single and not joint else color,
+                    markeredgecolor=SURFACE, markeredgewidth=1.5, label="đánh giá" if single and not joint else None,
                     zorder=3,
+                )
+        if single:  # ghi giá trị cuối ở đầu mút mỗi đường; hai đường thì tách nhãn lên trên và xuống dưới
+            ranked = sorted((last, step) for last, step in ends if not math.isnan(last))
+            for rank, (last, step) in enumerate(ranked):
+                align = "center" if len(ranked) == 1 else ("top" if rank == 0 else "bottom")
+                axis.annotate(
+                    _number(last), (step, last), xytext=(5, 0), textcoords="offset points",
+                    va=align, fontsize=9, color=INK_SECONDARY, annotation_clip=False,
                 )
 
         if key == "flag_rate":
@@ -138,7 +157,7 @@ def plot_runs(run_dirs, out_path):
             axis.text(0.01, 0.8, " ngưỡng 0,8 của đề", transform=axis.get_yaxis_transform(),
                       va="bottom", fontsize=8, color=MUTED)
             axis.set_ylim(-0.03, 1.03)
-            if single and runs[0]["evals"]:
+            if single and not joint and runs[0]["evals"]:
                 handles, labels = axis.get_legend_handles_labels()
                 axis.legend(handles, ["huấn luyện", "đánh giá"], loc="center left", frameon=False,
                             fontsize=8, labelcolor=INK_SECONDARY)
@@ -166,7 +185,16 @@ def plot_runs(run_dirs, out_path):
 
     first = runs[0]
     last_step = _column(first["progress"], "global_step")[-1]
-    if single:
+    if joint:
+        heading = f"Màn {' + '.join(levels)} (một mạng) · {first['name']} · {_number(last_step)} bước"
+        latest = first["progress"][-1]
+        summary = "Hiện tại: tỉ lệ chạm cờ " + " · ".join(
+            f"{level}: {_number(float(latest.get(f'flag_rate_{level}') or 'nan'))}" for level in levels
+        ) + f" · tốc độ {_number(float(latest.get('sps') or 'nan'))} bước/giây · đường xám: đại lượng chung của mạng"
+        handles, labels = axes[0, 0].get_legend_handles_labels()
+        figure.legend(handles, [f"màn {label}" for label in labels], loc="upper right", bbox_to_anchor=(0.985, 0.975),
+                      ncol=min(len(levels), 4), frameon=False, fontsize=9, labelcolor=INK_SECONDARY)
+    elif single:
         level = first["config"].get("level", "?")
         heading = f"Màn {level} · {first['name']} · {_number(last_step)} bước"
         latest = first["progress"][-1]
