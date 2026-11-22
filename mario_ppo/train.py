@@ -11,6 +11,7 @@ Kết quả trong run_dir (mặc định runs/<level>/<thời điểm>):
 import argparse
 import csv
 import functools
+import multiprocessing
 import time
 from collections import deque
 from datetime import datetime
@@ -30,7 +31,8 @@ def _make_vec_env(env_cfg, level, num_envs, seed):
     mode = gym.vector.AutoresetMode.SAME_STEP  # lượt mới bắt đầu ngay trong bước kết thúc; quan sát cuối ở info
     if num_envs == 1:
         return gym.vector.SyncVectorEnv(fns, autoreset_mode=mode)
-    return gym.vector.AsyncVectorEnv(fns, context="forkserver", autoreset_mode=mode)
+    context = "forkserver" if "forkserver" in multiprocessing.get_all_start_methods() else "spawn"
+    return gym.vector.AsyncVectorEnv(fns, context=context, autoreset_mode=mode)
 
 
 class _CSV:

@@ -3,6 +3,10 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
+.pytest-*/
+.wheels/
+*.pt
+*.pth
 runs/
 checkpoints/
 .claude/distill/

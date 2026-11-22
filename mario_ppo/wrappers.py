@@ -134,20 +134,22 @@ class FrameSkip(gym.Wrapper):
 
     def __init__(self, env, skip=4):
         super().__init__(env)
+        if skip < 1:
+            raise ValueError("skip must be positive")
         self.skip = skip
 
     def step(self, action):
-        total = None
-        prev = last = None
-        for _ in range(self.skip):
-            obs, reward, terminated, truncated, info = self.env.step(action)
-            reward = np.asarray(reward, dtype=np.float32)
-            total = reward.copy() if total is None else total + reward
-            prev, last = last, obs
+        previous = None
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        total = np.array(reward, dtype=np.float32, copy=True)
+        for _ in range(1, self.skip):
             if terminated or truncated:
                 break
-        # max theo điểm ảnh của hai khung cuối; chỉ có một khung thì trả khung đó
-        obs = last if prev is None else np.maximum(prev, last)
+            previous = obs.copy()
+            obs, reward, terminated, truncated, info = self.env.step(action)
+            total += reward
+        if previous is not None:
+            obs = np.maximum(previous, obs)
         return obs, total, terminated, truncated, info
 
 
@@ -162,7 +164,7 @@ class GrayResize(gym.ObservationWrapper):
     def __init__(self, env, size=84):
         super().__init__(env)
         self.size = size
-        self.observation_space = gym.spaces.Box(0, 255, (size, size), np.uint8)
+        self.observation_space = gym.spaces.Box(0, 255, (size, size), dtype=np.uint8)
 
     def observation(self, obs):
         gray = cv2.cvtColor(obs, cv2.COLOR_RGB2GRAY)
@@ -182,15 +184,15 @@ class ScalarizeReward(gym.Wrapper):
         super().__init__(env)
         reward_space = getattr(env.unwrapped, "reward_space", None)
         n_objectives = reward_space.shape[0] if reward_space is not None else 5
-        self.weights = np.asarray(weights, dtype=np.float32)
+        self.weights = np.array(weights, dtype=np.float32, copy=True)
         if self.weights.shape != (n_objectives,):
-            raise ValueError(f"cần {n_objectives} trọng số, nhận {self.weights.size}")
+            raise ValueError(f"expected {n_objectives} reward weights")
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
-        vector = np.asarray(reward, dtype=np.float32)
-        info = dict(info, vector_reward=vector)
-        return obs, float(np.dot(self.weights, vector)), terminated, truncated, info
+        reward_vector = np.array(reward, dtype=np.float32, copy=True)
+        return (obs, float(self.weights @ reward_vector), terminated, truncated,
+                dict(info, vector_reward=reward_vector))
 
 
 # ---------------------------------------------------------------------------------------------------------
