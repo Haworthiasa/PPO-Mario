@@ -1,10 +1,8 @@
-# Dạy Mario vượt màn bằng PPO
-
-Đồ án cuối kỳ Học tăng cường, học kỳ 1 năm học 2026–2027. Mario học chọn hành động từ ảnh màn hình bằng PPO kiểu actor–critic trong môi trường `mo-supermario-v0`. Mục tiêu của đề là vượt màn 1-1 và thêm một màn trong danh sách cho sẵn. [Đề bài](de-bai.md)
+# Train Mario-PPO
 
 Checkpoint 2 triệu bước đạt **15/20 lượt chạm cờ** trên màn 1-1, còn thiếu một lượt so với yêu cầu **16/20**. Phần huấn luyện màn thứ hai và hồ sơ nộp vẫn đang hoàn thiện. [Bảng so sánh và video](#so-sanh-1m-2m)
 
-## 1. Các thành phần chính
+## 1. Cài đặt
 
 | Tệp | Phần thực hiện |
 |---|---|
@@ -136,11 +134,7 @@ Lợi tức và tọa độ cuối lượt tăng so với đầu lần chạy. C
 
 Hai ô trên của hình dùng **5 lượt thăm dò mỗi mốc với seed thay đổi**. Ô dưới dùng 20 lượt chấm seed 2026. Ở checkpoint cuối, **8/20 lượt kết thúc tại `x=676–698`**. Khi chạy lại để kiểm tra nguyên nhân, cả 20 lượt đều chết khi đồng hồ trong game còn thời gian.
 
-## 5. Hạn chế và việc còn lại
+## 5. Hạn chế
 
 - **Màn 1-1 còn thiếu một lượt chạm cờ.** Bản 2M kết thúc 5 lượt trước cờ, với tọa độ cuối lần lượt là 1.797, 2.019, 2.469, 313 và 2.023. Có thể xem lại các lượt này để xác định Mario gặp trở ngại ở đâu.
 - **Hai lần chạy đang dùng ngân sách khác nhau.** Mạng nhỏ chạy 500.000 bước, mạng lớn chạy 1 triệu, nên lịch learning rate cũng khác. Thí nghiệm so sánh để đưa vào báo cáo sẽ dùng cùng ngân sách, cấu hình và giao thức chấm, mỗi cặp chỉ đổi một yếu tố. Nếu đủ thời gian, chạy thêm một seed huấn luyện.
-- **Cần cô lập số ngẫu nhiên khi thăm dò định kỳ.** Lời gọi đánh giá hiện thay đổi seed PyTorch của tiến trình huấn luyện. Việc cần sửa nằm ở chỗ gọi đánh giá trong `train.py`, để tần suất thăm dò ít ảnh hưởng hơn đến khả năng tái lập lần chạy.
-- **Màn thứ hai còn phải chốt.** Đề cho chọn một màn trong danh sách và dùng tối đa 10 triệu bước. Nếu chuyển giao từ checkpoint 1-1, cần ghi rõ checkpoint nguồn, cách khởi tạo và số bước trên màn đích trong báo cáo.
-
-Hồ sơ nộp theo đề gồm mã nguồn, `config.yaml`, `progress.csv`, `evals.csv`, checkpoint tốt nhất của hai màn, JSON và video chấm. Báo cáo PDF tối đa 8 trang cần có cấu hình, đường cong học, thí nghiệm so sánh, phân tích thất bại và đóng góp từng thành viên. Phần trình bày gồm 10 phút demo và 5 phút hỏi đáp. Checkpoint và log huấn luyện dung lượng lớn lưu cùng thư mục kết quả của lần chạy.
