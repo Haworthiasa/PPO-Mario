@@ -1,10 +1,10 @@
 # Dạy Mario vượt màn bằng PPO
 
-Đồ án cuối kỳ Học tăng cường, học kỳ 1 năm học 2026–2027. Nhóm tự cài đặt PPO kiểu actor–critic và huấn luyện Mario từ ảnh màn hình trong môi trường `mo-supermario-v0`. Mục tiêu của đề là vượt màn 1-1 và thêm một màn trong danh sách cho sẵn. [Đề bài](de-bai.md)
+Đồ án cuối kỳ Học tăng cường, học kỳ 1 năm học 2026–2027. Mario học chọn hành động từ ảnh màn hình bằng PPO kiểu actor–critic trong môi trường `mo-supermario-v0`. Mục tiêu của đề là vượt màn 1-1 và thêm một màn trong danh sách cho sẵn. [Đề bài](de-bai.md)
 
-Hiện tại **35/35 bài kiểm thử công khai đã qua**. Trên màn 1-1, checkpoint tốt nhất trong các mốc nhóm đã chấm đạt **1/20 lượt chạm cờ**. Mốc đạt của đề là **16/20**. Nhóm còn phần huấn luyện màn thứ hai và hoàn thiện hồ sơ nộp.
+Checkpoint 2 triệu bước đạt **15/20 lượt chạm cờ** trên màn 1-1, còn thiếu một lượt so với yêu cầu **16/20**. Phần huấn luyện màn thứ hai và hồ sơ nộp vẫn đang hoàn thiện. [Bảng so sánh và video](#so-sanh-1m-2m)
 
-## 1. Nhóm đã cài những gì?
+## 1. Các thành phần chính
 
 | Tệp | Phần thực hiện |
 |---|---|
@@ -17,7 +17,7 @@ Mỗi quan sát gồm **4 ảnh xám** xếp chồng. Mạng nhận các ảnh n
 
 ## 2. Cài đặt và kiểm tra nhanh
 
-Dùng Python **3.10–3.12**. Môi trường nhóm đã kiểm thử trên Windows dùng Python **3.12 x64**. Gói `nes-py` cần trình biên dịch C++ nếu phải cài từ mã nguồn.
+Dùng Python **3.10–3.12**. Bản cài trên Windows dùng Python **3.12 x64**. Gói `nes-py` cần trình biên dịch C++ nếu phải cài từ mã nguồn.
 
 **Linux hoặc WSL**
 
@@ -52,7 +52,7 @@ Lệnh thử thu một rollout, cập nhật PPO rồi lưu checkpoint. Bộ ki�
 
 ## 3. Huấn luyện và đánh giá
 
-[`configs/default.yaml`](configs/default.yaml) là cấu hình của bộ khởi đầu. [`configs/nature_1_7m.yaml`](configs/nature_1_7m.yaml) chứa thiết lập các lần thử Nature-CNN của nhóm. Lệnh dưới đặt ngân sách **1 triệu bước** như lần chạy đã báo cáo.
+[`configs/default.yaml`](configs/default.yaml) là cấu hình của bộ khởi đầu. [`configs/nature_1_7m.yaml`](configs/nature_1_7m.yaml) chứa thiết lập các lần thử Nature-CNN với cấu hình cũ. Lệnh dưới đặt ngân sách **1 triệu bước** như lần chạy đã báo cáo.
 
 ```bash
 python -m mario_ppo.train --config configs/nature_1_7m.yaml run_dir=runs/nature-1m algo.total_steps=1000000
@@ -83,7 +83,33 @@ python -m mario_ppo.evaluate --ckpt runs/nature-1m/checkpoints/step_001000000.pt
 
 Giao thức chấm dùng 20 lượt, 0–30 bước NOOP đầu mỗi lượt, lấy mẫu hành động theo chính sách và tối đa 3.000 bước tác tử mỗi lượt. Tỷ lệ chạm cờ tính từ `flag_get`. Khi chạy màn thứ hai, thay `--level` và tên tệp đầu ra tương ứng.
 
-## 4. Kết quả hiện tại
+<a id="so-sanh-1m-2m"></a>
+
+## 4. So sánh ba checkpoint trên màn 1-1
+
+Cả ba bản dùng Nature-CNN 1.687.206 tham số, 4 ảnh xám 84 × 84 và lặp mỗi hành động trong 2 khung hình. Mỗi checkpoint được chấm 20 lượt bằng cùng script, seed 2026 và giới hạn 3.000 bước mỗi lượt.
+
+| Cấu hình | Bước huấn luyện | Chạm cờ | Tỷ lệ | Tọa độ cuối trung bình | Tọa độ cuối cao nhất | Video lượt xa nhất |
+|---|---:|---:|---:|---:|---:|---|
+| Cũ | 1.000.000 | [0/20](docs/results/nature-cnn-1m.json) | 0% | 1.286,00 | 2.469 | [Lượt 14 · MP4](docs/results/1m-cu.mp4) |
+| Mới | 1.000.000 | [6/20](docs/results/1m-moi.json) | 30% | 1.941,55 | 3.161 | [Lượt 1 · MP4](docs/results/1m-moi.mp4) |
+| Mới | 2.000.000 | [15/20](docs/results/2m-moi.json) | 75% | 2.801,80 | 3.161 | [Lượt 1 · MP4](docs/results/2m-moi.mp4) |
+
+**Ở cùng mốc 1 triệu bước**, đổi cấu hình giúp Mario chạm cờ thêm 6 lượt (+30 điểm phần trăm). Tọa độ cuối trung bình tăng 655,55. **Khi tiếp tục cấu hình mới đến 2 triệu bước**, số lượt về đích tăng từ 6 lên 15 (+45 điểm phần trăm), tọa độ trung bình tăng thêm 860,25. Cả hai video cấu hình mới đều kết thúc ở cờ. Sự khác biệt nằm ở số lần lặp lại được kết quả đó trong 20 lượt.
+
+| Tham số huấn luyện | Cũ · 1M | Mới · 1M và 2M |
+|---|---|---|
+| Số môi trường × bước mỗi đợt | 8 × 125 | 8 × 512 |
+| Epoch × số mini-batch | 4 × 4 | Tối đa 10 × 16, dừng sớm khi KL vượt 0,03 |
+| Learning rate ban đầu và lịch giảm | 0,00025, giảm tuyến tính về 0 ở 1M | 0,00015, giảm tuyến tính về 0 ở 2M |
+| Gamma / lambda GAE | 0,90 / 0,95 | 0,90 / 1,00 |
+| Ngưỡng cắt PPO / hệ số critic | 0,20 / 0,25 | 0,15 / 0,50 |
+| Trọng số tiến ngang / thời gian / chết / xu / địch | 1 / 1 / 2 / 0,05 / 0,05 | 1 / 1 / 2 / 0 / 0 |
+| Thưởng và cắt lượt | Chuẩn hóa thưởng | Dùng thưởng thô, cộng 2 khi chạm cờ, cắt lượt sau 200 quyết định liên tiếp không vượt tọa độ xa nhất trong lượt |
+
+Hệ số entropy 0,01 và chuẩn hóa advantage được giữ ở cả ba bản. Nhiều tham số thay đổi cùng lúc ở mốc 1M, nên mức tăng 30 điểm phần trăm phản ánh tác động chung của cấu hình. Mỗi video minh họa một lượt có tọa độ cuối cao nhất trong 20 lượt chấm. Khi nhiều lượt cùng chạm cờ, video lấy lượt đầu tiên.
+
+### Các lần thử trước với cấu hình cũ
 
 Bảng dưới lấy từ các lần gọi trực tiếp script của thầy, mỗi checkpoint **20 lượt với seed 2026**.
 
@@ -108,13 +134,13 @@ Lợi tức và tọa độ cuối lượt tăng so với đầu lần chạy. C
 
 ![Kết quả thăm dò theo checkpoint và tọa độ của 20 lượt chấm cuối](docs/results/bieu-do-danh-gia-1m.png)
 
-Hai ô trên của hình dùng **5 lượt thăm dò mỗi mốc với seed thay đổi**. Ô dưới dùng 20 lượt chấm seed 2026. Ở checkpoint cuối, **8/20 lượt kết thúc tại `x=676–698`**. Khi chạy lại để kiểm tra nguyên nhân, cả 20 lượt đều chết khi đồng hồ trong game còn thời gian. Kết quả còn dao động giữa các checkpoint, nên nhóm chấm lại các mốc có triển vọng trước khi chọn bản nộp.
+Hai ô trên của hình dùng **5 lượt thăm dò mỗi mốc với seed thay đổi**. Ô dưới dùng 20 lượt chấm seed 2026. Ở checkpoint cuối, **8/20 lượt kết thúc tại `x=676–698`**. Khi chạy lại để kiểm tra nguyên nhân, cả 20 lượt đều chết khi đồng hồ trong game còn thời gian.
 
 ## 5. Hạn chế và việc còn lại
 
-- **Độ ổn định ở 1-1 còn thấp.** Trong các mốc đã chấm, 700.000 bước cho vị trí cuối trung bình cao nhất và có một lần chạm cờ. Nhóm sẽ kiểm tra video quanh `x≈680` để xác định nên thử thưởng thêm khi chạm cờ hay cắt sớm những lượt kẹt lâu.
+- **Màn 1-1 còn thiếu một lượt chạm cờ.** Bản 2M kết thúc 5 lượt trước cờ, với tọa độ cuối lần lượt là 1.797, 2.019, 2.469, 313 và 2.023. Có thể xem lại các lượt này để xác định Mario gặp trở ngại ở đâu.
 - **Hai lần chạy đang dùng ngân sách khác nhau.** Mạng nhỏ chạy 500.000 bước, mạng lớn chạy 1 triệu, nên lịch learning rate cũng khác. Thí nghiệm so sánh để đưa vào báo cáo sẽ dùng cùng ngân sách, cấu hình và giao thức chấm, mỗi cặp chỉ đổi một yếu tố. Nếu đủ thời gian, chạy thêm một seed huấn luyện.
 - **Cần cô lập số ngẫu nhiên khi thăm dò định kỳ.** Lời gọi đánh giá hiện thay đổi seed PyTorch của tiến trình huấn luyện. Việc cần sửa nằm ở chỗ gọi đánh giá trong `train.py`, để tần suất thăm dò ít ảnh hưởng hơn đến khả năng tái lập lần chạy.
-- **Màn thứ hai còn phải chốt.** Đề cho chọn một màn trong danh sách và dùng tối đa 10 triệu bước. Nếu chuyển giao từ checkpoint 1-1 của nhóm, cần ghi rõ checkpoint nguồn, cách khởi tạo và số bước trên màn đích trong báo cáo.
+- **Màn thứ hai còn phải chốt.** Đề cho chọn một màn trong danh sách và dùng tối đa 10 triệu bước. Nếu chuyển giao từ checkpoint 1-1, cần ghi rõ checkpoint nguồn, cách khởi tạo và số bước trên màn đích trong báo cáo.
 
 Hồ sơ nộp theo đề gồm mã nguồn, `config.yaml`, `progress.csv`, `evals.csv`, checkpoint tốt nhất của hai màn, JSON và video chấm. Báo cáo PDF tối đa 8 trang cần có cấu hình, đường cong học, thí nghiệm so sánh, phân tích thất bại và đóng góp từng thành viên. Phần trình bày gồm 10 phút demo và 5 phút hỏi đáp. Checkpoint và log huấn luyện dung lượng lớn lưu cùng thư mục kết quả của lần chạy.
