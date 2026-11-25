@@ -457,3 +457,107 @@ python -m mario_ppo.train --config configs/group-4-1.yaml run_dir=runs/4-1/from-
 python -m mario_ppo.evaluate --ckpt <checkpoint.pt> --level 4-1 --episodes 100 --seed 7 --out <tệp.json>   # chọn checkpoint
 python -m mario_ppo.plot runs/4-1/from-scratch                                              # vẽ lại curves.png
 ```
+
+## 17. Một mạng tám màn với 10 triệu bước (`runs/8-levels/from-scratch-10m`)
+
+Thí nghiệm bổ sung, không nộp và không cộng điểm: một mạng học từ đầu tám màn 1-1, 2-1, 3-1, 3-2, 4-1, 5-1, 5-2, 6-1 trong đúng 9.998.336 bước. Báo cáo riêng từng màn ở `docs/reports/report-<màn>.md`; phần soi vào bên trong mạng ở `docs/inside-the-network.md`; các hướng làm tiếp ở `docs/extension-directions.md`.
+
+### Cách chạy
+
+- Mã `mario_ppo/train_joint.py`, cấu hình `configs/group-8-levels.yaml`: giống cấu hình mạng hai màn (8 môi trường × 512 bước, tốc độ học 2e-4 giảm về 0, γ = 0,9, hệ số entropy 0,01 → 0,002), chỉ khác danh sách màn và `total_steps` 9.998.336. Seed 1.
+- **Đoạn 1, bước 0 → 2.002.944:** mỗi môi trường giữ một màn, tức mỗi màn 1/8 số bước (`config-0-to-2m.yaml`).
+- **Đoạn 2, bước 2.002.944 → 9.998.336:** nối tiếp bằng `resume=`, thêm cách chia bước theo tỉ lệ hỏng (`allocation.floor=0.06`, `allocation.cap=0.30`): mỗi màn được ít nhất 6% số bước, phần còn lại chia theo tỉ lệ không chạm cờ của 100 lượt huấn luyện gần nhất, không màn nào quá 30%. Mỗi lượt mới, môi trường bốc màn theo các phần đó. Phần đã chia ghi ở `allocation.csv`. Đánh giá và video trong lúc huấn luyện tắt ở đoạn này.
+- Đoạn 2 chạy khoảng 14 giờ (tốc độ trung bình trong log 157,7 bước mỗi giây, gồm cả hai lần tạm dừng để chấm).
+- Hai lần tạm dừng để chấm giữa chừng (bước 3,5 triệu và 6,3 triệu) dùng một quy tắc đặt trước: dừng hẳn nếu ít nhất hai trong bốn màn chậm (2-1, 3-1, 5-1, 5-2) không tiến. Cả hai lần đều không màn nào bị xếp là không tiến, nên lượt chạy tiếp tục.
+
+### Số chấm (chạm cờ trên 100 lượt, seed 7)
+
+Ba cột đầu là gộp hai checkpoint cạnh nhau (200 lượt, ghi theo phần trăm); các cột sau là từng checkpoint.
+
+| Màn | 1,9M + 2,0M | 3,4M + 3,5M | 6,2M + 6,3M | 8,0M | 9,0M | 9,9M | Cuối (9.998.336) |
+|---|---|---|---|---|---|---|---|
+| 1-1 | 24,5 | 73 | 90,5 | 83 | 85 | 99 | **99** |
+| 2-1 | 0 | 0 | 5 | 16 | 42 | 5 | **2** |
+| 3-1 | 0 | 6 | 59 | 84 | 84 | 97 | **97** |
+| 3-2 | 15,5 | 59 | 68 | 85 | 94 | 98 | **96** |
+| 4-1 | 28 | 63 | 84 | 94 | 95 | 100 | **100** |
+| 5-1 | 0,5 | 18,5 | 63,5 | 74 | 87 | 84 | **91** |
+| 5-2 | 0 | 0 | 42,5 | 55 | 61 | 71 | **68** |
+| 6-1 | 62,5 | 61,5 | 85 | 92 | 100 | 99 | **99** |
+
+Theo đúng lệnh chấm của đề (20 lượt, seed 2026):
+
+| Màn | 1-1 | 2-1 | 3-1 | 3-2 | 4-1 | 5-1 | 5-2 | 6-1 |
+|---|---|---|---|---|---|---|---|---|
+| Checkpoint cuối | 19 | 3 | 20 | 20 | 20 | 16 | 18 | 20 |
+| Bước 9.900.032 | 20 | 0 | 20 | 20 | 20 | 17 | 12 | 20 |
+
+Video của lượt chạm cờ đầu tiên ở checkpoint cuối, quay bằng chính lệnh chấm, nằm ở `runs/8-levels/from-scratch-10m/eval/step-009998336-20ep-seed2026/videos/<màn>.mp4` (đủ tám màn, kể cả 2-1).
+
+Checkpoint cuối được chấm thêm 100 lượt với seed 11 để kiểm tra (`eval/step-009998336-100ep-seed11/`):
+
+| Màn | Seed 7 | Seed 11 | Gộp 200 lượt | Khoảng tin cậy 95% |
+|---|---|---|---|---|
+| 1-1 | 99 | 96 | 97,5% | 94,3–98,9% |
+| 2-1 | 2 | 5 | 3,5% | 1,7–7,0% |
+| 3-1 | 97 | 100 | 98,5% | 95,7–99,5% |
+| 3-2 | 96 | 98 | 97,0% | 93,6–98,6% |
+| 4-1 | 100 | 99 | 99,5% | 97,2–99,9% |
+| 5-1 | 91 | 88 | 89,5% | 84,5–93,0% |
+| 5-2 | 68 | 82 | 75,0% | 68,6–80,5% |
+| 6-1 | 99 | 99 | 99,0% | 96,4–99,7% |
+
+Khoảng tin cậy tính theo công thức Wilson, coi 200 lượt là độc lập. Ở 5-2 giả định này không đúng hẳn (xem nhận xét), nên khoảng thật rộng hơn.
+
+### Nhận xét
+
+- **Sáu màn vượt ngưỡng rõ ràng** ở checkpoint cuối: 1-1, 3-1, 3-2, 4-1, 6-1 đạt 96–100/100 và 5-1 đạt 91/100.
+- **Màn 5-2 chưa vượt ngưỡng; tỉ lệ thật khoảng 74%.** Checkpoint cuối đạt 68/100 (seed 7), 82/100 (seed 11) và 18/20 theo lệnh chấm. Vì hai seed lệch nhau 14 điểm, nó được chấm thêm đủ 31 giá trị NOOP, mỗi giá trị 10 lượt (`experiments/noop_sweep.py`): 228/310 = 73,5%, khoảng tin cậy 95% là 68,4–78,1%. Gộp cả ba lần chấm là 378/510 = 74%. Con số 18/20 là một lần gặp may của 20 lượt.
+- **Ở 5-2, luôn chọn hành động xác suất cao nhất thì tốt hơn lấy mẫu:** 27 trên 31 giá trị NOOP chạm cờ (87%), so với 73,5% khi lấy mẫu. `evaluate.py` lấy mẫu và không được sửa, nên con số tính điểm vẫn là con số lấy mẫu.
+- **Hai seed lệch nhau ở 5-2 nhiều hơn mức ngẫu nhiên, và lệch ở đúng một chỗ.** Trong các lượt tới được x 2900, seed 7 có 18/86 lượt hỏng ở x 2952–3020, seed 11 có 2/84 (kiểm định Fisher, p = 0,0002). Chín lượt của seed 7 chết vì địch ở x 2952–2953 đúng bước thứ 247. Kết quả ở 5-2 phụ thuộc vào số bước NOOP đầu lượt: gộp hai seed, cả 7 lượt bắt đầu sau 10 bước NOOP và cả 6 lượt sau 29 bước NOOP đều hỏng. Vậy các lượt không độc lập với nhau, và điểm 100 lượt còn phụ thuộc vào việc seed bốc trúng những số NOOP nào. Phép chấm đủ 31 giá trị NOOP xác nhận: với 29 bước NOOP cả 11 lượt đều chết vì địch ở x 1858–1900, với 1 bước NOOP hỏng 8 trên 10 lượt, còn sáu giá trị NOOP đạt 10/10. Chưa biết địch gì ở x 2953 và x 1900. Chi tiết ở `docs/reports/report-5-2.md`, Mục 5.
+- **Màn 2-1 hỏng vì một chỗ.** Ở checkpoint cuối 73/100 lượt đứng trước bức tường gạch có lò xo ở x 3026 tới hết giờ. Ở bước 9,0 triệu nó từng đạt 42/100, trong đó 37 lượt chạm cờ mất từ 600 bước trở lên (chạy thẳng mất khoảng 350), tức đứng rất lâu rồi mới qua. Lúc huấn luyện, lượt bị cắt sau 200 bước không tiến, nên tỉ lệ chạm cờ lúc huấn luyện của 2-1 không bao giờ quá 0,14 (ở bước 8.105.984) dù nó nhận phần bước lớn nhất (sát trần 30%). Chi tiết ở `docs/inside-the-network.md`, mục 1.5–1.9.
+- **Số lúc huấn luyện và số chấm lệch nhau nhiều ở 2-1** (0,03 so với 42/100 ở bước 9,0 triệu) vì mẹo cắt lượt chỉ có khi huấn luyện. Cách chia bước theo tỉ lệ hỏng dùng số lúc huấn luyện, nên nó tiếp tục dồn bước vào 2-1 mà không thấy được điều này.
+- **Trên 24 màn chưa học, mạng tám màn không hơn mạng hai màn** (x trung bình 378 so với 332 điểm ảnh, 0/480 lượt chạm cờ). Học thêm sáu màn không đem lại khả năng chơi màn lạ.
+- **Giới hạn.** Một lượt chạy, một seed. Không có lượt đối chứng cho cách chia bước, nên chưa biết nó đóng góp bao nhiêu so với chia đều.
+
+### Thí nghiệm nối tiếp ở 2-1: bỏ mẹo cắt lượt có giữ được cách qua tường không
+
+Hai nhánh cùng nối tiếp checkpoint 6.303.744, chỉ học 2-1 thêm 1.495.040 bước, khác nhau đúng khóa `env.max_no_progress_steps` (2000 so với 200): `runs/2-1/wall-cut-2000` và `runs/2-1/wall-cut-200`, cấu hình `configs/group-2-1-experiment.yaml`. Tổng số bước huấn luyện của thí nghiệm là 2.998.272, kể cả 8.192 bước chạy thử. Thiết kế, dự đoán ghi trước và bảng đủ ở `docs/extension-directions.md`.
+
+| Checkpoint cuối nhánh (bước 7.798.784), 100 lượt seed 7 | Chạm cờ | Lượt tới tường | Lượt qua tường | Qua sau ≤ 200 bước ở tường | Lượt qua trên 1000 bước ở tường |
+|---|---|---|---|---|---|
+| Điểm xuất phát (bước 6.303.744) | 8 | 11 | 8 | 2 | 1,29 |
+| Cắt 2000 (gần như tắt cắt lượt) | 10 | 44 | 10 | 3 | 0,16 |
+| Cắt 200 (như lượt gốc) | 39 | 60 | 39 | 0 | 0,44 |
+
+- **Giả thuyết sai.** Giả thuyết là mẹo cắt lượt sau 200 bước không tiến làm mạng mất cách qua bức tường ở x 3026. Nhánh bỏ cắt lượt lại kết thúc kém hơn nhánh giữ cắt 200 (10 so với 39 lượt chạm cờ). Dự đoán ghi trước của tôi sai ở cả hai nhánh.
+- **Các lần qua tường của nhánh cắt 200 không phải thứ nó được luyện.** Cả 39 lượt đều đứng ở tường từ 852 bước trở lên mới qua; lúc huấn luyện lượt như vậy đã bị cắt từ bước 200, và tỉ lệ chạm cờ lúc huấn luyện của nhánh này ở cuối là 0,00. Trong 850 bước đầu ở tường, xác suất bấm "trái" là 0,002–0,005 và không có lần qua nào; sau đó nó tăng tới 0,059 và mọi lần qua xảy ra ở đây.
+- **Không nhánh nào học được cách qua tường ngay khi tới nơi:** 3 trên 44 lượt (cắt 2000) và 0 trên 60 lượt (cắt 200) qua tường trong 200 bước đầu.
+- **Mạng không đọc đồng hồ; nó phản ứng với việc màn hình bị cuộn.** Cách hiểu đầu tiên của tôi là mạng thấy đồng hồ thấp thì hành xử khác. Phép kiểm (`experiments/clock_swap.py`) bác bỏ: dán đồng hồ khác vào khung hình không đổi xác suất bấm "trái" (0,063 và 0,062), và chấm 100 lượt với đồng hồ bị giữ đứng yên vẫn cho 37 lượt chạm cờ so với 39. Thứ đổi theo thời gian là màn hình: khi Mario ép vào tường, trò chơi vẫn cuộn dần sang phải, bức tường trôi từ cột 41–44 về cột 31 của khung hình. Ở nhánh cắt 200, xác suất "trái" là 0,002 khi bức tường ở cột 41–43 và 0,108 khi ở cột 31; ở cùng một cột nó không đổi theo thời gian đã đứng (`experiments/wall_scroll.py`).
+- **Mỗi nhánh bấm "trái" rất ít ở những cảnh nó gặp nhiều lúc huấn luyện.** Nhánh cắt 2000 đứng ở cột 31 phần lớn thời gian và ở đó xác suất "trái" của nó chỉ 0,009. Cách hiểu mới, chưa kiểm: việc huấn luyện đẩy nút "trái" xuống vì bấm "trái" bị trừ thưởng ngay còn phần thưởng qua tường tới quá muộn với γ = 0,9. Nếu đúng thì số chạm cờ khi chấm ở 2-1 (kể cả 42/100 ở bước 9,0 triệu) đến từ những cảnh việc huấn luyện chưa chạm tới, và đó là lý do nó dao động 8, 42, 5, 2 giữa các checkpoint.
+- **Giới hạn.** Mỗi nhánh một seed. Số chạm cờ ở 2-1 từng đổi từ 42 xuống 5 trong 0,9 triệu bước của cùng một lượt chạy, nên 39 so với 10 chưa đủ để nói cắt 200 tốt hơn cắt 2000.
+
+### Cây ăn thịt trong cống có giết Mario không (24/11/2026)
+
+Câu hỏi đặt ra khi xem video: Mario hay nhảy qua, đứng trên hoặc đứng cạnh cống mà cây ăn thịt dường như không làm nó chết. Phép đo dùng `experiments/piranha_check.py` (chỉ đọc RAM của trình giả lập, không huấn luyện, không ghi gì vào trò chơi), checkpoint cuối của mạng 8 màn; kết quả ở `runs/8-levels/from-scratch-10m/eval/step-009998336-piranha/`.
+
+**Cây có giết Mario.** Hai luật của trò chơi gốc làm chuyện đó hiếm xảy ra:
+
+- **Cây không trồi lên khi Mario cách nó dưới 33 điểm ảnh theo chiều ngang.** Khi mạng tự chơi 15 lượt mỗi màn, có 96 bước cây đang nằm trong cống lúc Mario ở gần hơn 33 điểm ảnh và cây không trồi lên ở bước nào; lần cây bắt đầu trồi lên gần Mario nhất là ở khoảng cách 35 điểm ảnh (4-1). Phép thử trực tiếp ở 5-1: ép Mario đứng sát cống (cách cây 22 điểm ảnh) 4 lần, mỗi lần 300 bước tác tử, cây không lên lần nào.
+- **Vùng va chạm của cây nhỏ hơn hình vẽ.** Hình cây rộng 16, cao 24 điểm ảnh; vùng trò chơi dùng để xét va chạm rộng 10, cao 8 (từ điểm ảnh thứ 3 tới 13 theo chiều ngang, thứ 12 tới 20 theo chiều dọc, tính từ góc trên trái của hình), đo giống nhau ở cả 7 màn có cây.
+
+| Màn | Số cây đã gặp | Lượt chết vì cây /15 | Bước hình Mario chồng hình cây mà không chết | Bước cây trong cống khi Mario cách < 33 px | Trong đó cây trồi lên |
+|---|---|---|---|---|---|
+| 1-1 | 0 | 0 | 0 | 0 | 0 |
+| 2-1 | 7 | 2 | 173 | 48 | 0 |
+| 3-1 | 4 | 0 | 72 | 0 | 0 |
+| 3-2 | 1 | 0 | 14 | 0 | 0 |
+| 4-1 | 4 | 0 | 80 | 46 | 0 |
+| 5-1 | 4 | 1 | 62 | 2 | 0 |
+| 5-2 | 3 | 0 | 37 | 0 | 0 |
+| 6-1 | 1 | 0 | 15 | 0 | 0 |
+
+- Trong 120 lượt, mạng chết vì cây 3 lần (2-1 ở cống x 1960 và x 2824, 5-1 ở cống x 712); cả ba lần hai vùng va chạm chạm nhau đúng lúc chết.
+- Số bước hai vùng va chạm chồng nhau mà Mario không chết: 0 trên 12.426 bước có cây trên màn hình.
+- Phép thử trực tiếp ở cống đầu của 4-1: Mario đứng cách cây 62 điểm ảnh rồi nhảy vào lúc cây đang nhô lên thì chết vì cây cả 6 lần (trình giả lập lặp lại y hệt, nên thực chất là 2 tình huống: nhảy đi bộ và nhảy chạy). 18 lần thử còn lại ở 4-1 không chạm tới cây (15 lần chết vì địch khác trước, 3 lần cây ra khỏi bộ nhớ); 23 lần thử ở 5-1 không tới được cây (hai vùng va chạm luôn cách nhau ít nhất 16 điểm ảnh).
+- Giới hạn: RAM chỉ được đọc sau mỗi bước tác tử (4 khung hình), nên các con số đếm theo bước, không theo khung hình. "Hình Mario" suy từ vùng va chạm của Mario (rộng 16, cao 16 khi nhỏ), không đọc từ ảnh.
