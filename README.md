@@ -13,6 +13,28 @@ Tác tử PPO sau 1,2 triệu bước ở 1-1 và 4-1, 2,8 triệu bước ở 2
 
 Ba ảnh động được tạo từ video do `evaluate.py` ghi lại (`submission/1-1.mp4`, `submission/4-1.mp4`, `submission/2-3.mp4`).
 
+### Thí nghiệm bổ sung: một mạng chơi tám màn (không nộp)
+
+Một mạng duy nhất học từ đầu tám màn cùng lúc trong 9.998.336 bước tác tử (trần nhóm tự đặt là 10 triệu), lượt chạy `runs/8-levels/from-scratch-10m`, seed 1, kết thúc ngày 24/11/2026. Mạng chỉ nhận khung hình, không được báo đang ở màn nào. Bảng dưới là checkpoint cuối, chấm bằng `evaluate.py` nguyên bản; ngưỡng vượt màn của đề là 0,8.
+
+| Màn | 20 lượt, seed 2026 (lệnh chấm của đề) | 200 lượt (seed 7 và seed 11) | Khoảng tin cậy 95% | So với ngưỡng 0,8 |
+|---|---|---|---|---|
+| 1-1 | 19/20 | 97,5% | 94,3–98,9% | vượt |
+| 3-1 | 20/20 | 98,5% | 95,7–99,5% | vượt |
+| 3-2 | 20/20 | 97,0% | 93,6–98,6% | vượt |
+| 4-1 | 20/20 | 99,5% | 97,2–99,9% | vượt |
+| 5-1 | 16/20 | 89,5% | 84,5–93,0% | vượt |
+| 6-1 | 20/20 | 99,0% | 96,4–99,7% | vượt |
+| 5-2 | 18/20 | 75,0% | 68,6–80,5% | chưa vượt |
+| 2-1 | 3/20 | 3,5% | 1,7–7,0% | không vượt |
+
+- **Sáu trên tám màn vượt ngưỡng.** Màn 5-2 đạt 18/20 theo lệnh chấm nhưng đó là một lần gặp may: gộp 510 lượt chấm thì tỉ lệ là 74%. Kết quả ở 5-2 phụ thuộc vào số bước NOOP đầu lượt (với 29 bước NOOP, cả 11 lượt đều chết vì địch ở x 1858–1900).
+- **Màn 2-1 hỏng ở đúng một chỗ:** bức tường gạch có lò xo ở x 3026, nơi 73/100 lượt đứng tới hết giờ. Hai thí nghiệm nối tiếp ở chỗ này (đổi mẹo cắt lượt; kiểm xem mạng có đọc đồng hồ không) đều bác bỏ giả thuyết của nhóm; cách hiểu còn lại (γ = 0,9 nhìn quá gần) chưa được kiểm.
+- **Mạng không chơi được màn lạ:** 0/480 lượt chạm cờ trên 24 màn chưa học.
+- **Giới hạn:** một lượt chạy, một seed huấn luyện; không có lượt đối chứng cho cách chia bước theo tỉ lệ hỏng dùng từ bước 2 triệu.
+
+Đọc thêm: [nhật ký, Mục 17](docs/nhat-ky-trong-tu.md) (cách chạy, số chấm theo từng mốc) · báo cáo từng màn ở [docs/reports/](docs/reports/) · [soi vào bên trong mạng](docs/inside-the-network.md) · [các thí nghiệm nối tiếp ở 2-1](docs/extension-directions.md). Checkpoint và video của lượt này không nằm trên GitHub (bị `.gitignore` loại vì nặng).
+
 ## Cài đặt
 
 Cần Python 3.10–3.12 và trình biên dịch C++ (để cài `nes-py`).
@@ -97,6 +119,11 @@ hệ số entropy của nhóm nằm trong `ppo.py` (dòng dưới); cấu hình 
 | `mario_ppo/plot.py` | vẽ đồ thị từ `progress.csv` và `evals.csv`; cần thêm `pip install matplotlib` |
 | `mario_ppo/train_joint.py` | thí nghiệm bổ sung: một mạng học nhiều màn cùng lúc. Môi trường thứ i chơi màn `levels[i % số màn]`, nên mỗi lần cập nhật có dữ liệu của mọi màn; nhật ký và đánh giá tách theo màn. `train.py` của thầy không đổi |
 | `configs/group-1-1-and-4-1.yaml` | cấu hình cho một mạng học cả 1-1 và 4-1, 3 triệu bước (giống `group-4-1.yaml`, chỉ khác `levels` và `total_steps`): `python -m mario_ppo.train_joint --config configs/group-1-1-and-4-1.yaml run_dir=runs/1-1+4-1/from-scratch` |
+| `mario_ppo/train_joint.py` (hai khóa tùy chọn) | `stop_at_step`: dừng và lưu checkpoint ở một mốc bước định trước, chạy tiếp bằng `resume=` vẫn đúng lịch tốc độ học. `allocation`: chia bước theo tỉ lệ không chạm cờ của từng màn (có sàn và trần), ghi vào `allocation.csv`. Không có hai khóa này thì tệp chạy như cũ |
+| `configs/group-8-levels.yaml` | cấu hình cho một mạng học tám màn 1-1, 2-1, 3-1, 3-2, 4-1, 5-1, 5-2, 6-1 trong 9.998.336 bước (lượt chạy `runs/8-levels/from-scratch-10m`); hai lệnh chạy ghi ở đầu tệp |
+| `configs/group-2-1-experiment.yaml` | thí nghiệm có đối chứng ở bức tường của 2-1: hai nhánh nối từ checkpoint 6.303.744 của lượt tám màn, chỉ khác `env.max_no_progress_steps` (lượt chạy `runs/2-1/wall-cut-200` và `runs/2-1/wall-cut-2000`) |
+| `experiments/` | script đo và chẩn đoán, không huấn luyện: chỗ chết (`death_look.py`), chấm đủ 31 giá trị NOOP (`noop_sweep.py`), màn chưa học (`unseen_levels.py`), giá trị critic theo từng bước (`value_trace.py`), bức tường ở 2-1 (`clock_swap.py`, `wall_scroll.py`), cây ăn thịt (`piranha_check.py`), hình của báo cáo từng màn (`level_curves.py`) |
+| `docs/` | `nhat-ky-trong-tu.md` (nhật ký thí nghiệm), `reports/report-<màn>.md` (báo cáo từng màn), `inside-the-network.md`, `extension-directions.md` |
 | `tests_group/` | kiểm tra hai mẹo và `train_joint.py` trên trình giả lập thật: `python -m pytest -q tests_group` |
 | `legacy/` | bản mã nhóm tự viết trước khi có kho mã của thầy, cùng các lần chạy cũ; **không nộp** |
 
