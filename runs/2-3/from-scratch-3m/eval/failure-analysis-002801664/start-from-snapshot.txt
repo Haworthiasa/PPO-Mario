@@ -1,0 +1,79 @@
+# Episodes started from an emulator snapshot taken mid-level (checkpoint 2,801,664, sampled actions).
+# Part 1: snapshots at about x=1500-1600 taken from nine different driving episodes, no NOOP wait.
+=== snapshot from driving episode 0 ===
+snapshot taken at {'x': 1605, 'time': 274, 'y': 143} after 1 attempt(s)
+episodes from the snapshot: flags 4/40, mean steps 48, distinct final x values 9, deaths at [1972, 1973, 1977, 1978, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1982, 1982, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 2907]
+=== snapshot from driving episode 11 ===
+snapshot taken at {'x': 1605, 'time': 271, 'y': 143} after 1 attempt(s)
+episodes from the snapshot: flags 19/40, mean steps 135, distinct final x values 13, deaths at [2024, 2421, 2431, 2432, 2437, 2535, 2536, 2536, 2536, 2536, 2536, 2557, 2562, 2562, 2563, 2563, 2563, 2563, 2563, 3301, 3306]
+=== snapshot from driving episode 15 ===
+snapshot taken at {'x': 1605, 'time': 271, 'y': 143} after 1 attempt(s)
+episodes from the snapshot: flags 38/40, mean steps 163, distinct final x values 3, deaths at [1959, 3194]
+=== snapshot from driving episode 23 ===
+snapshot taken at {'x': 1509, 'time': 271, 'y': 127} after 1 attempt(s)
+episodes from the snapshot: flags 35/40, mean steps 168, distinct final x values 3, deaths at [2810, 2810, 2881, 2881, 2881]
+=== snapshot from driving episode 3 ===
+snapshot taken at {'x': 1509, 'time': 275, 'y': 127} after 1 attempt(s)
+episodes from the snapshot: flags 38/40, mean steps 172, distinct final x values 3, deaths at [2919, 2928]
+=== snapshot from driving episode 19 ===
+snapshot taken at {'x': 1509, 'time': 271, 'y': 127} after 1 attempt(s)
+episodes from the snapshot: flags 39/40, mean steps 174, distinct final x values 2, deaths at [2534]
+=== snapshot from driving episode 27 ===
+snapshot taken at {'x': 1509, 'time': 270, 'y': 127} after 1 attempt(s)
+episodes from the snapshot: flags 35/40, mean steps 173, distinct final x values 5, deaths at [2743, 2744, 2920, 2920, 2921]
+=== snapshot from driving episode 7 ===
+snapshot taken at {'x': 1509, 'time': 274, 'y': 127} after 1 attempt(s)
+episodes from the snapshot: flags 32/40, mean steps 179, distinct final x values 5, deaths at [3191, 3191, 3192, 3192, 3234, 3236, 3236, 3236]
+=== snapshot from driving episode 31 ===
+snapshot taken at {'x': 1509, 'time': 275, 'y': 127} after 1 attempt(s)
+episodes from the snapshot: flags 39/40, mean steps 174, distinct final x values 2, deaths at [2923]
+# Part 2: other start positions and NOOP waits (snapshot from driving episode 0, or 1 when 0 died earlier).
+=== start_x 1700, noop_max 0 ===
+snapshot taken at {'x': 1844, 'time': 270, 'y': 79} after 1 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 1855 to 1855, time from 269 to 269
+x component of the reward on that step: min 0.267, max 0.267 (a jump from 0 to 1844 would be 61.5)
+NOOP start 0..0: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 0/60, mean steps 4, distinct final x values 2, deaths at [1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1873, 1987, 1987, 1987, 1987]
+=== start_x 1620, noop_max 0 ===
+snapshot taken at {'x': 1665, 'time': 273, 'y': 143} after 1 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 1677 to 1677, time from 272 to 272
+x component of the reward on that step: min 0.300, max 0.300 (a jump from 0 to 1665 would be 55.5)
+NOOP start 0..0: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 3/60, mean steps 35, distinct final x values 11, deaths at [1865, 1967, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1968, 1973, 1973, 1973, 1973, 1973, 1978, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1982, 1987, 2330, 2537]
+=== start_x 1620, noop_max 4 ===
+snapshot taken at {'x': 1665, 'time': 273, 'y': 143} after 1 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 1677 to 1711, time from 272 to 272
+x component of the reward on that step: min 0.267, max 0.367 (a jump from 0 to 1665 would be 55.5)
+NOOP start 0..4: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 4/60, mean steps 33, distinct final x values 19, deaths at [1775, 1775, 1775, 1779, 1779, 1779, 1779, 1781, 1781, 1781, 1781, 1781, 1781, 1781, 1781, 1781, 1781, 1783, 1784, 1784, 1784, 1784, 1784, 1784, 1784, 1784, 1784, 1865, 1952, 1966, 1977, 1977, 1977, 1978, 1978, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1986, 2192, 2198, 2259, 2535, 2536, 2537, 2537, 2537]
+=== start_x 1500, noop_max 0 ===
+snapshot taken at {'x': 1605, 'time': 274, 'y': 143} after 1 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 1617 to 1617, time from 273 to 273
+x component of the reward on that step: min 0.300, max 0.300 (a jump from 0 to 1605 would be 53.5)
+NOOP start 0..0: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 6/60, mean steps 50, distinct final x values 10, deaths at [1968, 1972, 1973, 1977, 1978, 1978, 1978, 1978, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1982, 1982, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 1987, 2907, 2907, 2907]
+=== start_x 2600, noop_max 0 ===
+snapshot taken at {'x': 2661, 'time': 256, 'y': 127} after 2 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 2673 to 2673, time from 256 to 256
+x component of the reward on that step: min 0.300, max 0.300 (a jump from 0 to 2661 would be 88.7)
+NOOP start 0..0: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 60/60, mean steps 79, distinct final x values 1, deaths at []
+=== start_x 1500, noop_max 4 ===
+snapshot taken at {'x': 1605, 'time': 274, 'y': 143} after 1 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 1617 to 1648, time from 273 to 273
+x component of the reward on that step: min 0.233, max 0.367 (a jump from 0 to 1605 would be 53.5)
+NOOP start 0..4: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 22/60, mean steps 87, distinct final x values 12, deaths at [1865, 1953, 1970, 1970, 1970, 1976, 1977, 1977, 1977, 1977, 1977, 1977, 1977, 1978, 1978, 1978, 1978, 1978, 1978, 1978, 1978, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1979, 1987, 1987, 1987, 1987, 1992, 3220, 3220, 3308]
+=== start_x 2100, noop_max 4 ===
+snapshot taken at {'x': 2193, 'time': 264, 'y': 127} after 2 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 2205 to 2236, time from 263 to 264
+x component of the reward on that step: min 0.233, max 0.367 (a jump from 0 to 2193 would be 73.1)
+NOOP start 0..4: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 51/60, mean steps 106, distinct final x values 7, deaths at [2325, 2325, 2326, 2326, 2326, 2331, 2553, 3305, 3315]
+=== start_x 2100, noop_max 0 ===
+snapshot taken at {'x': 2193, 'time': 264, 'y': 127} after 2 attempt(s)
+after reset (+0..30 NOOP, +1 action): x from 2205 to 2205, time from 264 to 264
+x component of the reward on that step: min 0.300, max 0.300 (a jump from 0 to 2193 would be 73.1)
+NOOP start 0..0: 0/60 episodes ended while waiting
+episodes from the snapshot: flags 60/60, mean steps 118, distinct final x values 1, deaths at []
+

@@ -1,0 +1,123 @@
+{
+ "3-2": {
+  "level": "3-2",
+  "episodes": 15,
+  "causes": {
+   "flag": 14,
+   "pit": 1
+  },
+  "killers": {},
+  "plant_xs": [
+   2712
+  ],
+  "plant_steps": 448,
+  "hit_steps": 0,
+  "sprite_only_steps": 14,
+  "sprite_only_episodes": 14,
+  "rise_dx": [
+   221,
+   222,
+   221,
+   221,
+   221,
+   221,
+   221,
+   221,
+   221,
+   221,
+   221,
+   221,
+   221
+  ],
+  "down_near_steps": 0,
+  "down_near_rises": 0,
+  "box_offsets": [
+   [
+    [
+     3,
+     12,
+     13,
+     20
+    ],
+    294
+   ],
+   [
+    [
+     3,
+     12,
+     6,
+     20
+    ],
+    1
+   ]
+  ],
+  "deaths_by_plant": []
+ },
+ "1-1": {
+  "level": "1-1",
+  "episodes": 15,
+  "causes": {
+   "flag": 14,
+   "pit": 1
+  },
+  "killers": {},
+  "plant_xs": [],
+  "plant_steps": 0,
+  "hit_steps": 0,
+  "sprite_only_steps": 0,
+  "sprite_only_episodes": 0,
+  "rise_dx": [],
+  "down_near_steps": 0,
+  "down_near_rises": 0,
+  "box_offsets": [],
+  "deaths_by_plant": []
+ },
+ "6-1": {
+  "level": "6-1",
+  "episodes": 15,
+  "causes": {
+   "flag": 15
+  },
+  "killers": {},
+  "plant_xs": [
+   1640
+  ],
+  "plant_steps": 465,
+  "hit_steps": 0,
+  "sprite_only_steps": 15,
+  "sprite_only_episodes": 15,
+  "rise_dx": [],
+  "down_near_steps": 0,
+  "down_near_rises": 0,
+  "box_offsets": [
+   [
+    [
+     3,
+     12,
+     13,
+     20
+    ],
+    300
+   ],
+   [
+    [
+     3,
+     12,
+     9,
+     20
+    ],
+    12
+   ],
+   [
+    [
+     6,
+     12,
+     13,
+     20
+    ],
+    11
+   ]
+  ],
+  "deaths_by_plant": []
+ }
+}

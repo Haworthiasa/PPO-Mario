@@ -1,0 +1,6 @@
+=== runs/2-1/wall-cut-200/checkpoints/step_007798784.pt (bước 7798784), đồng hồ: low (dán đồng hồ 40); 100 lượt, seed 7 ===
+kết thúc lượt: enemy 36, flag 34, time 22, pit 8
+lượt tới tường: 56; lượt qua tường: 34; tổng bước ở tường: 80502; lượt qua trên 1000 bước ở tường: 0.42
+số bước đã đứng ở tường lúc qua: [444, 568, 645, 724, 817, 889, 939, 1013, 1040, 1069, 1101, 1172, 1198, 1251, 1302, 1306, 1334, 1337, 1383, 1411, 1433, 1443, 1459, 1483, 1504, 1548, 1565, 1576, 1612, 1626, 1630, 1652, 1657, 1692]
+qua sau <= 200 bước: 0; sau <= 850 bước: 5
+xác suất "trái" trung bình ở tường (theo bước): 0.018

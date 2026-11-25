@@ -1,0 +1,702 @@
+[
+ {
+  "episode": 0,
+  "x_pos": 3026,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 1,
+  "x_pos": 3026,
+  "steps": 2002,
+  "noop_steps": 3,
+  "cause": "time"
+ },
+ {
+  "episode": 2,
+  "x_pos": 3026,
+  "steps": 1981,
+  "noop_steps": 24,
+  "cause": "time"
+ },
+ {
+  "episode": 3,
+  "x_pos": 1649,
+  "steps": 161,
+  "noop_steps": 15,
+  "cause": "enemy"
+ },
+ {
+  "episode": 4,
+  "x_pos": 1646,
+  "steps": 153,
+  "noop_steps": 18,
+  "cause": "enemy"
+ },
+ {
+  "episode": 5,
+  "x_pos": 3026,
+  "steps": 1987,
+  "noop_steps": 18,
+  "cause": "time"
+ },
+ {
+  "episode": 6,
+  "x_pos": 3026,
+  "steps": 1983,
+  "noop_steps": 22,
+  "cause": "time"
+ },
+ {
+  "episode": 7,
+  "x_pos": 3026,
+  "steps": 2005,
+  "noop_steps": 0,
+  "cause": "time"
+ },
+ {
+  "episode": 8,
+  "x_pos": 3193,
+  "steps": 427,
+  "noop_steps": 15,
+  "cause": "flag"
+ },
+ {
+  "episode": 9,
+  "x_pos": 3026,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 10,
+  "x_pos": 3026,
+  "steps": 1993,
+  "noop_steps": 12,
+  "cause": "time"
+ },
+ {
+  "episode": 11,
+  "x_pos": 3026,
+  "steps": 1977,
+  "noop_steps": 28,
+  "cause": "time"
+ },
+ {
+  "episode": 12,
+  "x_pos": 3193,
+  "steps": 1725,
+  "noop_steps": 16,
+  "cause": "flag"
+ },
+ {
+  "episode": 13,
+  "x_pos": 2678,
+  "steps": 276,
+  "noop_steps": 2,
+  "cause": "enemy"
+ },
+ {
+  "episode": 14,
+  "x_pos": 3026,
+  "steps": 1989,
+  "noop_steps": 16,
+  "cause": "time"
+ },
+ {
+  "episode": 15,
+  "x_pos": 1646,
+  "steps": 153,
+  "noop_steps": 4,
+  "cause": "enemy"
+ },
+ {
+  "episode": 16,
+  "x_pos": 2666,
+  "steps": 254,
+  "noop_steps": 23,
+  "cause": "enemy"
+ },
+ {
+  "episode": 17,
+  "x_pos": 3026,
+  "steps": 1976,
+  "noop_steps": 29,
+  "cause": "time"
+ },
+ {
+  "episode": 18,
+  "x_pos": 1735,
+  "steps": 164,
+  "noop_steps": 30,
+  "cause": "pit"
+ },
+ {
+  "episode": 19,
+  "x_pos": 2815,
+  "steps": 300,
+  "noop_steps": 19,
+  "cause": "enemy"
+ },
+ {
+  "episode": 20,
+  "x_pos": 3026,
+  "steps": 1979,
+  "noop_steps": 26,
+  "cause": "time"
+ },
+ {
+  "episode": 21,
+  "x_pos": 3026,
+  "steps": 1994,
+  "noop_steps": 11,
+  "cause": "time"
+ },
+ {
+  "episode": 22,
+  "x_pos": 3026,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 23,
+  "x_pos": 3026,
+  "steps": 1990,
+  "noop_steps": 15,
+  "cause": "time"
+ },
+ {
+  "episode": 24,
+  "x_pos": 3026,
+  "steps": 1992,
+  "noop_steps": 13,
+  "cause": "time"
+ },
+ {
+  "episode": 25,
+  "x_pos": 3026,
+  "steps": 1985,
+  "noop_steps": 20,
+  "cause": "time"
+ },
+ {
+  "episode": 26,
+  "x_pos": 3026,
+  "steps": 1975,
+  "noop_steps": 30,
+  "cause": "time"
+ },
+ {
+  "episode": 27,
+  "x_pos": 736,
+  "steps": 75,
+  "noop_steps": 8,
+  "cause": "enemy"
+ },
+ {
+  "episode": 28,
+  "x_pos": 3193,
+  "steps": 1225,
+  "noop_steps": 26,
+  "cause": "flag"
+ },
+ {
+  "episode": 29,
+  "x_pos": 3026,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 30,
+  "x_pos": 1735,
+  "steps": 164,
+  "noop_steps": 10,
+  "cause": "pit"
+ },
+ {
+  "episode": 31,
+  "x_pos": 3026,
+  "steps": 1981,
+  "noop_steps": 24,
+  "cause": "time"
+ },
+ {
+  "episode": 32,
+  "x_pos": 3026,
+  "steps": 1998,
+  "noop_steps": 7,
+  "cause": "time"
+ },
+ {
+  "episode": 33,
+  "x_pos": 2657,
+  "steps": 290,
+  "noop_steps": 20,
+  "cause": "enemy"
+ },
+ {
+  "episode": 34,
+  "x_pos": 1184,
+  "steps": 115,
+  "noop_steps": 14,
+  "cause": "enemy"
+ },
+ {
+  "episode": 35,
+  "x_pos": 3026,
+  "steps": 1990,
+  "noop_steps": 15,
+  "cause": "time"
+ },
+ {
+  "episode": 36,
+  "x_pos": 3026,
+  "steps": 1976,
+  "noop_steps": 29,
+  "cause": "time"
+ },
+ {
+  "episode": 37,
+  "x_pos": 2479,
+  "steps": 248,
+  "noop_steps": 25,
+  "cause": "pit"
+ },
+ {
+  "episode": 38,
+  "x_pos": 3026,
+  "steps": 1979,
+  "noop_steps": 26,
+  "cause": "time"
+ },
+ {
+  "episode": 39,
+  "x_pos": 3026,
+  "steps": 1988,
+  "noop_steps": 17,
+  "cause": "time"
+ },
+ {
+  "episode": 40,
+  "x_pos": 3026,
+  "steps": 1975,
+  "noop_steps": 30,
+  "cause": "time"
+ },
+ {
+  "episode": 41,
+  "x_pos": 1734,
+  "steps": 172,
+  "noop_steps": 30,
+  "cause": "pit"
+ },
+ {
+  "episode": 42,
+  "x_pos": 1646,
+  "steps": 153,
+  "noop_steps": 4,
+  "cause": "enemy"
+ },
+ {
+  "episode": 43,
+  "x_pos": 3026,
+  "steps": 1999,
+  "noop_steps": 6,
+  "cause": "time"
+ },
+ {
+  "episode": 44,
+  "x_pos": 3026,
+  "steps": 1996,
+  "noop_steps": 9,
+  "cause": "time"
+ },
+ {
+  "episode": 45,
+  "x_pos": 2668,
+  "steps": 254,
+  "noop_steps": 17,
+  "cause": "enemy"
+ },
+ {
+  "episode": 46,
+  "x_pos": 3056,
+  "steps": 1980,
+  "noop_steps": 25,
+  "cause": "time"
+ },
+ {
+  "episode": 47,
+  "x_pos": 3026,
+  "steps": 1991,
+  "noop_steps": 14,
+  "cause": "time"
+ },
+ {
+  "episode": 48,
+  "x_pos": 3026,
+  "steps": 1975,
+  "noop_steps": 30,
+  "cause": "time"
+ },
+ {
+  "episode": 49,
+  "x_pos": 3026,
+  "steps": 1995,
+  "noop_steps": 10,
+  "cause": "time"
+ },
+ {
+  "episode": 50,
+  "x_pos": 3026,
+  "steps": 1977,
+  "noop_steps": 28,
+  "cause": "time"
+ },
+ {
+  "episode": 51,
+  "x_pos": 3026,
+  "steps": 1987,
+  "noop_steps": 18,
+  "cause": "time"
+ },
+ {
+  "episode": 52,
+  "x_pos": 3026,
+  "steps": 1983,
+  "noop_steps": 22,
+  "cause": "time"
+ },
+ {
+  "episode": 53,
+  "x_pos": 3026,
+  "steps": 1998,
+  "noop_steps": 7,
+  "cause": "time"
+ },
+ {
+  "episode": 54,
+  "x_pos": 3026,
+  "steps": 1987,
+  "noop_steps": 18,
+  "cause": "time"
+ },
+ {
+  "episode": 55,
+  "x_pos": 3026,
+  "steps": 1981,
+  "noop_steps": 24,
+  "cause": "time"
+ },
+ {
+  "episode": 56,
+  "x_pos": 3026,
+  "steps": 1978,
+  "noop_steps": 27,
+  "cause": "time"
+ },
+ {
+  "episode": 57,
+  "x_pos": 3026,
+  "steps": 1979,
+  "noop_steps": 26,
+  "cause": "time"
+ },
+ {
+  "episode": 58,
+  "x_pos": 3026,
+  "steps": 1976,
+  "noop_steps": 29,
+  "cause": "time"
+ },
+ {
+  "episode": 59,
+  "x_pos": 3026,
+  "steps": 2002,
+  "noop_steps": 3,
+  "cause": "time"
+ },
+ {
+  "episode": 60,
+  "x_pos": 3026,
+  "steps": 1981,
+  "noop_steps": 24,
+  "cause": "time"
+ },
+ {
+  "episode": 61,
+  "x_pos": 3026,
+  "steps": 1991,
+  "noop_steps": 14,
+  "cause": "time"
+ },
+ {
+  "episode": 62,
+  "x_pos": 1531,
+  "steps": 144,
+  "noop_steps": 21,
+  "cause": "pit"
+ },
+ {
+  "episode": 63,
+  "x_pos": 3026,
+  "steps": 1997,
+  "noop_steps": 8,
+  "cause": "time"
+ },
+ {
+  "episode": 64,
+  "x_pos": 3026,
+  "steps": 2005,
+  "noop_steps": 0,
+  "cause": "time"
+ },
+ {
+  "episode": 65,
+  "x_pos": 3026,
+  "steps": 2003,
+  "noop_steps": 2,
+  "cause": "time"
+ },
+ {
+  "episode": 66,
+  "x_pos": 2451,
+  "steps": 255,
+  "noop_steps": 30,
+  "cause": "pit"
+ },
+ {
+  "episode": 67,
+  "x_pos": 2818,
+  "steps": 270,
+  "noop_steps": 27,
+  "cause": "enemy"
+ },
+ {
+  "episode": 68,
+  "x_pos": 1733,
+  "steps": 166,
+  "noop_steps": 9,
+  "cause": "pit"
+ },
+ {
+  "episode": 69,
+  "x_pos": 3026,
+  "steps": 1992,
+  "noop_steps": 13,
+  "cause": "time"
+ },
+ {
+  "episode": 70,
+  "x_pos": 3026,
+  "steps": 1998,
+  "noop_steps": 7,
+  "cause": "time"
+ },
+ {
+  "episode": 71,
+  "x_pos": 3026,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 72,
+  "x_pos": 3193,
+  "steps": 1318,
+  "noop_steps": 26,
+  "cause": "flag"
+ },
+ {
+  "episode": 73,
+  "x_pos": 3026,
+  "steps": 1985,
+  "noop_steps": 20,
+  "cause": "time"
+ },
+ {
+  "episode": 74,
+  "x_pos": 2692,
+  "steps": 275,
+  "noop_steps": 2,
+  "cause": "enemy"
+ },
+ {
+  "episode": 75,
+  "x_pos": 2666,
+  "steps": 255,
+  "noop_steps": 6,
+  "cause": "enemy"
+ },
+ {
+  "episode": 76,
+  "x_pos": 3026,
+  "steps": 1988,
+  "noop_steps": 17,
+  "cause": "time"
+ },
+ {
+  "episode": 77,
+  "x_pos": 2680,
+  "steps": 275,
+  "noop_steps": 27,
+  "cause": "enemy"
+ },
+ {
+  "episode": 78,
+  "x_pos": 3026,
+  "steps": 1975,
+  "noop_steps": 30,
+  "cause": "time"
+ },
+ {
+  "episode": 79,
+  "x_pos": 2457,
+  "steps": 252,
+  "noop_steps": 6,
+  "cause": "pit"
+ },
+ {
+  "episode": 80,
+  "x_pos": 2663,
+  "steps": 275,
+  "noop_steps": 18,
+  "cause": "enemy"
+ },
+ {
+  "episode": 81,
+  "x_pos": 3025,
+  "steps": 2004,
+  "noop_steps": 1,
+  "cause": "time"
+ },
+ {
+  "episode": 82,
+  "x_pos": 3026,
+  "steps": 2000,
+  "noop_steps": 5,
+  "cause": "time"
+ },
+ {
+  "episode": 83,
+  "x_pos": 736,
+  "steps": 75,
+  "noop_steps": 6,
+  "cause": "enemy"
+ },
+ {
+  "episode": 84,
+  "x_pos": 3026,
+  "steps": 1992,
+  "noop_steps": 13,
+  "cause": "time"
+ },
+ {
+  "episode": 85,
+  "x_pos": 3026,
+  "steps": 1995,
+  "noop_steps": 10,
+  "cause": "time"
+ },
+ {
+  "episode": 86,
+  "x_pos": 3026,
+  "steps": 1983,
+  "noop_steps": 22,
+  "cause": "time"
+ },
+ {
+  "episode": 87,
+  "x_pos": 3026,
+  "steps": 1991,
+  "noop_steps": 14,
+  "cause": "time"
+ },
+ {
+  "episode": 88,
+  "x_pos": 3026,
+  "steps": 1995,
+  "noop_steps": 10,
+  "cause": "time"
+ },
+ {
+  "episode": 89,
+  "x_pos": 3026,
+  "steps": 1977,
+  "noop_steps": 28,
+  "cause": "time"
+ },
+ {
+  "episode": 90,
+  "x_pos": 2679,
+  "steps": 256,
+  "noop_steps": 19,
+  "cause": "enemy"
+ },
+ {
+  "episode": 91,
+  "x_pos": 3026,
+  "steps": 1984,
+  "noop_steps": 21,
+  "cause": "time"
+ },
+ {
+  "episode": 92,
+  "x_pos": 3193,
+  "steps": 454,
+  "noop_steps": 23,
+  "cause": "flag"
+ },
+ {
+  "episode": 93,
+  "x_pos": 1893,
+  "steps": 174,
+  "noop_steps": 10,
+  "cause": "enemy"
+ },
+ {
+  "episode": 94,
+  "x_pos": 3026,
+  "steps": 1978,
+  "noop_steps": 27,
+  "cause": "time"
+ },
+ {
+  "episode": 95,
+  "x_pos": 3026,
+  "steps": 2005,
+  "noop_steps": 0,
+  "cause": "time"
+ },
+ {
+  "episode": 96,
+  "x_pos": 1732,
+  "steps": 166,
+  "noop_steps": 9,
+  "cause": "pit"
+ },
+ {
+  "episode": 97,
+  "x_pos": 3026,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 98,
+  "x_pos": 3026,
+  "steps": 2005,
+  "noop_steps": 0,
+  "cause": "time"
+ },
+ {
+  "episode": 99,
+  "x_pos": 3026,
+  "steps": 1975,
+  "noop_steps": 30,
+  "cause": "time"
+ }
+]

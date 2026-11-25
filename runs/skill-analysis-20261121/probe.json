@@ -1,0 +1,355 @@
+{
+  "scope": "Diagnostics only; zero PPO training environment steps; no checkpoint writes.",
+  "torch_version": "2.15.0+cpu",
+  "torch_threads": 6,
+  "architectures": [
+    {
+      "name": "nature_current",
+      "parameters": 1688232,
+      "inference_ms_by_batch": {
+        "1": 1.824,
+        "8": 2.738
+      },
+      "synthetic_forward_backward_adam_batch256_ms": 106.446
+    },
+    {
+      "name": "impala_16_32_32_flat256",
+      "parameters": 1091288,
+      "inference_ms_by_batch": {
+        "1": 4.176,
+        "8": 11.3
+      },
+      "synthetic_forward_backward_adam_batch256_ms": 732.297
+    },
+    {
+      "name": "impala_16_32_32_regions4_global256",
+      "parameters": 239320,
+      "inference_ms_by_batch": {
+        "1": 3.187,
+        "8": 9.373
+      },
+      "synthetic_forward_backward_adam_batch256_ms": 765.817
+    }
+  ],
+  "jumps": {
+    "rows": [
+      {
+        "movement": "stationary",
+        "hold_A_agent_steps": 1,
+        "start_x": 40,
+        "start_y": 79,
+        "apex_height_pixels": 33,
+        "until_landing_or_end_agent_steps": 6,
+        "distance_pixels": 0,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "stationary",
+        "hold_A_agent_steps": 2,
+        "start_x": 40,
+        "start_y": 79,
+        "apex_height_pixels": 43,
+        "until_landing_or_end_agent_steps": 7,
+        "distance_pixels": 0,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "stationary",
+        "hold_A_agent_steps": 4,
+        "start_x": 40,
+        "start_y": 79,
+        "apex_height_pixels": 58,
+        "until_landing_or_end_agent_steps": 9,
+        "distance_pixels": 0,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "stationary",
+        "hold_A_agent_steps": 8,
+        "start_x": 40,
+        "start_y": 79,
+        "apex_height_pixels": 64,
+        "until_landing_or_end_agent_steps": 11,
+        "distance_pixels": 0,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "stationary",
+        "hold_A_agent_steps": 12,
+        "start_x": 40,
+        "start_y": 79,
+        "apex_height_pixels": 64,
+        "until_landing_or_end_agent_steps": 11,
+        "distance_pixels": 0,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right",
+        "hold_A_agent_steps": 1,
+        "start_x": 53,
+        "start_y": 79,
+        "apex_height_pixels": 35,
+        "until_landing_or_end_agent_steps": 6,
+        "distance_pixels": 40,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right",
+        "hold_A_agent_steps": 2,
+        "start_x": 53,
+        "start_y": 79,
+        "apex_height_pixels": 46,
+        "until_landing_or_end_agent_steps": 8,
+        "distance_pixels": 54,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right",
+        "hold_A_agent_steps": 4,
+        "start_x": 53,
+        "start_y": 79,
+        "apex_height_pixels": 60,
+        "until_landing_or_end_agent_steps": 10,
+        "distance_pixels": 68,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right",
+        "hold_A_agent_steps": 8,
+        "start_x": 53,
+        "start_y": 79,
+        "apex_height_pixels": 68,
+        "until_landing_or_end_agent_steps": 12,
+        "distance_pixels": 82,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right",
+        "hold_A_agent_steps": 12,
+        "start_x": 53,
+        "start_y": 79,
+        "apex_height_pixels": 68,
+        "until_landing_or_end_agent_steps": 12,
+        "distance_pixels": 82,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right+B",
+        "hold_A_agent_steps": 1,
+        "start_x": 60,
+        "start_y": 79,
+        "apex_height_pixels": 42,
+        "until_landing_or_end_agent_steps": 6,
+        "distance_pixels": 69,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right+B",
+        "hold_A_agent_steps": 2,
+        "start_x": 60,
+        "start_y": 79,
+        "apex_height_pixels": 55,
+        "until_landing_or_end_agent_steps": 8,
+        "distance_pixels": 93,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right+B",
+        "hold_A_agent_steps": 4,
+        "start_x": 60,
+        "start_y": 79,
+        "apex_height_pixels": 75,
+        "until_landing_or_end_agent_steps": 10,
+        "distance_pixels": 117,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right+B",
+        "hold_A_agent_steps": 8,
+        "start_x": 60,
+        "start_y": 79,
+        "apex_height_pixels": 86,
+        "until_landing_or_end_agent_steps": 13,
+        "distance_pixels": 153,
+        "terminated_or_truncated": false
+      },
+      {
+        "movement": "right+B",
+        "hold_A_agent_steps": 12,
+        "start_x": 60,
+        "start_y": 79,
+        "apex_height_pixels": 86,
+        "until_landing_or_end_agent_steps": 13,
+        "distance_pixels": 153,
+        "terminated_or_truncated": false
+      }
+    ],
+    "environment_agent_steps_including_settle": 372
+  },
+  "policy": {
+    "checkpoint": "runs/1-1+4-1/from-scratch/checkpoints/step_002904064.pt",
+    "rows": [
+      {
+        "level": "1-1",
+        "observations": 384,
+        "entropy_mean": 0.27356,
+        "mean_jump_button_probability": 0.53144,
+        "perturbations": {
+          "repeat_latest_frame": {
+            "mean_KL_original_to_changed": 3.43315,
+            "argmax_action_agreement": 0.3776
+          },
+          "hide_top_10_rows": {
+            "mean_KL_original_to_changed": 0.15282,
+            "argmax_action_agreement": 0.83854
+          },
+          "shift_right_2_pixels": {
+            "mean_KL_original_to_changed": 1.16983,
+            "argmax_action_agreement": 0.66406
+          }
+        }
+      },
+      {
+        "level": "4-1",
+        "observations": 384,
+        "entropy_mean": 0.32937,
+        "mean_jump_button_probability": 0.46149,
+        "perturbations": {
+          "repeat_latest_frame": {
+            "mean_KL_original_to_changed": 3.34448,
+            "argmax_action_agreement": 0.36458
+          },
+          "hide_top_10_rows": {
+            "mean_KL_original_to_changed": 0.24867,
+            "argmax_action_agreement": 0.79688
+          },
+          "shift_right_2_pixels": {
+            "mean_KL_original_to_changed": 1.2056,
+            "argmax_action_agreement": 0.68229
+          }
+        }
+      },
+      {
+        "level": "3-2",
+        "observations": 356,
+        "entropy_mean": 0.24532,
+        "mean_jump_button_probability": 0.4584,
+        "perturbations": {
+          "repeat_latest_frame": {
+            "mean_KL_original_to_changed": 4.12893,
+            "argmax_action_agreement": 0.51966
+          },
+          "hide_top_10_rows": {
+            "mean_KL_original_to_changed": 0.02195,
+            "argmax_action_agreement": 0.9691
+          },
+          "shift_right_2_pixels": {
+            "mean_KL_original_to_changed": 1.20791,
+            "argmax_action_agreement": 0.69382
+          }
+        }
+      },
+      {
+        "level": "1-3",
+        "observations": 384,
+        "entropy_mean": 0.22573,
+        "mean_jump_button_probability": 0.99991,
+        "perturbations": {
+          "repeat_latest_frame": {
+            "mean_KL_original_to_changed": 0.03718,
+            "argmax_action_agreement": 0.98698
+          },
+          "hide_top_10_rows": {
+            "mean_KL_original_to_changed": 0.05287,
+            "argmax_action_agreement": 1.0
+          },
+          "shift_right_2_pixels": {
+            "mean_KL_original_to_changed": 4.31592,
+            "argmax_action_agreement": 0.0
+          }
+        }
+      },
+      {
+        "level": "2-3",
+        "observations": 353,
+        "entropy_mean": 0.20402,
+        "mean_jump_button_probability": 0.54757,
+        "perturbations": {
+          "repeat_latest_frame": {
+            "mean_KL_original_to_changed": 0.65555,
+            "argmax_action_agreement": 0.86402
+          },
+          "hide_top_10_rows": {
+            "mean_KL_original_to_changed": 0.05345,
+            "argmax_action_agreement": 0.94051
+          },
+          "shift_right_2_pixels": {
+            "mean_KL_original_to_changed": 0.53671,
+            "argmax_action_agreement": 0.80737
+          }
+        }
+      },
+      {
+        "level": "6-1",
+        "observations": 98,
+        "entropy_mean": 0.282,
+        "mean_jump_button_probability": 0.19883,
+        "perturbations": {
+          "repeat_latest_frame": {
+            "mean_KL_original_to_changed": 3.44726,
+            "argmax_action_agreement": 0.56122
+          },
+          "hide_top_10_rows": {
+            "mean_KL_original_to_changed": 0.01742,
+            "argmax_action_agreement": 0.92857
+          },
+          "shift_right_2_pixels": {
+            "mean_KL_original_to_changed": 0.78781,
+            "argmax_action_agreement": 0.76531
+          }
+        }
+      }
+    ],
+    "environment_agent_steps": 1959,
+    "interpretation": "Sensitivity diagnostics on existing-policy trajectories, not success-rate evaluations or proof of causality."
+  },
+  "restart_log": {
+    "source": "runs/multi-level/restart-test/progress.csv",
+    "updates": 91,
+    "fraction_stopped_before_160_minibatches": 1.0,
+    "minibatch_updates_min_median_max": [
+      16.0,
+      32.0,
+      64.0
+    ],
+    "KL_mean_max": [
+      0.027647912087912088,
+      0.08869
+    ],
+    "warning": "Aggregate KL can hide per-level drift; learning-rate and entropy both changed on resume."
+  },
+  "discount": {
+    "0.9": {
+      "10": 0.3486784401000001,
+      "20": 0.12157665459056935,
+      "30": 0.04239115827521624,
+      "50": 0.00515377520732012,
+      "100": 2.6561398887587544e-05
+    },
+    "0.97": {
+      "10": 0.7374241268949281,
+      "20": 0.543794342926747,
+      "30": 0.4010070685431575,
+      "50": 0.2180653753474073,
+      "100": 0.04755250792540563
+    },
+    "0.99": {
+      "10": 0.9043820750088044,
+      "20": 0.8179069375972308,
+      "30": 0.7397003733882802,
+      "50": 0.6050060671375364,
+      "100": 0.3660323412732292
+    }
+  },
+  "elapsed_seconds": 45.54
+}

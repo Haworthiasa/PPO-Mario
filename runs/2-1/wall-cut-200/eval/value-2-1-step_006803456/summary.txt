@@ -1,0 +1,181 @@
+=== 2-1 với runs/2-1/wall-cut-200/checkpoints/step_006803456.pt (bước 6803456): 100 lượt, seed 7 ===
+lý do: enemy 62, time 19, pit 18, flag 1
+x cuối trung bình 2070; tổng 53534 bước tác tử
+V trên mọi bước: trung bình 1.14, p10 -0.47, p90 3.82; phần thưởng trung bình mỗi bước 0.117
+sai số của critic |V - G| trên mọi bước: trung vị 0.14 (G = lợi tức chiết khấu thật, gamma 0.9, có cộng thưởng cờ 2.0)
+gom cụm: hai x cuối cùng cụm nếu cách nhau <= 48; cụm phải có >= 5 lượt; lượt 'đi qua' = chạm cờ hoặc x cuối > mép phải của cụm + 100
+9 cụm chứa 83 lượt; 16 lượt hỏng lẻ không thuộc cụm nào (x cuối: 1078, 1646, 1647, 1826, 2066, 2066, 2066, 2066, 2283, 2452, 2477, 2566, 2568, 2574, 2915, 2923)
+
+--- cụm x 734-744: 7 lượt (enemy 7); 93 lượt đi qua được ---
+7 lượt hỏng không kẹt (lượt số 9, 21, 47, 77, 32, 53, 71)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    7    2.89    1.65      1.24      14%   -1.53     1.66     -3.19     0.66     0.46       0.76
+     2    7    2.47    1.65      0.82       0%   -1.15     1.66     -2.80     0.05     0.46       0.99
+     3    7    2.80    1.17      1.26       0%   -0.88     1.13     -2.03     0.17     0.35       0.96
+     5    7    1.85    1.17      0.68       0%   -0.58     1.13     -1.71     0.74     0.35       0.37
+     8    7    1.55    1.17      0.38      14%   -0.60     1.13     -1.73     0.65     0.35       0.76
+    10    7    1.26    1.65     -0.40      14%   -0.52     1.66     -2.17     1.09     0.46       0.16
+    15    7    0.71    1.65     -0.94      86%   -0.41     1.66     -2.06     0.01     0.46       1.00
+    20    7    1.87    1.90     -0.03      14%    1.24     1.97     -0.72     0.21     0.31       0.94
+    30    7    3.24    3.24      0.00      14%    3.00     3.22     -0.22     0.80     0.80       0.46
+    45    7    3.82    3.81      0.01       0%    3.75     3.78     -0.03     0.63     0.00       0.77
+    60    7    3.89    3.89     -0.00      14%    3.91     3.91     -0.00     0.92     0.71       0.72
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 0 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 0 bước trước; G thật theo cùng tiêu chí: từ 20 bước trước
+
+--- cụm x 1182-1192: 11 lượt (enemy 11); 81 lượt đi qua được ---
+11 lượt hỏng không kẹt (lượt số 44, 55, 61, 74, 89, 6, 35, 5, 25, 62, 42)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1   11    0.25    2.12     -1.87      45%   -1.53     2.31     -3.88     0.59     0.42       0.83
+     2   11    0.63    2.12     -1.50      18%   -1.25     2.31     -3.56     0.64     0.42       0.71
+     3   11    0.78    2.12     -1.34       9%   -1.02     2.31     -3.34     0.34     0.42       0.91
+     5   11    0.01    2.12     -2.11      45%   -0.78     2.31     -3.09     0.62     0.42       0.74
+     8   11    0.53    2.05     -1.53      36%   -0.36     2.00     -2.36     0.36     0.08       0.91
+    10   11    0.93    2.25     -1.53      55%    0.43     2.27     -1.84     0.02     0.00       1.00
+    15   11    2.19    3.08     -0.71      64%    1.74     3.01     -1.12     0.12     0.16       0.98
+    20   11    2.80    3.26     -0.45      36%    2.64     3.32     -0.68     0.02     0.02       1.00
+    30   11    3.64    3.71     -0.08       9%    3.49     3.73     -0.25     0.04     0.01       0.99
+    45   11    3.41    3.78      0.14      18%    3.57     3.76      0.06     0.16     0.15       0.96
+    60   11    0.82    1.70     -0.87      45%    0.87     1.67     -0.78     0.20     0.46       0.96
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 0 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 18 bước trước; G thật theo cùng tiêu chí: từ 22 bước trước
+
+--- cụm x 1354-1386: 6 lượt (enemy 6); 75 lượt đi qua được ---
+6 lượt hỏng không kẹt (lượt số 66, 34, 81, 2, 38, 92)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    6    2.97    3.86     -0.89      67%   -1.48     3.88     -5.36     0.18     0.05       0.96
+     2    6    3.25    3.84     -0.59      50%   -0.93     3.88     -4.81     0.08     0.05       0.98
+     3    6    2.85    3.87     -1.10      50%   -0.44     3.90     -4.33     0.02     0.04       1.00
+     5    6    3.02    4.03     -1.00      83%    0.37     3.89     -3.53     0.02     0.01       1.00
+     8    6    3.34    3.91     -0.58      67%    1.34     3.91     -2.57     0.08     0.02       0.99
+    10    6    3.40    3.82     -0.41      50%    1.67     3.90     -2.23     0.01     0.03       1.00
+    15    6    3.29    3.81     -0.37       0%    2.51     3.89     -1.39     0.15     0.19       0.97
+    20    6    1.97    2.27     -0.39      33%    2.41     2.42     -0.02     0.59     0.35       0.73
+    30    6    1.57    2.43     -1.16      67%    1.72     2.53     -0.81     0.47     0.35       0.87
+    45    6    3.27    3.49     -0.25      33%    3.40     3.52     -0.13     0.02     0.02       1.00
+    60    6    3.56    3.05      0.23      17%    3.60     3.11     -0.02     0.01     0.19       1.00
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 10 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 8 bước trước; G thật theo cùng tiêu chí: từ 18 bước trước
+
+--- cụm x 1731-1739: 15 lượt (pit 15); 57 lượt đi qua được ---
+15 lượt hỏng không kẹt (lượt số 76, 78, 56, 96, 30, 33, 59, 64, 17, 31, 40, 58, 69, 80, 75)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1   15   -1.08    2.68     -3.75     100%   -1.60     2.56     -4.16     0.81     0.02       0.60
+     2   15   -0.96    2.68     -3.64     100%   -1.37     2.56     -3.93     0.61     0.02       0.79
+     3   15   -0.91    2.68     -3.59     100%   -1.21     2.56     -3.76     0.28     0.02       0.92
+     5   15    1.52    3.19     -1.36      80%   -0.74     3.36     -4.05     0.00     0.09       1.00
+     8   15    2.90    3.47     -0.57      53%    0.54     3.53     -2.99     0.00     0.00       1.00
+    10   15    3.11    3.71     -0.54      53%    1.18     3.61     -2.42     0.00     0.00       1.00
+    15   15    3.22    3.61     -0.39       0%    2.31     3.72     -1.41     0.61     0.09       0.81
+    20   15    3.45    3.82     -0.34      27%    2.96     3.81     -0.84     0.00     0.00       1.00
+    30   15    3.75    3.90     -0.04       7%    3.59     3.88     -0.29     0.02     0.00       1.00
+    45   15    3.68    3.79     -0.11      27%    3.86     3.91     -0.05     0.00     0.00       1.00
+    60   15    2.17    2.32     -0.13      20%    2.43     2.47      0.03     0.36     0.17       0.91
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 6 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 8 bước trước; G thật theo cùng tiêu chí: từ 24 bước trước
+
+--- cụm x 1938-1952: 6 lượt (enemy 6); 51 lượt đi qua được ---
+6 lượt hỏng không kẹt (lượt số 19, 39, 50, 29, 63, 60)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    6    0.90    1.56     -0.66      50%   -1.58     1.59     -3.18     0.76     0.42       0.61
+     2    6    0.87    1.56     -0.69      50%   -1.41     1.59     -3.00     0.72     0.42       0.56
+     3    6    0.78    1.56     -0.77      50%   -1.22     1.59     -2.81     0.71     0.42       0.59
+     5    6    0.79    1.56     -0.77      50%   -0.97     1.59     -2.56     0.57     0.42       0.73
+     8    6    0.70    1.56     -0.86      50%   -0.74     1.59     -2.33     0.62     0.42       0.66
+    10    6    0.75    1.56     -0.81      50%   -0.60     1.59     -2.19     0.54     0.42       0.72
+    15    6    1.20    1.56     -0.36      17%   -0.38     1.59     -1.98     0.30     0.42       0.91
+    20    6    1.61    1.66     -0.09       0%    0.41     1.64     -1.24     0.21     0.33       0.96
+    30    6    2.08    2.30      0.10      17%    1.45     2.36     -0.61     0.00     0.04       1.00
+    45    6    3.51    3.34      0.12       0%    3.39     3.45     -0.06     0.03     0.00       1.00
+    60    6    3.57    3.72     -0.05      17%    3.82     3.82      0.00     0.00     0.01       1.00
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 11 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 13 bước trước; G thật theo cùng tiêu chí: từ 30 bước trước
+
+--- cụm x 2157-2158: 7 lượt (enemy 7); 40 lượt đi qua được ---
+7 lượt hỏng không kẹt (lượt số 0, 26, 28, 97, 98, 10, 45)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    7    2.84    3.78     -0.94      86%   -1.27     3.88     -5.15     0.18     0.02       0.96
+     2    7    3.12    3.77     -0.66      86%   -0.74     3.89     -4.63     0.27     0.09       0.93
+     3    7    3.52    3.93     -0.41      29%   -0.30     3.90     -4.19     0.29     0.05       0.92
+     5    7    3.73    3.87     -0.14      43%    0.52     3.90     -3.38     0.00     0.00       1.00
+     8    7    3.53    3.95     -0.42      57%    1.43     3.91     -2.48     0.15     0.01       0.97
+    10    7    3.68    3.78     -0.11       0%    1.92     3.91     -2.00     0.00     0.01       1.00
+    15    7    3.90    3.58      0.32       0%    2.74     3.47     -0.73     0.66     0.01       0.55
+    20    7    2.71    1.53      1.18      14%    2.60     1.64      0.96     0.12     0.42       0.98
+    30    7    1.06    1.25     -0.13       0%    1.10     1.36     -0.03     0.08     0.00       0.98
+    45    7    2.78    3.10     -0.16      29%    2.83     3.15     -0.19     0.00     0.03       1.00
+    60    7    3.28    3.68     -0.18      29%    3.02     3.63     -0.66     0.00     0.00       1.00
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 2 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 2 bước trước; G thật theo cùng tiêu chí: từ 15 bước trước
+
+--- cụm x 2656-2701: 8 lượt (enemy 8); 26 lượt đi qua được ---
+8 lượt hỏng không kẹt (lượt số 15, 37, 85, 23, 18, 54, 13, 94)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    8    1.85    2.77     -0.96      50%   -1.40     2.62     -4.05     0.28     0.06       0.92
+     2    8    1.76    3.03     -1.27      62%   -0.89     2.68     -3.61     0.08     0.03       0.99
+     3    8    1.60    3.16     -1.57      62%   -0.45     2.86     -3.36     0.00     0.06       1.00
+     5    8    2.47    3.13     -0.71      38%    0.33     2.96     -2.76     0.29     0.06       0.90
+     8    8    2.59    3.20     -0.65      50%    1.04     3.15     -2.07     0.56     0.08       0.79
+    10    8    2.88    3.20     -0.27       0%    1.54     3.24     -1.71     0.36     0.08       0.86
+    15    8    3.06    3.10     -0.07      25%    2.09     3.35     -1.17     0.63     0.08       0.73
+    20    8    3.34    3.25     -0.01      12%    2.81     3.55     -0.79     0.20     0.14       0.95
+    30    8    3.71    3.62      0.03      25%    3.53     3.81     -0.28     0.02     0.02       1.00
+    45    8    3.86    3.85     -0.01       0%    3.83     3.90     -0.07     0.02     0.04       1.00
+    60    8    3.73    3.78     -0.18       0%    3.90     3.87     -0.01     0.09     0.08       0.98
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 4 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 5 bước trước; G thật theo cùng tiêu chí: từ 24 bước trước
+
+--- cụm x 2802-2834: 8 lượt (enemy 8); 16 lượt đi qua được ---
+8 lượt hỏng không kẹt (lượt số 83, 4, 73, 8, 43, 46, 99, 72)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    8    2.26    1.68     -0.25      12%   -1.52     1.90     -3.52     0.34     0.59       0.92
+     2    8    2.07    1.68     -0.18      12%   -1.00     1.90     -3.02     0.39     0.59       0.90
+     3    8    1.87    1.68     -0.32       0%   -0.52     1.90     -2.97     0.35     0.59       0.90
+     5    8    2.82    2.79      0.38      12%    0.26     3.36     -2.98     0.28     0.28       0.93
+     8    8    3.01    2.93     -0.02       0%    1.05     3.43     -2.43     0.16     0.47       0.96
+    10    8    2.64    2.53      0.04      12%    1.36     2.97     -1.99     0.30     0.41       0.93
+    15    8    1.89    2.84     -0.60      25%    1.70     2.93     -1.18     0.34     0.18       0.87
+    20    8    2.65    3.30     -0.09      12%    2.33     3.44     -0.90     0.23     0.05       0.93
+    30    8    3.30    3.19      0.15      25%    2.90     3.37     -0.42     0.75     0.18       0.53
+    45    8    3.54    3.52     -0.09       0%    3.66     3.73     -0.06     0.09     0.12       0.98
+    60    8    3.87    3.85      0.02      25%    3.87     3.88     -0.01     0.11     0.04       0.98
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 0 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 0 bước trước; G thật theo cùng tiêu chí: từ 29 bước trước
+
+--- cụm x 3026-3026: 15 lượt (time 15); 1 lượt đi qua được ---
+15 lượt kẹt (lượt số 1, 7, 12, 20, 24, 36, 41, 67, 68, 84, 87, 88, 90, 91, 95); số bước đứng lại sau lần tiến cuối: 461-1704
+  khoảng bước (0 = lần tiến cuối)   lượt  V tb   V min  V max  lùi xa nhất   xác suất trung bình: đứng yên | phải | phải+nhảy | phải+chạy | phải+chạy+nhảy | nhảy tại chỗ | trái
+     -10 ..     0                  15   0.57  -0.56   2.43      113 px    0.24 | 0.03 | 0.17 | 0.19 | 0.21 | 0.08 | 0.08
+       1 ..    20                  15  -0.05  -0.36   0.39        4 px    0.09 | 0.21 | 0.14 | 0.24 | 0.17 | 0.14 | 0.02
+      21 ..   100                  15  -0.04  -0.30   1.47        6 px    0.09 | 0.21 | 0.12 | 0.22 | 0.19 | 0.15 | 0.02
+     101 ..   200                  15  -0.04  -0.34   0.39        3 px    0.10 | 0.21 | 0.12 | 0.21 | 0.23 | 0.12 | 0.02
+     201 ..  1000                  15   0.01  -0.50   0.83        6 px    0.07 | 0.21 | 0.07 | 0.38 | 0.17 | 0.08 | 0.03
+    1001 ..   hết                  14   0.02  -0.42   0.47        6 px    0.05 | 0.22 | 0.03 | 0.55 | 0.09 | 0.04 | 0.03
+  độ cao y lớn nhất của từng lượt kẹt sau lần tiến cuối: nhỏ nhất 130, trung vị 154, lớn nhất 233
+  16 lượt tới được chỗ này (x >= 3026 - gap); 1 lượt vượt qua x 3026 + 16; trong đó 1 lượt vượt sau <= 200 bước không tiến, 0 lượt sau > 200 bước
+  tổng số bước không tiến ở chỗ này (mọi lượt tới nơi): 25172; số lần thoát trên 1000 bước không tiến: 0.040
+  1 lượt vượt mà không đứng quá 9 bước; các lượt vượt sau khi đứng từ 10 bước trở lên (0):

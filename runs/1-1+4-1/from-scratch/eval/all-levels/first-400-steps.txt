@@ -1,0 +1,48 @@
+1-1 | 1-1+4-1   | entropy 0.27 | value +3.69 | right+B 25%  A 22%  right+A+B 21%  right+A 14%  NOOP 11%  right 7%
+      mean x @50: 597 (n=5)  @100: 1104 (n=5)  @200: 2303 (n=5)  @400: - (n=0)
+1-1 | 1-1       | entropy 0.64 | value +3.66 | right+A+B 28%  right+B 26%  right+A 17%  A 16%  NOOP 6%  right 6%
+      mean x @50: 596 (n=5)  @100: 1096 (n=5)  @200: 2295 (n=5)  @400: - (n=0)
+1-1 | 4-1       | entropy 0.70 | value +2.66 | right+B 42%  right+A+B 24%  right 14%  right+A 11%  A 6%  NOOP 3%
+      mean x @50: 476 (n=5)  @100: 620 (n=1)  @200: - (n=0)  @400: - (n=0)
+1-3 | 1-1+4-1   | entropy 0.22 | value +1.47 | A 95%  right+A 4%
+      mean x @50: 45 (n=5)  @100: 49 (n=5)  @200: 59 (n=5)  @400: 76 (n=5)
+1-3 | 1-1       | entropy 0.60 | value +2.19 | right+B 37%  A 27%  right+A 12%  NOOP 11%  right+A+B 7%  right 5%
+      mean x @50: - (n=0)  @100: - (n=0)  @200: - (n=0)  @400: - (n=0)
+1-3 | 4-1       | entropy 0.60 | value +2.62 | right 35%  right+B 35%  right+A+B 14%  right+A 7%  A 6%
+      mean x @50: 529 (n=1)  @100: - (n=0)  @200: - (n=0)  @400: - (n=0)
+2-3 | 1-1+4-1   | entropy 0.03 | value +4.45 | right 71%  right+B 24%  right+A+B 4%
+      mean x @50: 150 (n=4)  @100: 150 (n=4)  @200: 150 (n=4)  @400: 150 (n=4)
+2-3 | 1-1       | entropy 0.74 | value +1.96 | right+A 47%  A 16%  right+B 12%  right 10%  NOOP 9%  right+A+B 6%
+      mean x @50: 430 (n=5)  @100: 807 (n=3)  @200: - (n=0)  @400: - (n=0)
+2-3 | 4-1       | entropy 0.36 | value -0.98 | right 61%  right+A+B 17%  right+B 13%  right+A 6%
+      mean x @50: 152 (n=5)  @100: 221 (n=5)  @200: 677 (n=4)  @400: - (n=0)
+4-3 | 1-1+4-1   | entropy 0.21 | value +1.50 | A 95%  right+A 3%
+      mean x @50: 45 (n=5)  @100: 48 (n=5)  @200: 58 (n=5)  @400: 74 (n=5)
+4-3 | 1-1       | entropy 0.42 | value +2.37 | right+B 39%  A 21%  right+A 14%  NOOP 13%  right+A+B 10%
+      mean x @50: - (n=0)  @100: - (n=0)  @200: - (n=0)  @400: - (n=0)
+4-3 | 4-1       | entropy 0.58 | value +2.69 | right 32%  right+B 26%  right+A+B 22%  right+A 10%  A 8%
+      mean x @50: - (n=0)  @100: - (n=0)  @200: - (n=0)  @400: - (n=0)
+7-3 | 1-1+4-1   | entropy 0.03 | value +4.35 | right 71%  right+B 24%  right+A+B 4%
+      mean x @50: 150 (n=4)  @100: 150 (n=4)  @200: 150 (n=4)  @400: 150 (n=4)
+7-3 | 1-1       | entropy 0.68 | value +2.02 | right+A 39%  A 17%  right+B 16%  NOOP 12%  right 9%  right+A+B 7%
+      mean x @50: 439 (n=4)  @100: 683 (n=1)  @200: - (n=0)  @400: - (n=0)
+7-3 | 4-1       | entropy 0.27 | value -2.00 | right 79%  right+A+B 11%  right+B 5%  right+A 4%
+      mean x @50: 162 (n=5)  @100: 180 (n=4)  @200: 314 (n=2)  @400: - (n=0)
+6-2 | 1-1+4-1   | entropy 0.02 | value +2.85 | right+B 97%
+      mean x @50: 290 (n=3)  @100: 290 (n=3)  @200: 290 (n=3)  @400: 290 (n=3)
+6-2 | 1-1       | entropy 0.50 | value +2.91 | right 42%  right+A+B 20%  right+A 17%  right+B 12%  A 7%
+      mean x @50: 436 (n=1)  @100: - (n=0)  @200: - (n=0)  @400: - (n=0)
+6-2 | 4-1       | entropy 0.35 | value -0.10 | right+A 62%  right 17%  right+A+B 11%  right+B 3%  left 3%
+      mean x @50: 320 (n=5)  @100: 478 (n=4)  @200: 290 (n=1)  @400: - (n=0)
+8-3 | 1-1+4-1   | entropy 0.34 | value +2.00 | right+B 64%  NOOP 12%  A 10%  right+A+B 6%  right+A 4%
+      mean x @50: 424 (n=5)  @100: 694 (n=4)  @200: 554 (n=2)  @400: 554 (n=2)
+8-3 | 1-1       | entropy 0.74 | value +2.57 | right+B 44%  right 21%  right+A+B 14%  right+A 11%  NOOP 8%
+      mean x @50: 274 (n=3)  @100: 343 (n=3)  @200: - (n=0)  @400: - (n=0)
+8-3 | 4-1       | entropy 0.61 | value +2.15 | right+A+B 32%  right+B 23%  right+A 21%  right 13%  A 10%
+      mean x @50: 524 (n=5)  @100: 883 (n=3)  @200: - (n=0)  @400: - (n=0)
+2-1 | 1-1+4-1   | entropy 0.39 | value +2.44 | NOOP 32%  right+B 31%  A 14%  right+A+B 12%  right 7%  right+A 5%
+      mean x @50: 389 (n=4)  @100: 722 (n=1)  @200: - (n=0)  @400: - (n=0)
+2-1 | 1-1       | entropy 0.76 | value +2.57 | right+B 35%  right+A 20%  right+A+B 18%  NOOP 15%  right 6%  A 5%
+      mean x @50: 361 (n=3)  @100: - (n=0)  @200: - (n=0)  @400: - (n=0)
+2-1 | 4-1       | entropy 0.63 | value +2.27 | right+B 45%  right+A+B 21%  right+A 15%  right 10%  A 7%
+      mean x @50: 479 (n=4)  @100: 777 (n=3)  @200: - (n=0)  @400: - (n=0)

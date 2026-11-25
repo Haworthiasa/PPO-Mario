@@ -1,0 +1,5 @@
+=== 3-2 với runs/8-levels/from-scratch-10m/checkpoints/step_009998336.pt: 100 lượt ===
+lý do: flag 98, enemy 2
+x trung bình 3299
+  x  1100- 1199:   1  (enemy 1)
+  x  1700- 1799:   1  (enemy 1)

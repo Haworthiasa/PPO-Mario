@@ -1,0 +1,42 @@
+# Unseen levels played by three checkpoints of the joint 1-1+4-1 run, 2026-11-22. No training.
+# Official evaluate.py, 20 episodes, seed 2026, sampled actions. Per-episode files:
+#   runs/1-1+4-1/from-scratch/eval/<level>/20-seed2026_<step>.json   (steps 1,503,232 / 1,900,544 / 2,904,064)
+# Specialist rows are the older surveys: runs/1-1/run-1/eval/eval-on-<level>/ and runs/4-1/from-scratch/eval/eval-on-<level>/.
+# "% of level" = mean x / flag x from runs/level-lengths/level-lengths.csv (2-2 ends in a pipe, flag x not measured).
+# No checkpoint reached a flag on any of these levels.
+
+level  checkpoint       mean x  % of level  median x  max x  mean steps
+2-1    joint 1.5M        554    17%          480       919    101
+2-1    joint 1.9M        649    20%          670      1356    382
+2-1    joint 2.9M        565    18%          584       916     82
+2-1    1-1 only 1.2M     511    16%          472      1019     70
+3-2    joint 1.5M        694    21%          492      1876     96
+3-2    joint 1.9M        772    23%          582      2082    127
+3-2    joint 2.9M        840    25%         1002      1312    118
+3-2    1-1 only 1.2M     425    13%          378      1107    332
+3-2    4-1 only 1.2M     264     8%          184       660     29
+5-1    joint 1.5M        352    11%          293      1762    105
+5-1    joint 1.9M        378    12%          273       812    108
+5-1    joint 2.9M        443    14%          275       716     42
+5-1    1-1 only 1.2M     403    13%          276       940     52
+5-1    4-1 only 1.2M     493    16%          627       807     92
+2-3    joint 1.5M        172     5%          146       608   1275
+2-3    joint 1.9M        244     7%          146       873   1134
+2-3    joint 2.9M        192     5%          146       650    923
+2-3    1-1 only 1.2M     843    23%          952      1762    105
+2-3    4-1 only 1.2M    1024    28%         1080      1792    196
+7-3    joint 1.5M        173     5%          146       587   1203
+7-3    joint 1.9M        215     6%          146       587    961
+7-3    joint 2.9M        167     5%          146       586   1344
+7-3    1-1 only 1.2M     637    18%          582      1080     74
+7-3    4-1 only 1.2M     582    16%          586       891    175
+2-2    joint 1.5M        948     -           879      1906    363
+2-2    joint 1.9M        468     -           224      1255    425
+2-2    joint 2.9M        322     -           225       514    664
+2-2    1-1 only 1.2M    1096     -          1118      1618    373
+2-2    4-1 only 1.2M     822     -           852      2163    404
+
+Reading: the joint network is stuck at x = 146 on 2-3 and 7-3 at all three checkpoints, so that behaviour was already
+there at 1.5M steps and is not produced by the last, low-learning-rate part of the run. On 2-1, 3-2 and 5-1 the three
+checkpoints are within noise of each other. Only 2-2 gets worse with more training (948 -> 468 -> 322).
+20 episodes per cell, one seed.

@@ -1,0 +1,28 @@
+=== 3-2: 15 lượt ===
+kết thúc: flag 14, pit 1
+chết vì địch, theo loại địch gần hộp va chạm của Mario nhất: không có
+số cây ăn thịt khác nhau đã gặp: 1 (x: [2712])
+số bước có cây trên màn hình: 448; bước mà hộp va chạm chồng nhau nhưng Mario không chết: 0
+bước mà hình Mario chồng hình cây nhưng hộp va chạm không chạm: 14 (trong 14 lượt)
+hộp va chạm của cây so với góc trên trái hình cây (trái, trên, phải, dưới): [[[3, 12, 13, 20], 294], [[3, 12, 6, 20], 1]]
+cây bắt đầu trồi lên 13 lần; |dx| lúc đó: nhỏ nhất 221, trung vị 221
+bước cây nằm trong cống khi |dx| < 33: 0; trong đó cây trồi lên ở bước sau: 0
+
+=== 1-1: 15 lượt ===
+kết thúc: flag 14, pit 1
+chết vì địch, theo loại địch gần hộp va chạm của Mario nhất: không có
+số cây ăn thịt khác nhau đã gặp: 0 (x: [])
+số bước có cây trên màn hình: 0; bước mà hộp va chạm chồng nhau nhưng Mario không chết: 0
+bước mà hình Mario chồng hình cây nhưng hộp va chạm không chạm: 0 (trong 0 lượt)
+hộp va chạm của cây so với góc trên trái hình cây (trái, trên, phải, dưới): []
+bước cây nằm trong cống khi |dx| < 33: 0; trong đó cây trồi lên ở bước sau: 0
+
+=== 6-1: 15 lượt ===
+kết thúc: flag 15
+chết vì địch, theo loại địch gần hộp va chạm của Mario nhất: không có
+số cây ăn thịt khác nhau đã gặp: 1 (x: [1640])
+số bước có cây trên màn hình: 465; bước mà hộp va chạm chồng nhau nhưng Mario không chết: 0
+bước mà hình Mario chồng hình cây nhưng hộp va chạm không chạm: 15 (trong 15 lượt)
+hộp va chạm của cây so với góc trên trái hình cây (trái, trên, phải, dưới): [[[3, 12, 13, 20], 300], [[3, 12, 9, 20], 12], [[6, 12, 13, 20], 11]]
+bước cây nằm trong cống khi |dx| < 33: 0; trong đó cây trồi lên ở bước sau: 0
+

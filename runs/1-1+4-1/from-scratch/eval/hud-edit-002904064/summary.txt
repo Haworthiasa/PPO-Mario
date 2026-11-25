@@ -1,0 +1,21 @@
+# HUD edit test, 2026-11-22. Diagnostic only: no training, not the official scoring command.
+# Checkpoint runs/1-1+4-1/from-scratch/checkpoints/step_002904064.pt, 100 episodes, seed 7, sampled actions.
+# Script: experiments/hud_mask_eval.py (wraps model.act, plays with run_episodes of the unmodified evaluate.py).
+# The HUD text (score, coins, world label, timer) is rows 5..10 of the 84x84 frame; all 4 stacked frames are edited.
+#   none    untouched (control; reproduces the 99 and 99 of the lab notes)
+#   blank   HUD rows painted with the frame's own background colour
+#   frozen  HUD rows replaced by the HUD of the same level's first frame (score 0, full timer, right world label)
+#   swap    HUD rows replaced by the first-frame HUD of the other level (wrong world label; 11 pixels differ)
+
+level  mode    flags/100  mean x  failed episodes ended at x
+1-1    none    99         3136    680
+1-1    blank   98         3138    2022 2026
+1-1    frozen  97         3117    1435 1668 2019
+1-1    swap    97         3104    680 680 2469
+4-1    none    99         3581    2406
+4-1    blank   97         3535    532 1813 2606
+4-1    frozen  97         3539    532 2227 2608
+4-1    swap    97         3539    532 2227 2608
+
+Reading: removing or freezing the HUD costs 1-2 flags in 100, which is inside the noise of a 100-episode evaluation
+(about +-5 points). The policy does not need the timer, the score or the world label to finish either level.

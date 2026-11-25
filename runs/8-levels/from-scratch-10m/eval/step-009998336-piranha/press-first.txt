@@ -1,0 +1,12 @@
+=== 4-1: 10 lần thử ===
+ép sát cống đủ 300 bước (1200 khung hình): 0 lần; tổng số lần cây trồi lên trong lúc ép: 0; dx lúc ép: []
+đã lùi ra, chờ cây lên rồi nhảy vào: 0 lần; số bước chờ cây lên: []
+kết quả sau khi nhảy: 
+kết quả các lần không tới được bước nhảy: kết thúc: flag (lúc drive) 10
+
+=== 5-1: 10 lần thử ===
+ép sát cống đủ 300 bước (1200 khung hình): 4 lần; tổng số lần cây trồi lên trong lúc ép: 0; dx lúc ép: [22]
+đã lùi ra, chờ cây lên rồi nhảy vào: 4 lần; số bước chờ cây lên: [2, 4, 5, 6]
+kết quả sau khi nhảy: nhảy trượt 4
+kết quả các lần không tới được bước nhảy: chết vì rùa xanh (lúc press) 6
+

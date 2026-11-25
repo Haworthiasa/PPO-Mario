@@ -1,0 +1,121 @@
+level,flag_x,network,trained_on_this_level,mean_x,max_x,flags,episodes,mean_steps,file
+1-2,,"mạng 8 màn, bước 9.998.336",0,426.9,972,0,20,161,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/1-2.json
+1-2,,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,255.9,652,0,20,522,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/1-2/20-seed2026_002904064.json
+1-2,,"mạng chuyên 1-1, bước 1.200.128",0,177.3,965,0,20,266,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-1-2/20-seed2026_001200128.json
+1-2,,"mạng chuyên 4-1, bước 1.200.128",0,,,,,,
+1-2,,"mạng chuyên 2-3, bước 2.801.664",0,354.8,892,0,20,876,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-1-2/20-seed2026_002801664.json
+1-3,2425,"mạng 8 màn, bước 9.998.336",0,430.2,439,0,20,41,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/1-3.json
+1-3,2425,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,156.8,420,0,20,1428,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/1-3/20-seed2026_002904064.json
+1-3,2425,"mạng chuyên 1-1, bước 1.200.128",0,415.9,445,0,20,36,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-1-3/20-seed2026_001200128.json
+1-3,2425,"mạng chuyên 4-1, bước 1.200.128",0,403.1,747,0,20,40,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-1-3/20-seed2026_001200128.json
+1-3,2425,"mạng chuyên 2-3, bước 2.801.664",0,292.4,315,0,20,28,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-1-3/20-seed2026_002801664.json
+1-4,2244,"mạng 8 màn, bước 9.998.336",0,231.6,236,0,20,32,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/1-4.json
+1-4,2244,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,494.1,561,0,20,48,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/1-4/20-seed2026_002904064.json
+1-4,2244,"mạng chuyên 1-1, bước 1.200.128",0,232.8,234,0,20,25,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-1-4/20-seed2026_001200128.json
+1-4,2244,"mạng chuyên 4-1, bước 1.200.128",0,,,,,,
+1-4,2244,"mạng chuyên 2-3, bước 2.801.664",0,231.8,232,0,20,25,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-1-4/20-seed2026_002801664.json
+2-2,,"mạng 8 màn, bước 9.998.336",0,873.9,1435,0,20,182,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/2-2.json
+2-2,,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,322.4,514,0,20,664,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/2-2/20-seed2026_002904064.json
+2-2,,"mạng chuyên 1-1, bước 1.200.128",0,1096.1,1618,0,20,373,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-2-2/20-seed2026_001200128.json
+2-2,,"mạng chuyên 4-1, bước 1.200.128",0,822.1,2163,0,20,404,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-2-2/20-seed2026_001200128.json
+2-2,,"mạng chuyên 2-3, bước 2.801.664",0,1084.3,1522,0,20,194,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-2-2/20-seed2026_002801664.json
+2-3,3593,"mạng 8 màn, bước 9.998.336",0,258.7,1081,0,20,1281,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/2-3.json
+2-3,3593,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,192.2,650,0,20,923,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/2-3/20-seed2026_002904064.json
+2-3,3593,"mạng chuyên 1-1, bước 1.200.128",0,843.2,1762,0,20,105,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-2-3/20-seed2026_001200128.json
+2-3,3593,"mạng chuyên 4-1, bước 1.200.128",0,1023.6,1792,0,20,196,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-2-3/20-seed2026_001200128.json
+2-3,3593,"mạng chuyên 2-3, bước 2.801.664",1,3492.1,3593,18,20,293,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/20-seed2026_002801664.json
+2-4,2245,"mạng 8 màn, bước 9.998.336",0,344.2,348,0,20,34,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/2-4.json
+2-4,2245,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,388.9,416,0,20,35,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/2-4/20-seed2026_002904064.json
+2-4,2245,"mạng chuyên 1-1, bước 1.200.128",0,291.3,344,0,20,35,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-2-4/20-seed2026_001200128.json
+2-4,2245,"mạng chuyên 4-1, bước 1.200.128",0,337.4,347,0,20,29,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-2-4/20-seed2026_001200128.json
+2-4,2245,"mạng chuyên 2-3, bước 2.801.664",0,313.6,344,0,20,30,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-2-4/20-seed2026_002801664.json
+3-3,2409,"mạng 8 màn, bước 9.998.336",0,461.9,472,0,20,48,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/3-3.json
+3-3,2409,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,304.9,323,0,20,37,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/3-3/20-seed2026_002904064.json
+3-3,2409,"mạng chuyên 1-1, bước 1.200.128",0,322.2,454,0,20,115,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-3-3/20-seed2026_001200128.json
+3-3,2409,"mạng chuyên 4-1, bước 1.200.128",0,,,,,,
+3-3,2409,"mạng chuyên 2-3, bước 2.801.664",0,324.4,326,0,20,28,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-3-3/20-seed2026_002801664.json
+3-4,2244,"mạng 8 màn, bước 9.998.336",0,358.1,524,0,20,36,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/3-4.json
+3-4,2244,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,358.0,434,0,20,32,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/3-4/20-seed2026_002904064.json
+3-4,2244,"mạng chuyên 1-1, bước 1.200.128",0,323.5,521,0,20,35,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-3-4/20-seed2026_001200128.json
+3-4,2244,"mạng chuyên 4-1, bước 1.200.128",0,270.1,274,0,20,25,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-3-4/20-seed2026_001200128.json
+3-4,2244,"mạng chuyên 2-3, bước 2.801.664",0,504.9,1435,0,20,46,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-3-4/20-seed2026_002801664.json
+4-2,,"mạng 8 màn, bước 9.998.336",0,244.3,346,0,20,30,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/4-2.json
+4-2,,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,263.4,466,0,20,418,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/4-2/20-seed2026_002904064.json
+4-2,,"mạng chuyên 1-1, bước 1.200.128",0,280.9,466,0,20,328,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-4-2/20-seed2026_001200128.json
+4-2,,"mạng chuyên 4-1, bước 1.200.128",0,249.2,350,0,20,31,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-4-2/20-seed2026_001200128.json
+4-2,,"mạng chuyên 2-3, bước 2.801.664",0,223.0,466,0,20,126,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-4-2/20-seed2026_002801664.json
+4-3,2345,"mạng 8 màn, bước 9.998.336",0,397.6,413,0,20,40,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/4-3.json
+4-3,2345,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,187.2,634,0,20,1430,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/4-3/20-seed2026_002904064.json
+4-3,2345,"mạng chuyên 1-1, bước 1.200.128",0,508.1,578,0,20,45,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-4-3/20-seed2026_001200128.json
+4-3,2345,"mạng chuyên 4-1, bước 1.200.128",0,466.2,710,0,20,46,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-4-3/20-seed2026_001200128.json
+4-3,2345,"mạng chuyên 2-3, bước 2.801.664",0,420.8,583,0,20,38,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-4-3/20-seed2026_002801664.json
+4-4,,"mạng 8 màn, bước 9.998.336",0,137.8,138,0,20,18,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/4-4.json
+4-4,,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,131.6,137,0,20,19,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/4-4/20-seed2026_002904064.json
+4-4,,"mạng chuyên 1-1, bước 1.200.128",0,123.5,133,0,20,21,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-4-4/20-seed2026_001200128.json
+4-4,,"mạng chuyên 4-1, bước 1.200.128",0,108.2,147,0,20,980,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-4-4/20-seed2026_001200128.json
+4-4,,"mạng chuyên 2-3, bước 2.801.664",0,134.2,138,0,20,20,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-4-4/20-seed2026_002801664.json
+5-3,2425,"mạng 8 màn, bước 9.998.336",0,424.6,628,0,20,41,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/5-3.json
+5-3,2425,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,416.4,628,0,20,309,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/5-3/20-seed2026_002904064.json
+5-3,2425,"mạng chuyên 1-1, bước 1.200.128",0,360.4,702,0,20,33,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-5-3/20-seed2026_001200128.json
+5-3,2425,"mạng chuyên 4-1, bước 1.200.128",0,266.7,418,0,20,28,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-5-3/20-seed2026_001200128.json
+5-3,2425,"mạng chuyên 2-3, bước 2.801.664",0,285.4,318,0,20,26,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-5-3/20-seed2026_002801664.json
+5-4,2245,"mạng 8 màn, bước 9.998.336",0,337.8,347,0,20,34,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/5-4.json
+5-4,2245,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,343.0,418,0,20,31,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/5-4/20-seed2026_002904064.json
+5-4,2245,"mạng chuyên 1-1, bước 1.200.128",0,294.6,378,0,20,40,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-5-4/20-seed2026_001200128.json
+5-4,2245,"mạng chuyên 4-1, bước 1.200.128",0,337.4,347,0,20,29,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-5-4/20-seed2026_001200128.json
+5-4,2245,"mạng chuyên 2-3, bước 2.801.664",0,315.3,344,0,20,30,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-5-4/20-seed2026_002801664.json
+6-2,3449,"mạng 8 màn, bước 9.998.336",0,356.5,448,0,20,43,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/6-2.json
+6-2,3449,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,295.4,305,0,20,1206,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/6-2/20-seed2026_002904064.json
+6-2,3449,"mạng chuyên 1-1, bước 1.200.128",0,317.9,448,0,20,136,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-6-2/20-seed2026_001200128.json
+6-2,3449,"mạng chuyên 4-1, bước 1.200.128",0,686.0,1278,0,20,247,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-6-2/20-seed2026_001200128.json
+6-2,3449,"mạng chuyên 2-3, bước 2.801.664",0,296.0,302,0,20,1006,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-6-2/20-seed2026_002801664.json
+6-3,2665,"mạng 8 màn, bước 9.998.336",0,411.0,491,0,20,44,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/6-3.json
+6-3,2665,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,311.2,393,0,20,36,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/6-3/20-seed2026_002904064.json
+6-3,2665,"mạng chuyên 1-1, bước 1.200.128",0,298.9,373,0,20,123,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-6-3/20-seed2026_001200128.json
+6-3,2665,"mạng chuyên 4-1, bước 1.200.128",0,350.4,480,0,20,40,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-6-3/20-seed2026_001200128.json
+6-3,2665,"mạng chuyên 2-3, bước 2.801.664",0,375.4,480,0,20,36,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-6-3/20-seed2026_002801664.json
+6-4,2244,"mạng 8 màn, bước 9.998.336",0,236.8,349,0,20,33,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/6-4.json
+6-4,2244,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,520.8,561,0,20,52,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/6-4/20-seed2026_002904064.json
+6-4,2244,"mạng chuyên 1-1, bước 1.200.128",0,232.8,234,0,20,25,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-6-4/20-seed2026_001200128.json
+6-4,2244,"mạng chuyên 4-1, bước 1.200.128",0,232.7,235,0,20,26,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-6-4/20-seed2026_001200128.json
+6-4,2244,"mạng chuyên 2-3, bước 2.801.664",0,231.8,232,0,20,25,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-6-4/20-seed2026_002801664.json
+7-1,2857,"mạng 8 màn, bước 9.998.336",0,408.6,722,0,20,99,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/7-1.json
+7-1,2857,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,443.1,1216,0,20,725,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/7-1/20-seed2026_002904064.json
+7-1,2857,"mạng chuyên 1-1, bước 1.200.128",0,559.3,882,0,20,99,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-7-1/20-seed2026_001200128.json
+7-1,2857,"mạng chuyên 4-1, bước 1.200.128",0,524.0,985,0,20,80,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-7-1/20-seed2026_001200128.json
+7-1,2857,"mạng chuyên 2-3, bước 2.801.664",0,514.0,817,0,20,106,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-7-1/20-seed2026_002801664.json
+7-2,,"mạng 8 màn, bước 9.998.336",0,484.6,789,0,20,110,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/7-2.json
+7-2,,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,388.7,786,0,20,411,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/7-2/20-seed2026_002904064.json
+7-2,,"mạng chuyên 1-1, bước 1.200.128",0,810.5,1235,0,20,224,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-7-2/20-seed2026_001200128.json
+7-2,,"mạng chuyên 4-1, bước 1.200.128",0,487.1,1109,0,20,648,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-7-2/20-seed2026_001200128.json
+7-2,,"mạng chuyên 2-3, bước 2.801.664",0,681.9,1904,0,20,119,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-7-2/20-seed2026_002801664.json
+7-3,3593,"mạng 8 màn, bước 9.998.336",0,298.9,796,0,20,994,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/7-3.json
+7-3,3593,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,167.4,586,0,20,1344,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/7-3/20-seed2026_002904064.json
+7-3,3593,"mạng chuyên 1-1, bước 1.200.128",0,636.5,1080,0,20,74,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-7-3/20-seed2026_001200128.json
+7-3,3593,"mạng chuyên 4-1, bước 1.200.128",0,581.5,891,0,20,175,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-7-3/20-seed2026_001200128.json
+7-3,3593,"mạng chuyên 2-3, bước 2.801.664",0,1178.4,1867,0,20,99,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-7-3/20-seed2026_002801664.json
+7-4,,"mạng 8 màn, bước 9.998.336",0,345.3,424,0,20,34,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/7-4.json
+7-4,,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,340.6,346,0,20,30,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/7-4/20-seed2026_002904064.json
+7-4,,"mạng chuyên 1-1, bước 1.200.128",0,301.4,358,0,20,43,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-7-4/20-seed2026_001200128.json
+7-4,,"mạng chuyên 4-1, bước 1.200.128",0,339.9,347,0,20,31,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-7-4/20-seed2026_001200128.json
+7-4,,"mạng chuyên 2-3, bước 2.801.664",0,328.4,422,0,20,32,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-7-4/20-seed2026_002801664.json
+8-1,6009,"mạng 8 màn, bước 9.998.336",0,449.9,1216,0,20,44,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/8-1.json
+8-1,6009,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,506.7,938,0,20,44,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/8-1/20-seed2026_002904064.json
+8-1,6009,"mạng chuyên 1-1, bước 1.200.128",0,400.6,1074,0,20,405,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-8-1/20-seed2026_001200128.json
+8-1,6009,"mạng chuyên 4-1, bước 1.200.128",0,460.7,1072,0,20,46,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-8-1/20-seed2026_001200128.json
+8-1,6009,"mạng chuyên 2-3, bước 2.801.664",0,255.7,546,0,20,99,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-8-1/20-seed2026_002801664.json
+8-2,3449,"mạng 8 màn, bước 9.998.336",0,317.2,348,0,20,35,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/8-2.json
+8-2,3449,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,420.9,1018,0,20,121,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/8-2/20-seed2026_002904064.json
+8-2,3449,"mạng chuyên 1-1, bước 1.200.128",0,305.1,1428,0,20,60,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-8-2/20-seed2026_001200128.json
+8-2,3449,"mạng chuyên 4-1, bước 1.200.128",0,407.6,1438,0,20,51,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-8-2/20-seed2026_001200128.json
+8-2,3449,"mạng chuyên 2-3, bước 2.801.664",0,285.6,346,0,20,91,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-8-2/20-seed2026_002801664.json
+8-3,3417,"mạng 8 màn, bước 9.998.336",0,654.5,2009,0,20,648,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/8-3.json
+8-3,3417,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,589.1,1730,0,20,748,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/8-3/20-seed2026_002904064.json
+8-3,3417,"mạng chuyên 1-1, bước 1.200.128",0,600.7,1015,0,20,118,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-8-3/20-seed2026_001200128.json
+8-3,3417,"mạng chuyên 4-1, bước 1.200.128",0,922.8,1237,0,20,117,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-8-3/20-seed2026_001200128.json
+8-3,3417,"mạng chuyên 2-3, bước 2.801.664",0,565.8,1137,0,20,424,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-8-3/20-seed2026_002801664.json
+8-4,,"mạng 8 màn, bước 9.998.336",0,171.4,178,0,20,18,/mnt/d/mario-ppo/runs/8-levels/from-scratch-10m/eval/inside-network-009998336/unseen-levels/8-4.json
+8-4,,"mạng 2 màn (1-1 và 4-1), bước 2.904.064",0,167.0,167,0,20,15,/mnt/d/mario-ppo/runs/1-1+4-1/from-scratch/eval/8-4/20-seed2026_002904064.json
+8-4,,"mạng chuyên 1-1, bước 1.200.128",0,146.9,147,0,20,19,/mnt/d/mario-ppo/runs/1-1/run-1/eval/eval-on-8-4/20-seed2026_001200128.json
+8-4,,"mạng chuyên 4-1, bước 1.200.128",0,237.8,1159,0,20,257,/mnt/d/mario-ppo/runs/4-1/from-scratch/eval/eval-on-8-4/20-seed2026_001200128.json
+8-4,,"mạng chuyên 2-3, bước 2.801.664",0,174.2,177,0,20,19,/mnt/d/mario-ppo/runs/2-3/from-scratch-3m/eval/eval-on-8-4/20-seed2026_002801664.json

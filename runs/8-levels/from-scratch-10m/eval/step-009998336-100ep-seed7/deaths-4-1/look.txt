@@ -1,0 +1,3 @@
+=== 4-1 với runs/8-levels/from-scratch-10m/checkpoints/step_009998336.pt: 100 lượt ===
+lý do: flag 100
+x trung bình 3593

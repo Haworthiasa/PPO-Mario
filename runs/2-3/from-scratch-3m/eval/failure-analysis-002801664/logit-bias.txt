@@ -1,0 +1,16 @@
+bias [none] level 2-3 step_002801664.pt: flags 86/100, mean x 3358, mean steps 283, ends {'enemy': 1, 'flag': 86, 'pit': 13}
+   steps moving backwards 0.0% | taken: NOOP 5.7%  right 8.0%  right+A 15.3%  right+B 35.6%  right+A+B 21.6%  A 13.1%  left 0.8% | at flag: mean steps 302, mean time left 237
+bias [6:1] level 2-3 step_002801664.pt: flags 86/100, mean x 3364, mean steps 283, ends {'flag': 86, 'pit': 10, 'enemy': 4}
+   steps moving backwards 0.0% | taken: NOOP 6.0%  right 7.8%  right+A 15.3%  right+B 35.7%  right+A+B 21.3%  A 13.2%  left 0.8% | at flag: mean steps 302, mean time left 237
+bias [6:2] level 2-3 step_002801664.pt: flags 82/100, mean x 3371, mean steps 284, ends {'flag': 82, 'pit': 15, 'enemy': 3}
+   steps moving backwards 0.0% | taken: NOOP 5.6%  right 7.9%  right+A 15.3%  right+B 35.8%  right+A+B 20.9%  A 13.5%  left 0.9% | at flag: mean steps 302, mean time left 237
+bias [6:3] level 2-3 step_002801664.pt: flags 84/100, mean x 3370, mean steps 285, ends {'flag': 84, 'pit': 15, 'enemy': 1}
+   steps moving backwards 0.0% | taken: NOOP 5.7%  right 8.1%  right+A 15.6%  right+B 35.5%  right+A+B 21.2%  A 13.1%  left 1.0% | at flag: mean steps 304, mean time left 236
+bias [0:1] level 2-3 step_002801664.pt: flags 81/100, mean x 3367, mean steps 284, ends {'enemy': 7, 'flag': 81, 'pit': 12}
+   steps moving backwards 0.0% | taken: NOOP 7.3%  right 7.6%  right+A 15.2%  right+B 35.2%  right+A+B 21.0%  A 13.0%  left 0.8% | at flag: mean steps 303, mean time left 237
+bias [0:2] level 2-3 step_002801664.pt: flags 77/100, mean x 3244, mean steps 273, ends {'enemy': 9, 'pit': 14, 'flag': 77}
+   steps moving backwards 0.0% | taken: NOOP 9.3%  right 7.2%  right+A 14.9%  right+B 35.1%  right+A+B 20.2%  A 12.5%  left 0.8% | at flag: mean steps 302, mean time left 237
+bias [6:-inf] level 2-3 step_002801664.pt: flags 60/100, mean x 3188, mean steps 271, ends {'enemy': 27, 'pit': 13, 'flag': 60}
+   steps moving backwards 0.0% | taken: NOOP 5.6%  right 8.2%  right+A 15.6%  right+B 36.9%  right+A+B 21.1%  A 12.5%  left 0.0% | at flag: mean steps 307, mean time left 236
+bias [0:-inf,6:-inf] level 2-3 step_002801664.pt: flags 59/100, mean x 3159, mean steps 282, ends {'flag': 59, 'enemy': 26, 'pit': 15}
+   steps moving backwards 0.1% | taken: NOOP 0.0%  right 9.4%  right+A 18.5%  right+B 36.9%  right+A+B 21.9%  A 13.3%  left 0.0% | at flag: mean steps 330, mean time left 231

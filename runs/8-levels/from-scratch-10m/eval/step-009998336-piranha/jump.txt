@@ -1,0 +1,16 @@
+=== 4-1: 24 lần thử ===
+ép sát cống từ 100 bước trở lên: 0 lần, tổng 0 bước (0 khung hình); số lần cây trồi lên trong lúc ép: 0; dx lúc ép: []
+đứng ngoài chờ cây lên rồi nhảy vào: 24 lần; số bước chờ cây lên: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+kết quả sau khi nhảy: chết vì nhím 15, chết vì cây ăn thịt 6, cây biến khỏi bộ nhớ 3
+các lần nhảy trượt: khoảng hở nhỏ nhất giữa hai hộp va chạm (px, <= 0 là chạm): []
+các lần chết vì cây: lần 3 (đứng cách 62, cây nhô 11 px lúc chết); lần 7 (đứng cách 62, cây nhô 11 px lúc chết); lần 11 (đứng cách 62, cây nhô 11 px lúc chết); lần 15 (đứng cách 62, cây nhô 11 px lúc chết); lần 19 (đứng cách 62, cây nhô 11 px lúc chết); lần 23 (đứng cách 62, cây nhô 11 px lúc chết)
+kết quả các lần không tới được bước nhảy: không có
+
+=== 5-1: 24 lần thử ===
+ép sát cống từ 100 bước trở lên: 0 lần, tổng 0 bước (0 khung hình); số lần cây trồi lên trong lúc ép: 0; dx lúc ép: []
+đứng ngoài chờ cây lên rồi nhảy vào: 23 lần; số bước chờ cây lên: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+kết quả sau khi nhảy: nhảy trượt 23
+các lần nhảy trượt: khoảng hở nhỏ nhất giữa hai hộp va chạm (px, <= 0 là chạm): [16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16]
+các lần chết vì cây: 
+kết quả các lần không tới được bước nhảy: chết vì nấm goomba (lúc drive) 1
+
