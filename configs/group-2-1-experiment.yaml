@@ -1,0 +1,60 @@
+# Thí nghiệm có đối chứng ở màn 2-1 (hướng 2 trong docs/extension-directions.md). KHÔNG phải bản nộp.
+#
+# Câu hỏi (từ docs/inside-the-network.md, mục 1.6 và 4): ở bức tường lò xo x ≈ 3026 của 2-1, mạng 8 màn mất dần cách
+# thoát giữa bước 6,3 triệu và 10 triệu. Có phải vì mẹo cắt lượt sau 200 bước không tiến đã cắt mất đúng những lần thoát
+# (6 trên 8 lần thoát ở checkpoint 6,3 triệu cần hơn 200 bước đứng yên)?
+#
+# Cách làm: hai nhánh cùng nối tiếp checkpoint 6.303.744 của lượt 8 màn, cùng học CHỈ màn 2-1 thêm 1.495.040 bước
+# (365 vòng thu x 4096), cùng lịch tốc độ học và lịch entropy của lượt gốc (total_steps giữ 9.998.336).
+# Hai nhánh khác nhau ĐÚNG MỘT khóa, ghi đè trên dòng lệnh:
+#   nhánh đối chứng: env.max_no_progress_steps=200   (như lượt gốc)
+#   nhánh thử:       env.max_no_progress_steps=2000  (gần như tắt: lượt kẹt chạy tới khi hết đồng hồ của trò chơi)
+# Chạy:
+#   python -m mario_ppo.train_joint --config configs/group-2-1-experiment.yaml run_dir=runs/2-1/wall-cut-200
+#   python -m mario_ppo.train_joint --config configs/group-2-1-experiment.yaml run_dir=runs/2-1/wall-cut-2000 env.max_no_progress_steps=2000
+# Tổng hai nhánh 2.990.080 bước, cộng 8.192 bước chạy thử, dưới mức 3 triệu bước Dũng duyệt ngày 24/11/2026.
+levels: ["2-1"]
+seed: 1
+device: auto
+run_dir: null
+resume: runs/8-levels/from-scratch-10m/checkpoints/step_006303744.pt
+stop_at_step: 7_798_784
+torch_threads: 6
+checkpoint_every: 100_000
+eval_episodes: 0
+eval_max_steps: 3000
+video: false
+
+env:
+  actions: simple
+  frame_skip: 4
+  frame_stack: 4
+  size: 84
+  weights: [1.0, 1.0, 2.0, 0.0, 0.0]
+  noop_max: 30
+  normalize_reward: false
+  # ---- mẹo huấn luyện của nhóm (chỉ chạy khi eval_mode=False) ----
+  max_no_progress_steps: 200
+  flag_bonus: 2.0
+
+model: {}
+
+algo:
+  num_envs: 8
+  num_steps: 512
+  num_minibatches: 16
+  update_epochs: 10
+  total_steps: 9_998_336
+  lr: 2.0e-4
+  anneal_lr: true
+  adam_eps: 1e-5
+  gamma: 0.9
+  gae_lambda: 1.0
+  clip_coef: 0.15
+  clip_vloss: false
+  norm_adv: true
+  ent_coef: 0.01
+  ent_coef_final: 0.002
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: 0.03

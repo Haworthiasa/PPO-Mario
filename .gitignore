@@ -19,3 +19,9 @@ runs/**/*.log
 
 # Bản mã cũ trước khi chuyển sang kho mã của thầy
 legacy/
+
+# Dữ liệu thô từng bước của các script chẩn đoán (trace.npz, wall-obs.npz): nặng, tạo lại được bằng script.
+*.npz
+# Tệp ghi số tiến trình của lượt huấn luyện và tệp lỗi của công cụ dòng lệnh
+*.pid
+*.stackdump

@@ -2,7 +2,7 @@
 
     python -m mario_ppo.train_joint --config configs/group-1-1-and-4-1.yaml run_dir=runs/1-1+4-1/from-scratch
 
-Khác train.py ở đúng ba chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
+Khác train.py ở đúng năm chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
 train.py:
   1. Cấu hình có khóa `levels` (danh sách màn) thay cho `level`. Môi trường thứ i chơi màn levels[i % số màn],
      nên mỗi màn nhận phần bước bằng nhau và MỖI lần cập nhật PPO đều có dữ liệu của mọi màn. Lợi thế (GAE)
@@ -12,6 +12,21 @@ train.py:
      x_pos, flag_rate là trung bình cộng của các màn, để màn có lượt ngắn không lấn át con số chung.
   3. Mỗi checkpoint được đánh giá trên từng màn: evals.csv có một dòng cho mỗi (checkpoint, màn),
      video là videos/step_*_<màn>.mp4.
+  4. Khóa tùy chọn `stop_at_step` (cấp cao nhất của cấu hình, mặc định không có): lượt chạy dừng sau đoạn thu đầu
+     tiên đưa bộ đếm bước tới mốc này, lưu checkpoint ở đúng bước đó rồi thoát. Lịch tốc độ học và lịch entropy
+     vẫn tính theo algo.total_steps, nên chạy tiếp bằng `resume=<checkpoint đó>` đi đúng lịch của lượt đầy đủ.
+     Dùng để chạy một đoạn có số bước định trước mà không phải dừng tay, ví dụ:
+         python -m mario_ppo.train_joint --config <cấu hình> run_dir=<thư mục> stop_at_step=2000000
+     Mỗi đoạn thu là num_envs * num_steps bước, nên bước dừng thật là bội số đầu tiên của số đó không nhỏ hơn mốc.
+  5. Mục tùy chọn `allocation` (cấp cao nhất của cấu hình, mặc định không có = chia đều như mục 1): dồn bước cho
+     màn còn trượt nhiều. Mỗi môi trường chơi được mọi màn (LevelSwitchEnv) và chọn màn cho từng lượt chơi mới;
+     sau mỗi đoạn thu, phần bước mục tiêu của từng màn được tính lại từ tỉ lệ trượt của 100 lượt gần nhất:
+         allocation:
+           floor: 0.06        # phần bước tối thiểu của mỗi màn, để màn đã thạo không bị quên
+           cap: 0.30          # phần bước tối đa của một màn, để một màn quá khó không nuốt hết ngân sách
+           min_episodes: 20   # màn có ít lượt hơn số này trong cửa sổ thì coi như tỉ lệ trượt bằng 1
+     Phần còn lại sau khi trừ sàn (1 - số màn * floor) chia theo tỉ lệ trượt. Số bước thật và phần mục tiêu của
+     từng đoạn thu được ghi vào allocation.csv; progress.csv giữ nguyên các cột.
 
 Mạng không được báo đang ở màn nào: đầu vào vẫn chỉ là khung hình (Quy định 3.5). `info` chỉ dùng để ghi nhật ký.
 Với `levels` chỉ có một màn, tệp này cho đúng các con số của train.py (bài kiểm tra tests_group/test_train_joint.py).
@@ -50,9 +65,101 @@ def assign_levels(levels, num_envs):
     return [levels[i % len(levels)] for i in range(num_envs)]
 
 
-def _make_vec_env(env_cfg, env_levels, seed):
+def level_shares(fail_rates, floor, cap):
+    """Phần bước mục tiêu của từng màn (tổng bằng 1) theo tỉ lệ trượt `fail_rates`.
+
+    Mỗi màn nhận `floor`; phần còn lại chia theo tỉ lệ trượt; không màn nào vượt `cap` (phần vượt trần chia lại
+    cho các màn còn dưới trần, vẫn theo tỉ lệ trượt). Khi các màn còn dưới trần đều không trượt thì chia đều.
+    """
+    fail = np.clip(np.asarray(fail_rates, dtype=float), 0.0, 1.0)
+    n = len(fail)
+    if not (n and 0.0 <= floor <= cap and n * floor <= 1.0 + 1e-9 and n * cap >= 1.0 - 1e-9):
+        raise ValueError(f"allocation: cần 0 <= floor <= cap, {n} * floor <= 1 <= {n} * cap; "
+                         f"nhận floor={floor}, cap={cap}")
+    share = np.full(n, float(floor))
+    free = np.ones(n, dtype=bool)  # màn còn dưới trần
+    rest = 1.0 - n * floor         # phần chưa chia
+    while rest > 1e-12 and free.any():
+        weight = np.where(free, fail, 0.0)
+        if weight.sum() <= 0.0:
+            weight = free.astype(float)
+        add = rest * weight / weight.sum()
+        over = free & (share + add > cap + 1e-12)
+        if not over.any():
+            share += add
+            break
+        rest -= float((cap - share[over]).sum())
+        share[over] = cap
+        free &= ~over
+    return share
+
+
+def episode_probs(shares, mean_lengths):
+    """Xác suất chọn màn cho lượt chơi kế tiếp để phần BƯỚC của mỗi màn bằng `shares`.
+
+    Màn có lượt dài cần ít lượt hơn để nhận cùng số bước, nên xác suất tỉ lệ với shares / độ dài lượt trung bình.
+    Màn chưa có lượt nào (độ dài nan) dùng trung bình độ dài của các màn đã có.
+    """
+    shares, lengths = np.asarray(shares, dtype=float), np.asarray(mean_lengths, dtype=float)
+    known = np.isfinite(lengths) & (lengths > 0)
+    lengths = np.where(known, lengths, lengths[known].mean() if known.any() else 1.0)
+    probs = shares / lengths
+    return probs / probs.sum()
+
+
+class LevelSwitchEnv(gym.Env):
+    """Một môi trường chơi được nhiều màn; chỉ dùng khi huấn luyện với mục `allocation`.
+
+    Mỗi lần reset, môi trường chọn màn cho lượt chơi kế tiếp theo xác suất `level_probs` (tiến trình huấn luyện đặt
+    lại sau mỗi đoạn thu bằng envs.set_attr); khi `level_probs` còn là None thì giữ màn đang chơi. Mỗi màn là một
+    môi trường make_env riêng, tạo khi cần lần đầu. Quan sát vẫn chỉ là khung hình: chỉ số màn nằm trong
+    info["level_index"] để tiến trình huấn luyện ghi nhật ký, mạng không nhận được nó (Quy định 3.5).
+    """
+
+    def __init__(self, levels, start_level, seed, env_cfg):
+        self.levels = [str(level) for level in levels]
+        self.level_probs = None
+        self._seed, self._env_cfg, self._envs = int(seed), dict(env_cfg), {}
+        self._index = self.levels.index(str(start_level))
+        self._pick = np.random.default_rng(self._seed)
+        env = self._current()
+        self.observation_space, self.action_space = env.observation_space, env.action_space
+        self.metadata, self.render_mode = dict(env.metadata), env.render_mode
+
+    def _current(self):
+        if self._index not in self._envs:
+            from mario_ppo.env import make_env
+            self._envs[self._index] = make_env(self.levels[self._index], seed=self._seed + 1000 * self._index,
+                                               **self._env_cfg)
+        return self._envs[self._index]
+
+    def reset(self, *, seed=None, options=None):
+        if seed is not None:
+            self._pick = np.random.default_rng(seed)
+        if self.level_probs is not None:
+            probs = np.asarray(self.level_probs, dtype=float)
+            self._index = int(self._pick.choice(len(self.levels), p=probs / probs.sum()))
+        obs, info = self._current().reset(seed=seed, options=options)
+        return obs, dict(info, level_index=self._index)
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self._current().step(action)
+        return obs, reward, terminated, truncated, dict(info, level_index=self._index)
+
+    def close(self):
+        for env in self._envs.values():
+            env.close()
+        self._envs = {}
+
+
+def _make_vec_env(env_cfg, env_levels, seed, switch_levels=None):
+    """`switch_levels` (danh sách màn) bật LevelSwitchEnv: môi trường i bắt đầu ở env_levels[i] rồi đổi màn theo lượt."""
     from mario_ppo.env import make_env
-    fns = [functools.partial(make_env, level, seed=seed + i, **env_cfg) for i, level in enumerate(env_levels)]
+    if switch_levels is None:
+        fns = [functools.partial(make_env, level, seed=seed + i, **env_cfg) for i, level in enumerate(env_levels)]
+    else:
+        fns = [functools.partial(LevelSwitchEnv, list(switch_levels), level, seed + i, env_cfg)
+               for i, level in enumerate(env_levels)]
     mode = gym.vector.AutoresetMode.SAME_STEP  # như train.py
     if len(fns) == 1:
         return gym.vector.SyncVectorEnv(fns, autoreset_mode=mode)
@@ -96,9 +203,19 @@ def train(cfg):
         opt.load_state_dict(ck["optimizer"])
         global_step = ck["global_step"]
         print(f"resumed from {cfg.resume} at step {global_step}")
+    stop_at = cfg.get("stop_at_step")  # mốc dừng sớm của nhóm; None = chạy tới algo.total_steps như train.py
+    if stop_at is not None and int(stop_at) <= global_step:
+        raise ValueError(f"stop_at_step={stop_at} phải lớn hơn bước hiện tại ({global_step})")
+    last_step = a.total_steps if stop_at is None else min(a.total_steps, int(stop_at))
+    alloc = cfg.get("allocation")  # dồn bước theo tỉ lệ trượt (mục 5 ở đầu tệp); None = mỗi môi trường một màn cố định
+    if alloc is not None:
+        level_shares(np.ones(len(levels)), alloc.floor, alloc.cap)  # báo lỗi cấu hình trước khi mở môi trường
 
     progress, evals = _CSV(run / "progress.csv"), _CSV(run / "evals.csv")
-    envs = _make_vec_env(env_cfg, env_levels, cfg.seed)
+    allocation = _CSV(run / "allocation.csv")
+    envs = _make_vec_env(env_cfg, env_levels, cfg.seed, switch_levels=levels if alloc is not None else None)
+    playing = np.array([levels.index(level) for level in env_levels])  # chỉ số màn mỗi môi trường đang chơi
+    level_steps = np.zeros(len(levels), dtype=np.int64)                # số bước của từng màn trong đoạn thu hiện tại
     T, N = a.num_steps, a.num_envs
     obs_shape = envs.single_observation_space.shape
     b_obs = torch.zeros((T, N, *obs_shape), dtype=torch.uint8)
@@ -129,7 +246,7 @@ def train(cfg):
         obs, _ = envs.reset(seed=cfg.seed)
         obs = torch.as_tensor(obs)
         t_start, step_start = time.perf_counter(), global_step
-        while global_step < a.total_steps:
+        while global_step < last_step:
             lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
             for g in opt.param_groups:
                 g["lr"] = lr
@@ -144,20 +261,24 @@ def train(cfg):
                 b_rew[t] = torch.as_tensor(reward, dtype=torch.float32)
                 b_term[t] = torch.as_tensor(term, dtype=torch.float32)
                 b_trunc[t] = torch.as_tensor(np.logical_and(trunc, ~term), dtype=torch.float32)
+                level_steps += np.bincount(playing, minlength=len(levels))
                 done = np.logical_or(term, trunc)
                 if done.any():
                     fin = info["final_info"]
                     for i in np.flatnonzero(done):
+                        level = levels[playing[i]]
                         played = (int(fin["world"][i]), int(fin["stage"][i]))
-                        if played != parse_level(env_levels[i]):  # tự kiểm tra: môi trường i phải chơi đúng màn đã gán
-                            raise RuntimeError(f"môi trường {i} được gán màn {env_levels[i]} nhưng đang chơi {played}")
-                        recent[env_levels[i]].append((float(fin["episode"]["r"][i]), int(fin["episode"]["l"][i]),
-                                                      int(fin["x_pos"][i]), bool(fin["flag_get"][i])))
+                        if played != parse_level(level):  # tự kiểm tra: môi trường i phải chơi đúng màn đang ghi cho nó
+                            raise RuntimeError(f"môi trường {i} được ghi là màn {level} nhưng đang chơi {played}")
+                        recent[level].append((float(fin["episode"]["r"][i]), int(fin["episode"]["l"][i]),
+                                              int(fin["x_pos"][i]), bool(fin["flag_get"][i])))
                     cut = np.flatnonzero(np.logical_and(trunc, ~term))
                     if len(cut):  # giá trị của quan sát cuối của lượt bị cắt (không phải quan sát đầu lượt mới)
                         final_obs = torch.as_tensor(np.stack([info["final_obs"][i] for i in cut]))
                         _, _, v_fin = model.act(final_obs)
                         b_final[t, cut] = v_fin
+                if alloc is not None:  # môi trường vừa hết lượt có thể đã sang màn khác
+                    playing = np.asarray(info["level_index"], dtype=np.int64)
                 obs = torch.as_tensor(next_obs)
             global_step += T * N
             _, _, last_value = model.act(obs)
@@ -193,15 +314,33 @@ def train(cfg):
             print(f"step {global_step:>9d}  sps {sps:6.1f}  return {row['ep_return']:8.2f}  "
                   f"x {row['x_pos']:7.1f}  flag {row['flag_rate']:.2f}  kl {row.get('approx_kl', 0):.4f}{by_level}",
                   flush=True)
+
+            # ---- dồn bước cho màn còn trượt: đặt xác suất chọn màn cho các lượt chơi kế tiếp ----
+            if alloc is not None:
+                min_episodes = alloc.get("min_episodes", 20)
+                fail = [1.0 if len(recent[level]) < min_episodes else 1.0 - per_level[level][3] for level in levels]
+                shares = level_shares(fail, alloc.floor, alloc.cap)
+                probs = episode_probs(shares, [per_level[level][1] for level in levels])
+                envs.set_attr("level_probs", [tuple(float(p) for p in probs)] * N)
+                # steps_*: số bước thật của đoạn thu vừa xong; share_*, prob_*: mục tiêu cho các lượt chơi sắp tới
+                allocation.write({"global_step": global_step,
+                                  **{f"steps_{level}": int(level_steps[k]) for k, level in enumerate(levels)},
+                                  **{f"share_{level}": round(float(shares[k]), 4) for k, level in enumerate(levels)},
+                                  **{f"prob_{level}": round(float(probs[k]), 4) for k, level in enumerate(levels)}})
+            level_steps[:] = 0
             if global_step >= next_ckpt:
                 checkpoint()
                 next_ckpt += cfg.checkpoint_every
         if not list((run / "checkpoints").glob(f"step_{global_step:09d}.pt")):
             checkpoint()
+        if global_step < a.total_steps:
+            print(f"stopped at step {global_step} (stop_at_step={stop_at}, total_steps={a.total_steps}); "
+                  f"continue with resume={run / 'checkpoints' / f'step_{global_step:09d}.pt'}", flush=True)
     finally:
         envs.close()
         progress.close()
         evals.close()
+        allocation.close()
     return run
 
 
