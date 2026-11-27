@@ -1,0 +1,39 @@
+{
+  "ckpt": "runs/8-levels/from-scratch-10m/checkpoints/step_006303744.pt",
+  "global_step": 6303744,
+  "levels": [
+    "1-1",
+    "2-1",
+    "3-1",
+    "3-2",
+    "4-1",
+    "5-1",
+    "5-2",
+    "6-1"
+  ],
+  "rollouts": 8,
+  "b_small": 256,
+  "b_big": 4096,
+  "train_flag_rate": 0.7142857142857143,
+  "episodes": 119,
+  "policy": {
+    "B_simple_within_rollout": 148565.14080980665,
+    "G_sq_within": 0.0072219961633284875,
+    "trace_sigma_within": 1072.93687693278,
+    "rollout_noise_to_signal": Infinity,
+    "B_simple_between_rollouts": Infinity,
+    "G_sq_between": -0.002875756738441329,
+    "rollout_var": 0.2720452717372349,
+    "cos_between_rollouts": -0.012085221707820892
+  },
+  "total": {
+    "B_simple_within_rollout": 1184.1961792792501,
+    "G_sq_within": 1.1063858882213633,
+    "trace_sigma_within": 1310.177941640218,
+    "rollout_noise_to_signal": 1.4249759688426253,
+    "B_simple_between_rollouts": 5836.701568379393,
+    "G_sq_between": 0.5881516252245221,
+    "rollout_var": 0.8381019319806781,
+    "cos_between_rollouts": 0.4275258183479309
+  }
+}

@@ -38,6 +38,12 @@ RUNS = [
          start=6303744, before={"2-1": 1034903}, after=1),
     dict(path="runs/2-1/wall-cut-200", label="Nối từ 6,30M, chỉ 2-1, cắt 200 bước", levels=["2-1"], share="resumed",
          start=6303744, before={"2-1": 1034903}, after=1),
+    dict(path="runs/2-1/wall-cut-2000-seed2", label="Như trên, cắt 2000 bước, seed 2", levels=["2-1"], share="resumed",
+         start=6303744, before={"2-1": 1034903}, after=1),
+    dict(path="runs/2-1/wall-cut-200-seed2", label="Như trên, cắt 200 bước, seed 2", levels=["2-1"], share="resumed",
+         start=6303744, before={"2-1": 1034903}, after=1),
+    dict(path="runs/2-1/gamma-0.97-cut-200", label="Như trên, cắt 200 bước, γ = 0,97", levels=["2-1"],
+         share="resumed", start=6303744, before={"2-1": 1034903}, after=1),
 ]
 MIN_EPISODES = 20  # bỏ các dòng mà cửa sổ của màn có ít hơn chừng này lượt
 COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
@@ -109,9 +115,17 @@ def main():
         ax.spines["bottom"].set_color("#c3c2b7")
         ax.tick_params(colors="#898781", length=0)
         ax.set_title(title, loc="left", fontsize=10, color="#52514e")
-    axes[0].legend(loc="upper center", bbox_to_anchor=(0.5, 1.36), ncol=2, frameon=False, fontsize=9)
-    fig.suptitle(f"Màn {args.level}: tỉ lệ chạm cờ lúc huấn luyện (100 lượt gần nhất)", x=0.07, ha="left", fontsize=11)
-    fig.tight_layout(rect=(0, 0, 1, 0.97))
+    # Chú thích chung đặt dưới tiêu đề hình; chiều cao phần đầu tăng theo số dòng chú thích để không đè lên ô đầu.
+    handles, labels = axes[0].get_legend_handles_labels()
+    rows = -(-len(labels) // 2)
+    head = 0.45 + 0.24 * rows  # inch
+    fig.set_size_inches(8, 6.6 + head)
+    top = 1 - head / (6.6 + head)
+    fig.suptitle(f"Màn {args.level}: tỉ lệ chạm cờ lúc huấn luyện (100 lượt gần nhất)", x=0.07, y=0.995, ha="left",
+                 va="top", fontsize=11)
+    fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 1 - 0.4 / (6.6 + head)), ncol=2,
+               frameon=False, fontsize=9)
+    fig.tight_layout(rect=(0, 0, 1, top))
     fig.savefig(out, facecolor="white")
     print("đã ghi", out)
 

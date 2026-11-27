@@ -1,0 +1,702 @@
+[
+ {
+  "episode": 0,
+  "x_pos": 3193,
+  "steps": 577,
+  "noop_steps": 4,
+  "cause": "flag"
+ },
+ {
+  "episode": 1,
+  "x_pos": 3193,
+  "steps": 949,
+  "noop_steps": 3,
+  "cause": "flag"
+ },
+ {
+  "episode": 2,
+  "x_pos": 319,
+  "steps": 42,
+  "noop_steps": 24,
+  "cause": "enemy"
+ },
+ {
+  "episode": 3,
+  "x_pos": 1731,
+  "steps": 183,
+  "noop_steps": 15,
+  "cause": "pit"
+ },
+ {
+  "episode": 4,
+  "x_pos": 2678,
+  "steps": 260,
+  "noop_steps": 18,
+  "cause": "enemy"
+ },
+ {
+  "episode": 5,
+  "x_pos": 3193,
+  "steps": 1734,
+  "noop_steps": 18,
+  "cause": "flag"
+ },
+ {
+  "episode": 6,
+  "x_pos": 1951,
+  "steps": 198,
+  "noop_steps": 22,
+  "cause": "enemy"
+ },
+ {
+  "episode": 7,
+  "x_pos": 2683,
+  "steps": 278,
+  "noop_steps": 0,
+  "cause": "enemy"
+ },
+ {
+  "episode": 8,
+  "x_pos": 1733,
+  "steps": 182,
+  "noop_steps": 15,
+  "cause": "pit"
+ },
+ {
+  "episode": 9,
+  "x_pos": 1062,
+  "steps": 104,
+  "noop_steps": 4,
+  "cause": "enemy"
+ },
+ {
+  "episode": 10,
+  "x_pos": 2924,
+  "steps": 320,
+  "noop_steps": 12,
+  "cause": "enemy"
+ },
+ {
+  "episode": 11,
+  "x_pos": 2682,
+  "steps": 277,
+  "noop_steps": 28,
+  "cause": "enemy"
+ },
+ {
+  "episode": 12,
+  "x_pos": 734,
+  "steps": 74,
+  "noop_steps": 16,
+  "cause": "enemy"
+ },
+ {
+  "episode": 13,
+  "x_pos": 3193,
+  "steps": 612,
+  "noop_steps": 2,
+  "cause": "flag"
+ },
+ {
+  "episode": 14,
+  "x_pos": 3193,
+  "steps": 1769,
+  "noop_steps": 16,
+  "cause": "flag"
+ },
+ {
+  "episode": 15,
+  "x_pos": 1386,
+  "steps": 149,
+  "noop_steps": 4,
+  "cause": "enemy"
+ },
+ {
+  "episode": 16,
+  "x_pos": 2707,
+  "steps": 277,
+  "noop_steps": 23,
+  "cause": "enemy"
+ },
+ {
+  "episode": 17,
+  "x_pos": 1085,
+  "steps": 107,
+  "noop_steps": 29,
+  "cause": "enemy"
+ },
+ {
+  "episode": 18,
+  "x_pos": 3026,
+  "steps": 1975,
+  "noop_steps": 30,
+  "cause": "time"
+ },
+ {
+  "episode": 19,
+  "x_pos": 1006,
+  "steps": 105,
+  "noop_steps": 19,
+  "cause": "enemy"
+ },
+ {
+  "episode": 20,
+  "x_pos": 1733,
+  "steps": 182,
+  "noop_steps": 26,
+  "cause": "pit"
+ },
+ {
+  "episode": 21,
+  "x_pos": 3193,
+  "steps": 1362,
+  "noop_steps": 11,
+  "cause": "flag"
+ },
+ {
+  "episode": 22,
+  "x_pos": 722,
+  "steps": 80,
+  "noop_steps": 4,
+  "cause": "enemy"
+ },
+ {
+  "episode": 23,
+  "x_pos": 2817,
+  "steps": 281,
+  "noop_steps": 15,
+  "cause": "enemy"
+ },
+ {
+  "episode": 24,
+  "x_pos": 3193,
+  "steps": 476,
+  "noop_steps": 13,
+  "cause": "flag"
+ },
+ {
+  "episode": 25,
+  "x_pos": 3193,
+  "steps": 505,
+  "noop_steps": 20,
+  "cause": "flag"
+ },
+ {
+  "episode": 26,
+  "x_pos": 3193,
+  "steps": 597,
+  "noop_steps": 30,
+  "cause": "flag"
+ },
+ {
+  "episode": 27,
+  "x_pos": 3193,
+  "steps": 642,
+  "noop_steps": 8,
+  "cause": "flag"
+ },
+ {
+  "episode": 28,
+  "x_pos": 735,
+  "steps": 75,
+  "noop_steps": 26,
+  "cause": "enemy"
+ },
+ {
+  "episode": 29,
+  "x_pos": 2925,
+  "steps": 294,
+  "noop_steps": 4,
+  "cause": "enemy"
+ },
+ {
+  "episode": 30,
+  "x_pos": 3193,
+  "steps": 712,
+  "noop_steps": 10,
+  "cause": "flag"
+ },
+ {
+  "episode": 31,
+  "x_pos": 1735,
+  "steps": 171,
+  "noop_steps": 24,
+  "cause": "pit"
+ },
+ {
+  "episode": 32,
+  "x_pos": 1403,
+  "steps": 144,
+  "noop_steps": 7,
+  "cause": "enemy"
+ },
+ {
+  "episode": 33,
+  "x_pos": 3193,
+  "steps": 1257,
+  "noop_steps": 20,
+  "cause": "flag"
+ },
+ {
+  "episode": 34,
+  "x_pos": 3193,
+  "steps": 602,
+  "noop_steps": 14,
+  "cause": "flag"
+ },
+ {
+  "episode": 35,
+  "x_pos": 3026,
+  "steps": 1990,
+  "noop_steps": 15,
+  "cause": "time"
+ },
+ {
+  "episode": 36,
+  "x_pos": 3193,
+  "steps": 688,
+  "noop_steps": 29,
+  "cause": "flag"
+ },
+ {
+  "episode": 37,
+  "x_pos": 2683,
+  "steps": 277,
+  "noop_steps": 25,
+  "cause": "enemy"
+ },
+ {
+  "episode": 38,
+  "x_pos": 3193,
+  "steps": 681,
+  "noop_steps": 26,
+  "cause": "flag"
+ },
+ {
+  "episode": 39,
+  "x_pos": 3193,
+  "steps": 576,
+  "noop_steps": 17,
+  "cause": "flag"
+ },
+ {
+  "episode": 40,
+  "x_pos": 2679,
+  "steps": 258,
+  "noop_steps": 30,
+  "cause": "enemy"
+ },
+ {
+  "episode": 41,
+  "x_pos": 2682,
+  "steps": 259,
+  "noop_steps": 30,
+  "cause": "enemy"
+ },
+ {
+  "episode": 42,
+  "x_pos": 1646,
+  "steps": 159,
+  "noop_steps": 4,
+  "cause": "enemy"
+ },
+ {
+  "episode": 43,
+  "x_pos": 2275,
+  "steps": 225,
+  "noop_steps": 6,
+  "cause": "pit"
+ },
+ {
+  "episode": 44,
+  "x_pos": 3026,
+  "steps": 1996,
+  "noop_steps": 9,
+  "cause": "time"
+ },
+ {
+  "episode": 45,
+  "x_pos": 3193,
+  "steps": 540,
+  "noop_steps": 17,
+  "cause": "flag"
+ },
+ {
+  "episode": 46,
+  "x_pos": 1950,
+  "steps": 209,
+  "noop_steps": 25,
+  "cause": "enemy"
+ },
+ {
+  "episode": 47,
+  "x_pos": 1183,
+  "steps": 126,
+  "noop_steps": 14,
+  "cause": "enemy"
+ },
+ {
+  "episode": 48,
+  "x_pos": 3193,
+  "steps": 577,
+  "noop_steps": 30,
+  "cause": "flag"
+ },
+ {
+  "episode": 49,
+  "x_pos": 3026,
+  "steps": 1995,
+  "noop_steps": 10,
+  "cause": "time"
+ },
+ {
+  "episode": 50,
+  "x_pos": 2827,
+  "steps": 318,
+  "noop_steps": 28,
+  "cause": "enemy"
+ },
+ {
+  "episode": 51,
+  "x_pos": 3193,
+  "steps": 735,
+  "noop_steps": 18,
+  "cause": "flag"
+ },
+ {
+  "episode": 52,
+  "x_pos": 3026,
+  "steps": 1983,
+  "noop_steps": 22,
+  "cause": "time"
+ },
+ {
+  "episode": 53,
+  "x_pos": 1735,
+  "steps": 165,
+  "noop_steps": 7,
+  "cause": "pit"
+ },
+ {
+  "episode": 54,
+  "x_pos": 3193,
+  "steps": 472,
+  "noop_steps": 18,
+  "cause": "flag"
+ },
+ {
+  "episode": 55,
+  "x_pos": 1968,
+  "steps": 203,
+  "noop_steps": 24,
+  "cause": "enemy"
+ },
+ {
+  "episode": 56,
+  "x_pos": 2924,
+  "steps": 290,
+  "noop_steps": 27,
+  "cause": "enemy"
+ },
+ {
+  "episode": 57,
+  "x_pos": 2679,
+  "steps": 293,
+  "noop_steps": 26,
+  "cause": "enemy"
+ },
+ {
+  "episode": 58,
+  "x_pos": 1732,
+  "steps": 182,
+  "noop_steps": 29,
+  "cause": "pit"
+ },
+ {
+  "episode": 59,
+  "x_pos": 3193,
+  "steps": 613,
+  "noop_steps": 3,
+  "cause": "flag"
+ },
+ {
+  "episode": 60,
+  "x_pos": 3193,
+  "steps": 641,
+  "noop_steps": 24,
+  "cause": "flag"
+ },
+ {
+  "episode": 61,
+  "x_pos": 2682,
+  "steps": 261,
+  "noop_steps": 14,
+  "cause": "enemy"
+ },
+ {
+  "episode": 62,
+  "x_pos": 3026,
+  "steps": 1984,
+  "noop_steps": 21,
+  "cause": "time"
+ },
+ {
+  "episode": 63,
+  "x_pos": 734,
+  "steps": 75,
+  "noop_steps": 8,
+  "cause": "enemy"
+ },
+ {
+  "episode": 64,
+  "x_pos": 2565,
+  "steps": 267,
+  "noop_steps": 0,
+  "cause": "enemy"
+ },
+ {
+  "episode": 65,
+  "x_pos": 2814,
+  "steps": 306,
+  "noop_steps": 2,
+  "cause": "enemy"
+ },
+ {
+  "episode": 66,
+  "x_pos": 3193,
+  "steps": 536,
+  "noop_steps": 30,
+  "cause": "flag"
+ },
+ {
+  "episode": 67,
+  "x_pos": 3193,
+  "steps": 622,
+  "noop_steps": 27,
+  "cause": "flag"
+ },
+ {
+  "episode": 68,
+  "x_pos": 2833,
+  "steps": 301,
+  "noop_steps": 9,
+  "cause": "enemy"
+ },
+ {
+  "episode": 69,
+  "x_pos": 1727,
+  "steps": 182,
+  "noop_steps": 13,
+  "cause": "pit"
+ },
+ {
+  "episode": 70,
+  "x_pos": 3193,
+  "steps": 679,
+  "noop_steps": 7,
+  "cause": "flag"
+ },
+ {
+  "episode": 71,
+  "x_pos": 2066,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 72,
+  "x_pos": 1952,
+  "steps": 212,
+  "noop_steps": 26,
+  "cause": "enemy"
+ },
+ {
+  "episode": 73,
+  "x_pos": 1646,
+  "steps": 160,
+  "noop_steps": 20,
+  "cause": "enemy"
+ },
+ {
+  "episode": 74,
+  "x_pos": 3193,
+  "steps": 599,
+  "noop_steps": 2,
+  "cause": "flag"
+ },
+ {
+  "episode": 75,
+  "x_pos": 734,
+  "steps": 75,
+  "noop_steps": 6,
+  "cause": "enemy"
+ },
+ {
+  "episode": 76,
+  "x_pos": 3193,
+  "steps": 520,
+  "noop_steps": 17,
+  "cause": "flag"
+ },
+ {
+  "episode": 77,
+  "x_pos": 3193,
+  "steps": 553,
+  "noop_steps": 27,
+  "cause": "flag"
+ },
+ {
+  "episode": 78,
+  "x_pos": 3193,
+  "steps": 473,
+  "noop_steps": 30,
+  "cause": "flag"
+ },
+ {
+  "episode": 79,
+  "x_pos": 3026,
+  "steps": 1999,
+  "noop_steps": 6,
+  "cause": "time"
+ },
+ {
+  "episode": 80,
+  "x_pos": 3026,
+  "steps": 1987,
+  "noop_steps": 18,
+  "cause": "time"
+ },
+ {
+  "episode": 81,
+  "x_pos": 3193,
+  "steps": 1817,
+  "noop_steps": 1,
+  "cause": "flag"
+ },
+ {
+  "episode": 82,
+  "x_pos": 3193,
+  "steps": 730,
+  "noop_steps": 5,
+  "cause": "flag"
+ },
+ {
+  "episode": 83,
+  "x_pos": 3193,
+  "steps": 1712,
+  "noop_steps": 6,
+  "cause": "flag"
+ },
+ {
+  "episode": 84,
+  "x_pos": 3193,
+  "steps": 775,
+  "noop_steps": 13,
+  "cause": "flag"
+ },
+ {
+  "episode": 85,
+  "x_pos": 2927,
+  "steps": 305,
+  "noop_steps": 10,
+  "cause": "enemy"
+ },
+ {
+  "episode": 86,
+  "x_pos": 1737,
+  "steps": 183,
+  "noop_steps": 22,
+  "cause": "pit"
+ },
+ {
+  "episode": 87,
+  "x_pos": 3026,
+  "steps": 1991,
+  "noop_steps": 14,
+  "cause": "time"
+ },
+ {
+  "episode": 88,
+  "x_pos": 2561,
+  "steps": 264,
+  "noop_steps": 10,
+  "cause": "enemy"
+ },
+ {
+  "episode": 89,
+  "x_pos": 3026,
+  "steps": 1977,
+  "noop_steps": 28,
+  "cause": "time"
+ },
+ {
+  "episode": 90,
+  "x_pos": 3193,
+  "steps": 557,
+  "noop_steps": 19,
+  "cause": "flag"
+ },
+ {
+  "episode": 91,
+  "x_pos": 1404,
+  "steps": 139,
+  "noop_steps": 21,
+  "cause": "enemy"
+ },
+ {
+  "episode": 92,
+  "x_pos": 3193,
+  "steps": 1673,
+  "noop_steps": 23,
+  "cause": "flag"
+ },
+ {
+  "episode": 93,
+  "x_pos": 1950,
+  "steps": 206,
+  "noop_steps": 10,
+  "cause": "enemy"
+ },
+ {
+  "episode": 94,
+  "x_pos": 3193,
+  "steps": 696,
+  "noop_steps": 27,
+  "cause": "flag"
+ },
+ {
+  "episode": 95,
+  "x_pos": 3193,
+  "steps": 468,
+  "noop_steps": 0,
+  "cause": "flag"
+ },
+ {
+  "episode": 96,
+  "x_pos": 1647,
+  "steps": 172,
+  "noop_steps": 9,
+  "cause": "enemy"
+ },
+ {
+  "episode": 97,
+  "x_pos": 3026,
+  "steps": 2001,
+  "noop_steps": 4,
+  "cause": "time"
+ },
+ {
+  "episode": 98,
+  "x_pos": 2682,
+  "steps": 260,
+  "noop_steps": 0,
+  "cause": "enemy"
+ },
+ {
+  "episode": 99,
+  "x_pos": 3193,
+  "steps": 416,
+  "noop_steps": 30,
+  "cause": "flag"
+ }
+]

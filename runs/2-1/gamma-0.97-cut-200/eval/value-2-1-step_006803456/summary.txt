@@ -1,0 +1,130 @@
+=== 2-1 với runs/2-1/gamma-0.97-cut-200/checkpoints/step_006803456.pt (bước 6803456): 100 lượt, seed 7 ===
+lý do: enemy 44, time 26, flag 17, pit 13
+x cuối trung bình 2319; tổng 73948 bước tác tử
+V trên mọi bước: trung bình 4.48, p10 -0.04, p90 10.41; phần thưởng trung bình mỗi bước 0.094
+sai số của critic |V - G| trên mọi bước: trung vị 2.22 (G = lợi tức chiết khấu thật, gamma 0.97, có cộng thưởng cờ 2.0)
+gom cụm: hai x cuối cùng cụm nếu cách nhau <= 48; cụm phải có >= 5 lượt; lượt 'đi qua' = chạm cờ hoặc x cuối > mép phải của cụm + 100
+5 cụm chứa 55 lượt; 28 lượt hỏng lẻ không thuộc cụm nào (x cuối: 1016, 1017, 1080, 1080, 1083, 1356, 1357, 1406, 1408, 1530, 1647, 1647, 1648, 1651, 1950, 1952, 1953, 2002, 2066, 2066, 2066, 2456, 2467, 2563, 2819, 2901, 2933, 2935)
+
+--- cụm x 1182-1187: 10 lượt (enemy 10); 85 lượt đi qua được ---
+10 lượt hỏng không kẹt (lượt số 69, 71, 91, 38, 96, 16, 31, 85, 89, 51)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1   10    6.35    9.27     -2.92      50%   -1.47     9.09    -10.56     0.03     0.06       0.99
+     2   10    7.62    9.27     -1.66      20%   -1.17     9.09    -10.39     0.34     0.06       0.73
+     3   10    8.06   10.13     -2.08      10%   -0.91    10.42    -11.32     0.20     0.01       0.93
+     5   10    7.73   10.16     -2.42      20%   -0.41    11.10    -11.16     0.06     0.17       0.99
+     8   10    8.16   10.03     -1.82      10%    0.29    10.91    -10.62     0.08     0.02       0.99
+    10   10    8.05    9.75     -1.76      20%    0.67    10.66     -9.99     0.09     0.36       0.98
+    15   10    7.60   10.05     -2.37      50%    2.04    10.74     -8.69     0.03     0.01       1.00
+    20   10    8.07    9.87     -1.93      40%    3.60    11.03     -7.43     0.00     0.03       1.00
+    30   10   10.93   10.70      0.26       0%    6.09    11.53     -5.44     0.00     0.01       1.00
+    45   10   10.79    9.08      1.55       0%    8.06     9.20     -1.36     0.02     0.34       1.00
+    60   10    7.12    8.16     -0.67      30%    5.40     8.42     -2.85     0.00     0.17       1.00
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 1 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 23 bước trước; G thật theo cùng tiêu chí: từ 60 bước trước
+
+--- cụm x 1723-1735: 10 lượt (pit 10); 62 lượt đi qua được ---
+10 lượt hỏng không kẹt (lượt số 15, 25, 36, 14, 56, 74, 99, 49, 68, 86)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1   10   -0.45    8.22     -8.67     100%   -1.67     8.16     -9.83     0.57     0.03       0.81
+     2   10   -1.08    8.22     -9.27     100%   -1.62     8.16     -9.78     0.57     0.03       0.70
+     3   10   -1.03    8.22     -9.25     100%   -1.57     8.16     -9.73     0.37     0.03       0.88
+     5   10    1.35    7.87     -6.70     100%   -1.28     8.79     -9.92     0.18     0.09       0.95
+     8   10    3.78    7.51     -4.26      80%   -0.03     9.15     -9.18     0.00     0.01       1.00
+    10   10    5.03    7.65     -2.62      90%    0.76     9.28     -8.59     0.14     0.10       0.97
+    15   10    5.61    8.76     -2.76      60%    2.50     9.85     -7.35     0.00     0.00       1.00
+    20   10    7.45    9.56     -1.60      30%    4.00    10.38     -6.38     0.00     0.00       1.00
+    30   10    7.31    8.43     -1.25      20%    6.33    10.97     -4.69     0.22     0.04       0.95
+    45   10    9.46   10.36     -0.70      40%    8.61    11.53     -2.92     0.06     0.05       0.99
+    60   10    9.34    9.88     -0.44       0%    9.27    11.00     -1.83     0.09     0.02       0.98
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 16 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 37 bước trước; G thật theo cùng tiêu chí: từ 60 bước trước
+
+--- cụm x 1826-1862: 5 lượt (enemy 4, time 1); 58 lượt đi qua được ---
+4 lượt hỏng không kẹt (lượt số 20, 33, 53, 82)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    4   -4.37    7.00    -11.37     100%   -1.67     7.57     -9.24     0.29     0.02       0.92
+     2    4   -4.81    7.53    -12.33     100%   -1.43     7.79     -9.22     0.05     0.00       0.99
+     3    4   -5.65    7.53    -13.18     100%   -0.99     7.79     -8.78     0.00     0.00       1.00
+     5    4    1.21    7.87     -6.66     100%   -0.18     8.22     -8.39     0.14     0.10       0.97
+     8    4    6.85    8.22     -1.38     100%    1.00     8.44     -7.44     0.06     0.00       0.99
+    10    4    6.57    8.00     -1.43       0%    1.65     8.83     -7.17     0.21     0.12       0.92
+    15    4    6.12    7.74     -1.62       0%    3.26     9.32     -6.05     0.13     0.10       0.98
+    20    4    6.94    8.79     -1.85       0%    4.65     9.88     -5.22     0.00     0.00       1.00
+    30    4    7.97    9.09     -1.11      50%    6.87    10.77     -3.90     0.00     0.01       1.00
+    45    4    9.86    9.82     -0.01       0%    9.00    11.43     -2.43     0.00     0.00       1.00
+    60    4   10.68   10.36      0.47       0%   10.22    11.56     -1.34     0.25     0.21       0.93
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 8 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 8 bước trước; G thật theo cùng tiêu chí: từ 56 bước trước
+1 lượt kẹt (lượt số 55); số bước đứng lại sau lần tiến cuối: 1768-1768
+  khoảng bước (0 = lần tiến cuối)   lượt  V tb   V min  V max  lùi xa nhất   xác suất trung bình: đứng yên | phải | phải+nhảy | phải+chạy | phải+chạy+nhảy | nhảy tại chỗ | trái
+     -10 ..     0                   1   6.49   2.75  10.47       50 px    0.08 | 0.02 | 0.01 | 0.27 | 0.45 | 0.00 | 0.18
+       1 ..    20                   1   1.89   0.36   2.68      119 px    0.01 | 0.03 | 0.01 | 0.00 | 0.06 | 0.00 | 0.88
+      21 ..   100                   1   2.20   1.70   2.64      129 px    0.00 | 0.03 | 0.00 | 0.00 | 0.03 | 0.00 | 0.95
+     101 ..   200                   1   2.22   1.69   2.56      129 px    0.00 | 0.02 | 0.00 | 0.00 | 0.02 | 0.00 | 0.95
+     201 ..  1000                   1   2.22   1.61   2.70      129 px    0.00 | 0.02 | 0.00 | 0.00 | 0.02 | 0.00 | 0.95
+    1001 ..   hết                   1   2.21   1.62   2.65      129 px    0.00 | 0.02 | 0.00 | 0.00 | 0.02 | 0.00 | 0.95
+  độ cao y lớn nhất của từng lượt kẹt sau lần tiến cuối: nhỏ nhất 207, trung vị 207, lớn nhất 207
+  66 lượt tới được chỗ này (x >= 1826 - gap); 62 lượt vượt qua x 1862 + 16; trong đó 62 lượt vượt sau <= 200 bước không tiến, 0 lượt sau > 200 bước
+  tổng số bước không tiến ở chỗ này (mọi lượt tới nơi): 0; số lần thoát trên 1000 bước không tiến: –
+  62 lượt vượt mà không đứng quá 9 bước; các lượt vượt sau khi đứng từ 10 bước trở lên (0):
+
+--- cụm x 2659-2694: 10 lượt (enemy 10); 41 lượt đi qua được ---
+10 lượt hỏng không kẹt (lượt số 24, 77, 0, 19, 84, 92, 26, 42, 3, 75)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1   10    0.42    6.38     -5.96      90%   -1.57     7.22     -8.77     0.14     0.00       0.97
+     2   10    1.48    6.63     -5.06      90%   -1.30     7.15     -8.45     0.11     0.00       0.98
+     3   10    1.48    6.71     -5.23      80%   -1.05     7.15     -8.19     0.00     0.00       1.00
+     5   10    1.18    6.72     -5.54      90%   -0.47     7.20     -7.67     0.00     0.00       1.00
+     8   10    2.44    7.18     -4.67     100%    0.62     7.51     -6.88     0.02     0.09       1.00
+    10   10    5.79    7.44     -1.52      90%    1.35     7.47     -6.11     0.06     0.17       0.96
+    15   10    6.69    6.48      0.36      10%    2.98     7.73     -4.81     0.15     0.16       0.96
+    20   10    6.67    6.82     -0.24       0%    4.18     8.28     -4.10     0.06     0.02       0.99
+    30   10    8.52    8.56      0.30      10%    6.48     9.53     -3.05     0.00     0.00       1.00
+    45   10   10.09   10.21     -0.12      20%    8.86    10.78     -1.92     0.08     0.12       0.98
+    60   10   10.29   10.67     -0.38      20%   10.04    11.24     -1.12     0.07     0.11       0.99
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 12 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 12 bước trước; G thật theo cùng tiêu chí: từ 60 bước trước
+
+--- cụm x 3026-3026: 20 lượt (time 20); 17 lượt đi qua được ---
+20 lượt kẹt (lượt số 5, 7, 10, 11, 21, 22, 30, 40, 44, 46, 47, 48, 50, 63, 66, 80, 81, 83, 90, 97); số bước đứng lại sau lần tiến cuối: 1618-1698
+  khoảng bước (0 = lần tiến cuối)   lượt  V tb   V min  V max  lùi xa nhất   xác suất trung bình: đứng yên | phải | phải+nhảy | phải+chạy | phải+chạy+nhảy | nhảy tại chỗ | trái
+     -10 ..     0                  20   0.89  -1.27   3.07      119 px    0.31 | 0.17 | 0.14 | 0.01 | 0.28 | 0.08 | 0.02
+       1 ..    20                  20  -0.12  -0.93   1.39        6 px    0.42 | 0.10 | 0.06 | 0.13 | 0.17 | 0.02 | 0.09
+      21 ..   100                  20   0.26  -0.65   5.73       20 px    0.26 | 0.07 | 0.02 | 0.15 | 0.19 | 0.03 | 0.27
+     101 ..   200                  20   0.99  -0.95   5.83       39 px    0.20 | 0.01 | 0.03 | 0.31 | 0.14 | 0.04 | 0.26
+     201 ..  1000                  20   2.97  -0.56   5.85       26 px    0.07 | 0.01 | 0.05 | 0.77 | 0.01 | 0.00 | 0.08
+    1001 ..   hết                  20   3.35   2.73   3.91        3 px    0.04 | 0.01 | 0.05 | 0.90 | 0.00 | 0.00 | 0.00
+  độ cao y lớn nhất của từng lượt kẹt sau lần tiến cuối: nhỏ nhất 158, trung vị 260, lớn nhất 261
+  39 lượt tới được chỗ này (x >= 3026 - gap); 17 lượt vượt qua x 3026 + 16; trong đó 3 lượt vượt sau <= 200 bước không tiến, 14 lượt sau > 200 bước
+  tổng số bước không tiến ở chỗ này (mọi lượt tới nơi): 40788; số lần thoát trên 1000 bước không tiến: 0.417
+  0 lượt vượt mà không đứng quá 9 bước; các lượt vượt sau khi đứng từ 10 bước trở lên (17):
+    lượt   1 (flag): tới ở bước 316, rời chỗ kẹt ở bước 588, đứng không tiến tối đa 263 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng -0.06, V lớn nhất trong 8 bước trước khi rời 6.53
+    lượt   4 (flag): tới ở bước 302, rời chỗ kẹt ở bước 610, đứng không tiến tối đa 303 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng -0.10, V lớn nhất trong 8 bước trước khi rời 5.77
+    lượt  13 (flag): tới ở bước 301, rời chỗ kẹt ở bước 503, đứng không tiến tối đa 193 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng 0.39, V lớn nhất trong 8 bước trước khi rời 5.79
+    lượt  17 (flag): tới ở bước 327, rời chỗ kẹt ở bước 581, đứng không tiến tối đa 246 bước liên tục, lùi xa nhất 6 px, y cao nhất 261, V trung vị lúc đứng -0.05, V lớn nhất trong 8 bước trước khi rời 6.45
+    lượt  23 (flag): tới ở bước 301, rời chỗ kẹt ở bước 630, đứng không tiến tối đa 324 bước liên tục, lùi xa nhất 6 px, y cao nhất 261, V trung vị lúc đứng -0.12, V lớn nhất trong 8 bước trước khi rời 6.16
+    lượt  32 (flag): tới ở bước 328, rời chỗ kẹt ở bước 807, đứng không tiến tối đa 470 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng 0.34, V lớn nhất trong 8 bước trước khi rời 5.80
+    lượt  34 (flag): tới ở bước 339, rời chỗ kẹt ở bước 708, đứng không tiến tối đa 359 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng -0.05, V lớn nhất trong 8 bước trước khi rời 5.97
+    lượt  41 (flag): tới ở bước 303, rời chỗ kẹt ở bước 639, đứng không tiến tối đa 324 bước liên tục, lùi xa nhất 7 px, y cao nhất 260, V trung vị lúc đứng -0.04, V lớn nhất trong 8 bước trước khi rời 5.88
+    lượt  43 (flag): tới ở bước 307, rời chỗ kẹt ở bước 584, đứng không tiến tối đa 268 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng -0.04, V lớn nhất trong 8 bước trước khi rời 6.04
+    lượt  58 (flag): tới ở bước 330, rời chỗ kẹt ở bước 677, đứng không tiến tối đa 342 bước liên tục, lùi xa nhất 6 px, y cao nhất 261, V trung vị lúc đứng -0.10, V lớn nhất trong 8 bước trước khi rời 5.96
+    lượt  59 (flag): tới ở bước 302, rời chỗ kẹt ở bước 1082, đứng không tiến tối đa 771 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng -0.07, V lớn nhất trong 8 bước trước khi rời 5.62
+    lượt  60 (flag): tới ở bước 301, rời chỗ kẹt ở bước 536, đứng không tiến tối đa 231 bước liên tục, lùi xa nhất 7 px, y cao nhất 260, V trung vị lúc đứng -0.07, V lớn nhất trong 8 bước trước khi rời 6.08
+    lượt  61 (flag): tới ở bước 332, rời chỗ kẹt ở bước 530, đứng không tiến tối đa 189 bước liên tục, lùi xa nhất 24 px, y cao nhất 260, V trung vị lúc đứng 0.34, V lớn nhất trong 8 bước trước khi rời 6.30
+    lượt  65 (flag): tới ở bước 305, rời chỗ kẹt ở bước 758, đứng không tiến tối đa 445 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng -0.05, V lớn nhất trong 8 bước trước khi rời 6.03
+    lượt  76 (flag): tới ở bước 333, rời chỗ kẹt ở bước 600, đứng không tiến tối đa 258 bước liên tục, lùi xa nhất 6 px, y cao nhất 260, V trung vị lúc đứng -0.09, V lớn nhất trong 8 bước trước khi rời 6.39
+    lượt  94 (flag): tới ở bước 326, rời chỗ kẹt ở bước 605, đứng không tiến tối đa 274 bước liên tục, lùi xa nhất 12 px, y cao nhất 260, V trung vị lúc đứng -0.07, V lớn nhất trong 8 bước trước khi rời 5.48
+    lượt  95 (flag): tới ở bước 302, rời chỗ kẹt ở bước 428, đứng không tiến tối đa 117 bước liên tục, lùi xa nhất 14 px, y cao nhất 260, V trung vị lúc đứng 0.14, V lớn nhất trong 8 bước trước khi rời 5.94

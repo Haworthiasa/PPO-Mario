@@ -1,0 +1,47 @@
+=== 2-1 với runs/2-1/gamma-0.97-cut-200-seed2/checkpoints/step_007303168.pt (bước 7303168): 100 lượt, seed 7 ===
+lý do: flag 66, pit 15, enemy 15, time 4
+x cuối trung bình 2816; tổng 42441 bước tác tử
+V trên mọi bước: trung bình 6.64, p10 0.09, p90 11.59; phần thưởng trung bình mỗi bước 0.210
+sai số của critic |V - G| trên mọi bước: trung vị 0.50 (G = lợi tức chiết khấu thật, gamma 0.97, có cộng thưởng cờ 2.0)
+gom cụm: hai x cuối cùng cụm nếu cách nhau <= 48; cụm phải có >= 5 lượt; lượt 'đi qua' = chạm cờ hoặc x cuối > mép phải của cụm + 100
+2 cụm chứa 16 lượt; 18 lượt hỏng lẻ không thuộc cụm nào (x cuối: 914, 1082, 1518, 1527, 1528, 1529, 1614, 1647, 1871, 1959, 2065, 2256, 2280, 2892, 2935, 2939, 2942, 3026)
+
+--- cụm x 1727-1730: 9 lượt (pit 9); 83 lượt đi qua được ---
+9 lượt hỏng không kẹt (lượt số 72, 12, 24, 38, 50, 59, 60, 69, 99)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    9   -2.81    8.60    -11.42     100%   -1.67     8.83    -10.50     0.00     0.00       1.00
+     2    9   -2.33    8.60    -10.92     100%   -1.62     8.83    -10.45     0.00     0.00       1.00
+     3    9   -1.53    8.60    -10.12     100%   -1.60     8.83    -10.43     0.00     0.00       1.00
+     5    9   -0.32    8.60     -8.92     100%   -1.57     8.83    -10.41     0.00     0.00       1.00
+     8    9    4.57    9.16     -4.59     100%   -0.43     9.14     -9.57     0.00     0.00       1.00
+    10    9    5.57    9.17     -3.60      89%    0.35     9.46     -9.11     0.40     0.27       0.89
+    15    9    7.24    9.20     -1.82      44%    2.15     9.89     -7.74     0.00     0.05       1.00
+    20    9    8.17    9.51     -1.31       0%    3.70    10.36     -6.66     0.01     0.36       1.00
+    30    9    8.25   10.61     -2.37      67%    6.12    11.11     -4.99     0.17     0.05       0.96
+    45    9   10.96   11.24     -0.33       0%    8.59    11.72     -3.13     0.15     0.00       0.97
+    60    9   11.52   11.41      0.55       0%    9.41    11.46     -1.93     0.00     0.00       1.00
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 14 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 44 bước trước; G thật theo cùng tiêu chí: từ 52 bước trước
+
+--- cụm x 2666-2680: 7 lượt (enemy 7); 71 lượt đi qua được ---
+7 lượt hỏng không kẹt (lượt số 23, 46, 22, 11, 30, 80, 58)
+  k = số bước trước khi lượt kết thúc; V = trung vị V của các lượt hỏng; thường = trung vị V của các
+  lượt đi qua ở cùng x; dưới p10 = phần lượt hỏng có V thấp hơn 90% các lần đi qua; G = lợi tức thật
+  (G thường = trung vị G của các lượt đi qua ở cùng x; G-thường = trung vị của hiệu từng lượt)
+     k    n      V   thường   V-thường  dưới p10      G  G thường  G-thường   entropy  (thường)  p(hành động)
+     1    7    4.22    7.47     -3.26     100%   -1.30     8.20     -9.50     0.00     0.00       1.00
+     2    7    5.03    7.47     -2.18      71%   -0.93     8.20     -9.15     0.00     0.00       1.00
+     3    7    4.91    7.13     -2.26      57%   -0.50     8.26     -8.76     0.01     0.05       1.00
+     5    7    5.86    7.43     -1.57      71%    0.32     8.61     -8.29     0.00     0.00       1.00
+     8    7    7.79    8.37     -0.57      43%    1.42     8.79     -7.37     0.00     0.00       1.00
+    10    7    7.63    7.99     -0.36      43%    2.13     8.37     -6.25     0.18     0.07       0.96
+    15    7    9.03    8.85      0.18      43%    3.68     9.62     -5.94     0.00     0.00       1.00
+    20    7    9.53    9.28      0.25      29%    4.89     9.57     -4.68     0.01     0.02       1.00
+    30    7   10.33   10.17      0.15       0%    6.94    10.71     -3.75     0.18     0.01       0.96
+    45    7   10.46   11.35     -0.89      14%    9.14    11.37     -2.29     0.05     0.03       0.99
+    60    7   10.81   11.39     -0.77       0%   10.12    11.69     -1.57     0.01     0.06       1.00
+  V thấp hơn thường lệ (ít nhất nửa số lượt dưới p10) liên tục từ 5 bước trước khi kết thúc
+  V thấp hơn thường lệ ít nhất 0.5 (trung vị) liên tục từ 9 bước trước; G thật theo cùng tiêu chí: từ 60 bước trước

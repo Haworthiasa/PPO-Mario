@@ -561,3 +561,22 @@ Câu hỏi đặt ra khi xem video: Mario hay nhảy qua, đứng trên hoặc �
 - Số bước hai vùng va chạm chồng nhau mà Mario không chết: 0 trên 12.426 bước có cây trên màn hình.
 - Phép thử trực tiếp ở cống đầu của 4-1: Mario đứng cách cây 62 điểm ảnh rồi nhảy vào lúc cây đang nhô lên thì chết vì cây cả 6 lần (trình giả lập lặp lại y hệt, nên thực chất là 2 tình huống: nhảy đi bộ và nhảy chạy). 18 lần thử còn lại ở 4-1 không chạm tới cây (15 lần chết vì địch khác trước, 3 lần cây ra khỏi bộ nhớ); 23 lần thử ở 5-1 không tới được cây (hai vùng va chạm luôn cách nhau ít nhất 16 điểm ảnh).
 - Giới hạn: RAM chỉ được đọc sau mỗi bước tác tử (4 khung hình), nên các con số đếm theo bước, không theo khung hình. "Hình Mario" suy từ vùng va chạm của Mario (rộng 16, cao 16 khi nhỏ), không đọc từ ảnh.
+
+### Đợt chạy đêm 26/11/2026: seed 2 cho thí nghiệm cắt lượt, và γ = 0,97
+
+Dũng duyệt 4.485.120 bước. Ba lượt cùng nối tiếp bước 6.303.744 và chỉ học 2-1. Thiết kế, cách chấm và luật quyết định ghi trước khi chạy ở `docs/extension-directions.md`; bảng đủ ở `docs/reports/report-2-1.md`, Mục 4.
+
+| Checkpoint cuối 7.798.784 (seed chấm 7 / 11) | Chạm cờ /100 | Qua tường ≤ 200 bước / tới tường |
+|---|---|---|
+| γ 0,9, cắt 200, seed 1 (cũ) | 39 / 44 | 0/60 / 1/60 |
+| γ 0,9, cắt 2000, seed 1 (cũ) | 10 / 8 | 3/44 / 0/45 |
+| γ 0,9, cắt 200, seed 2 | 35 / 48 | 3/67 / 4/69 |
+| γ 0,9, cắt 2000, seed 2 | 26 / 38 | 8/38 / 6/49 |
+| **γ 0,97, cắt 200, seed 1** | **78 / 71** | **78/78 / 70/71** |
+
+- **γ = 0,97 giải được bức tường ở seed này.** 148 trên 149 lượt tới tường qua ngay. Chạm cờ 149/200 so với 83/200 của nhánh γ = 0,9 cùng seed (p = 3·10⁻¹¹). Màn 2-1 vẫn dưới ngưỡng 0,8: các lượt hỏng còn lại chết trước tường.
+- **Trước khi chạy đã đo được** rằng đổi γ làm critic cũ sai lệch lớn: gradient của critic gấp khoảng 22 lần gradient của actor (`experiments/gamma_gradient_check.py`). Lượt γ khởi đầu chậm đúng như thế (17/100 ở 6.803.456), rồi lên 62/100 ở 7.303.168.
+- **Thí nghiệm cắt lượt cùng chiều ở hai seed nhưng chênh lệch không lặp lại:** 83 so với 18 (seed 1) và 83 so với 64 (seed 2, p = 0,06). Không nhánh γ = 0,9 nào học được cách qua tường khi vừa tới.
+- Việc tiếp theo theo luật đã chốt: γ = 0,97 seed 2 (1.495.040 bước), cần Dũng duyệt.
+- **Lặp lại với seed 2 (27/11/2026):** γ = 0,97 seed 2 đạt 75/100 và 72/100 lượt chạm cờ (seed chấm 7 và 11), qua sớm 73/75 và 68/72. Đối chứng γ = 0,9 seed 2 đạt 35 và 48 lượt chạm cờ, qua sớm 3/67 và 4/69. Kết quả lặp lại ở cả hai seed huấn luyện.
+- **Đo độ quên:** các nhánh chỉ học 2-1 tụt từ 71,9/100 xuống 3–15/100 lượt chạm cờ trung bình trên bảy màn kia. Chúng là mạng chuyên 2-1; kết quả về γ chưa nói gì về mạng nhiều màn. Dũng dừng phân tích tại đây.

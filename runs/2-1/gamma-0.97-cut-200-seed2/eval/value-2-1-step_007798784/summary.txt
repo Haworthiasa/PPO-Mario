@@ -1,0 +1,7 @@
+=== 2-1 với runs/2-1/gamma-0.97-cut-200-seed2/checkpoints/step_007798784.pt (bước 7798784): 100 lượt, seed 7 ===
+lý do: flag 75, enemy 20, pit 5
+x cuối trung bình 2881; tổng 31376 bước tác tử
+V trên mọi bước: trung bình 8.88, p10 3.76, p90 11.65; phần thưởng trung bình mỗi bước 0.294
+sai số của critic |V - G| trên mọi bước: trung vị 0.39 (G = lợi tức chiết khấu thật, gamma 0.97, có cộng thưởng cờ 2.0)
+gom cụm: hai x cuối cùng cụm nếu cách nhau <= 48; cụm phải có >= 5 lượt; lượt 'đi qua' = chạm cờ hoặc x cuối > mép phải của cụm + 100
+0 cụm chứa 0 lượt; 25 lượt hỏng lẻ không thuộc cụm nào (x cuối: 1182, 1182, 1182, 1185, 1402, 1402, 1402, 1402, 1528, 1529, 1648, 1664, 1730, 1730, 1827, 1950, 2464, 2665, 2675, 2680, 2680, 2802, 2834, 2917, 2924)

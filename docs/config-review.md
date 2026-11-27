@@ -85,13 +85,13 @@ Các số dưới đây là trung vị hoặc trung bình trên mọi lần cậ
 
 | Tham số | Giá trị | Bằng chứng | Kết luận |
 |---|---|---|---|
-| `num_envs` × `num_steps` | 8 × 512 | Giống uvipen. Một đoạn thu dài khoảng 2 lượt chơi (lượt dài 145–280 bước). Ở đoạn 0–2 triệu của lượt 8 màn, mỗi lần cập nhật chỉ có một quỹ đạo của mỗi màn. Burda và cộng sự (2018) thấy tăng số môi trường song song từ 128 lên 2048 tốt hơn nhiều, nhưng đó là bài học bằng tò mò (curiosity). | Giữ khi học một màn. Khi học nhiều màn có thể thử 16 × 256 (vẫn 4.096 mẫu mỗi lần cập nhật), nhưng trước đó phải đo tốc độ trên máy 6 nhân. |
+| `num_envs` × `num_steps` | 8 × 512 | Giống uvipen. Một đoạn thu dài khoảng 2 lượt chơi (lượt dài 145–280 bước). Ở đoạn 0–2 triệu của lượt 8 màn, mỗi lần cập nhật chỉ có một quỹ đạo của mỗi màn. Burda và cộng sự (2018) thấy tăng số môi trường song song từ 128 lên 2048 tốt hơn nhiều, nhưng đó là bài học bằng tò mò (curiosity). | Giữ. (Gợi ý thử 16 × 256 ở bản đầu đã bị bác: đo trực tiếp không thấy ít nhiễu hơn, xem `docs/config-math.md`, Mục 2.) |
 | `update_epochs`, `num_minibatches` | 10, 16 | Dừng sớm 0–1,4% số lần cập nhật khi học một màn, 31–72% khi học nhiều màn. CleanRL, SB3 Zoo, Procgen và PPG dùng 3–4 epoch; PPG thấy 3 epoch là tốt nhất cho PPO. | Không sai, vì `target_kl` tự cắt bớt. Khi học nhiều màn, đặt 4–6 epoch sẽ bớt 25–35% thời gian mỗi vòng (Mục 5), nhưng chưa biết có mất hiệu quả mẫu không. |
 | `lr` | 2e-4, giảm về 0 | Nhóm đã thấy: các lượt chạy hết lịch kết thúc ổn định hơn (`nhat-ky-trong-tu.md`, Mục 14.2). Kinh nghiệm của uvipen: tốc độ học là tham số nhạy nhất theo màn. | Giữ. |
 | `gamma` | 0,9 | Xem Mục 4. | Ứng viên số 1 cho một thí nghiệm. |
 | `gae_lambda` | 1,0 | Với γ = 0,9 thì γλ = 0,9, nên lợi thế chỉ cộng dồn khoảng 10 bước và phương sai còn vừa phải. Các nguồn khác dùng 0,9–0,95. | Giữ nếu giữ γ. Nếu tăng γ thì hạ λ về khoảng 0,95, để γλ ≈ 0,92 gần như cũ. |
 | `clip_coef` | 0,15 | Nằm giữa 0,1 (CleanRL) và 0,2 (uvipen, Procgen). | Giữ. |
-| `ent_coef` → `ent_coef_final` | 0,01 → 0,002 | Đề chấm bằng cách lấy mẫu. Chọn hành động xác suất cao nhất tốt hơn lấy mẫu 5–20 điểm phần trăm ở mọi checkpoint đã so (ở 5-2 là 87% so với 73,5%). | Có thể đặt mức cuối bằng 0 ở lượt sau; đổi này rẻ. Hiệu quả có lẽ nhỏ (suy luận): độ ngẫu nhiên còn lại chủ yếu nằm ở những trạng thái mà các hành động gần như tương đương. Không chỉnh logits sau khi huấn luyện. |
+| `ent_coef` → `ent_coef_final` | 0,01 → 0,002 | Đề chấm bằng cách lấy mẫu. Chọn hành động xác suất cao nhất tốt hơn lấy mẫu 5–20 điểm phần trăm ở mọi checkpoint đã so (ở 5-2 là 87% so với 73,5%). | Giữ. Với c = 0,002, phần thưởng entropy đã quá nhỏ để giữ độ ngẫu nhiên còn lại, nên đặt mức cuối bằng 0 sẽ gần như không đổi gì (`docs/config-math.md`, Mục 5). Không chỉnh logits sau khi huấn luyện. |
 | `vf_coef` | 0,5 (trên MSE không có ½) | Bằng uvipen khi sai số nhỏ, gấp đôi CleanRL và gấp đôi mặc định 0,25 của thầy. Mạng dùng chung thân nên critic và actor tranh nhau gradient (PPG, bài 37 chi tiết). Explained variance vẫn tốt. | Giữ với γ = 0,9. Nếu tăng γ thì phải chuẩn hóa phần thưởng (Mục 4). |
 | `max_grad_norm` | 0,5 | Luôn bị chạm trần (Mục 2). | Giữ, chỉ cần biết là nó luôn hoạt động. |
 | `target_kl` | 0,03 | Là thứ quyết định độ dài bước khi học nhiều màn. | Giữ. |
@@ -194,8 +194,7 @@ Kỳ vọng mất tổng cộng khoảng 0,23 điểm, nên không đáng huấn
 4. **Nếu chạy lại nhiều màn:**
    - Thay cách chia theo tỉ lệ hỏng bằng điểm |GAE| như PLR, hoặc theo tốc độ tiến bộ (hướng 3 trong `extension-directions.md`). Hoặc ít nhất hạ `cap` xuống khoảng 0,2.
    - Đặt `update_epochs` 4–6.
-   - Thử `ent_coef_final: 0`.
-   - Đo thử tốc độ với 16 × 256 trước khi đổi.
+   - (Hai gợi ý ở bản đầu, `ent_coef_final: 0` và 16 × 256, đã bị bác trong `docs/config-math.md`, Mục 2 và 5.)
 5. **Chỉ khi đã bật GPU:**
    - Cài torch có CUDA trong venv riêng, nhanh khoảng 1,6–2 lần.
    - Khi đó mới đáng thử IMPALA-CNN, và nếu muốn mạng chơi được màn lạ thì thử thêm tăng cường ảnh (DrAC: cắt ngẫu nhiên tốt nhất ở 8–9 trên 16 trò Procgen).

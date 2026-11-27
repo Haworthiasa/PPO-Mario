@@ -1,0 +1,17 @@
+{
+ "meta": {
+  "level": "2-1",
+  "checkpoint": "runs/2-1/gamma-0.97-cut-200-seed2/checkpoints/step_007798784.pt",
+  "global_step": 7798784,
+  "seed": 7,
+  "episodes": 100,
+  "max_steps": 3000,
+  "gamma": 0.97,
+  "flag_bonus": 2.0,
+  "max_no_progress_steps": 200
+ },
+ "gap": 48,
+ "min_size": 5,
+ "margin": 100,
+ "clusters": []
+}

@@ -1,6 +1,11 @@
 # Báo cáo màn 2-1
 
-Cập nhật lần cuối: 24/11/2026, 15:15. Lượt 8 màn đã kết thúc ở bước 9.998.336; 10 checkpoint của nó đã được chấm 100 lượt seed 7 trên 2-1, 2 checkpoint đã được chấm theo lệnh của đề. Checkpoint cuối đã được chấm thêm 100 lượt seed 11. Hai lượt thí nghiệm chỉ học 2-1 (`runs/2-1/wall-cut-2000`, `runs/2-1/wall-cut-200`) đã kết thúc ở bước 7.798.784; mỗi lượt có 3 checkpoint được đo 100 lượt seed 7.
+Cập nhật lần cuối: 27/11/2026, 03:20.
+- **Lượt 8 màn** đã kết thúc ở bước 9.998.336. 10 checkpoint của nó đã được chấm 100 lượt seed 7 trên 2-1, 2 checkpoint đã được chấm theo lệnh của đề, và checkpoint cuối được chấm thêm 100 lượt seed 11.
+- **Năm lượt thí nghiệm chỉ học 2-1** đều nối tiếp bước 6.303.744 và kết thúc ở bước 7.798.784. Mỗi lượt có 3 checkpoint được đo 100 lượt seed 7, cộng 100 lượt seed 11 ở checkpoint cuối:
+  - `runs/2-1/wall-cut-2000`, `runs/2-1/wall-cut-200`;
+  - `runs/2-1/wall-cut-2000-seed2`, `runs/2-1/wall-cut-200-seed2`;
+  - `runs/2-1/gamma-0.97-cut-200`.
 
 Quy ước: **bước** là bước tác tử. **Số chấm** là kết quả của `evaluate.py` (100 lượt seed 7 để ra quyết định, 20 lượt seed 2026 là đúng lệnh chấm của đề). **Số lúc huấn luyện** là tỉ lệ chạm cờ của 100 lượt huấn luyện gần nhất trong `progress.csv`; hai loại số có thể lệch nhau hơn 10 điểm. Cờ của 2-1 ở x = 3193; ngưỡng vượt màn là 0,8.
 
@@ -13,12 +18,19 @@ Quy ước: **bước** là bước tác tử. **Số chấm** là kết quả c
 | Một mạng 8 màn (checkpoint cuối) | `runs/8-levels/from-scratch-10m`, bước 9.998.336 | 2/100 | 3/20 |
 | Thí nghiệm: nối từ bước 6.303.744, chỉ học 2-1, cắt 200 bước | `runs/2-1/wall-cut-200`, bước 7.798.784 | 39/100 | chưa chấm |
 | Thí nghiệm: nối từ bước 6.303.744, chỉ học 2-1, cắt 2000 bước | `runs/2-1/wall-cut-2000`, bước 7.798.784 | 10/100 | chưa chấm |
+| Thí nghiệm: như trên, cắt 200 bước, seed 2 | `runs/2-1/wall-cut-200-seed2`, bước 7.798.784 | 35/100 (seed 11: 48/100) | chưa chấm |
+| Thí nghiệm: như trên, cắt 2000 bước, seed 2 | `runs/2-1/wall-cut-2000-seed2`, bước 7.798.784 | 26/100 (seed 11: 38/100) | chưa chấm |
+| **Thí nghiệm: như trên, cắt 200 bước, γ = 0,97** | `runs/2-1/gamma-0.97-cut-200`, bước 7.798.784 | **78/100** (seed 11: 71/100) | chưa chấm |
+| **Thí nghiệm: như trên, cắt 200 bước, γ = 0,97, seed 2** | `runs/2-1/gamma-0.97-cut-200-seed2`, bước 7.798.784 | **75/100** (seed 11: 72/100) | chưa chấm |
 
-Ở checkpoint cuối (bước 9.998.336), mạng 8 màn đạt 2/100 theo 100 lượt seed 7 và 3/20 theo lệnh chấm. Màn 2-1 chưa vượt ngưỡng 0,8. Checkpoint cao nhất theo 100 lượt là bước 9.003.008 (42/100). Màn 2-1 không có checkpoint nộp; số ở đây chỉ dùng cho báo cáo. Hai mạng thí nghiệm chỉ học 2-1 sau bước 6.303.744 nên không còn là mạng 8 màn; chúng chưa được chấm trên bảy màn kia.
+- **Cao nhất hiện có là lượt γ = 0,97:** 78/100 (seed 7) và 71/100 (seed 11), gộp 149/200 = 74,5%, khoảng tin cậy 95% là 68–80%. Màn 2-1 vẫn chưa vượt ngưỡng 0,8.
+- **Mạng 8 màn:** checkpoint cuối (bước 9.998.336) đạt 2/100 theo 100 lượt seed 7 và 3/20 theo lệnh chấm. Checkpoint cao nhất của nó theo 100 lượt là bước 9.003.008 (42/100).
+- Màn 2-1 không có checkpoint nộp; số ở đây chỉ dùng cho báo cáo.
+- Các mạng thí nghiệm chỉ học 2-1 sau bước 6.303.744 nên không còn là mạng 8 màn, và chưa được chấm trên bảy màn kia.
 
 ## 2. Các lượt chạy có huấn luyện 2-1
 
-Mọi lượt đều dùng seed 1, 8 môi trường × 512 bước, γ = 0,9, bộ hành động `simple`.
+Mọi lượt dùng 8 môi trường × 512 bước và bộ hành động `simple`. Nếu không ghi khác, lượt dùng seed 1 và γ = 0,9.
 
 | Lượt chạy | Số màn | Tổng bước | Bước riêng trên 2-1 | Tốc độ học | Chạm cờ lúc huấn luyện, cuối lượt |
 |---|---|---|---|---|---|
@@ -26,10 +38,14 @@ Mọi lượt đều dùng seed 1, 8 môi trường × 512 bước, γ = 0,9, b�
 | `runs/8-levels/from-scratch-10m` | 8 | 9.998.336 | 2.039.849 | 2e-4 giảm về 0 | 2% |
 | `runs/2-1/wall-cut-2000` | 1 | 1.495.040 (nối tiếp lượt 8 màn ở bước 6.303.744) | 2.529.943 | theo lịch của lượt 8 màn (7,4e-5 xuống 4,4e-5) | 9% |
 | `runs/2-1/wall-cut-200` | 1 | 1.495.040 (nối tiếp lượt 8 màn ở bước 6.303.744) | 2.529.943 | theo lịch của lượt 8 màn (7,4e-5 xuống 4,4e-5) | 0% |
+| `runs/2-1/wall-cut-200-seed2` (seed 2) | 1 | 1.495.040 (như trên) | 2.529.943 | như trên | 4% |
+| `runs/2-1/wall-cut-2000-seed2` (seed 2) | 1 | 1.495.040 (như trên) | 2.529.943 | như trên | 32% |
+| `runs/2-1/gamma-0.97-cut-200` (γ = 0,97) | 1 | 1.495.040 (như trên) | 2.529.943 | như trên | 69% |
 
 - Ở lượt 8 màn, mỗi màn chạy trên một môi trường tới bước 2.002.944, nên 2-1 nhận 1/8 số bước đó. Sau đó phần bước chia theo tỉ lệ hỏng lúc huấn luyện (sàn 6%, trần 30%, ghi trong `allocation.csv`): 2-1 nhận 22% số bước của chặng này (14% ở triệu bước thứ 3, 24% ở triệu bước thứ 7, 30% ở triệu bước thứ 10).
 - Bước riêng trên 2-1 = 1/8 của 2.002.944 bước đầu cộng dồn cột `steps_2-1` của `allocation.csv`.
 - Hai lượt `runs/2-1/wall-*` là một thí nghiệm có đối chứng: cùng nối tiếp checkpoint 6.303.744 của lượt 8 màn (lúc đó 2-1 đã có 1.034.903 bước riêng), cùng chỉ học 2-1 tới bước 7.798.784, khác nhau đúng khóa `env.max_no_progress_steps` (2000 so với 200). Cấu hình ở `configs/group-2-1-experiment.yaml`.
+- Ba lượt chạy đêm 26/11/2026 dùng cùng cấu hình đó, chỉ khác ở khóa ghi đè trên dòng lệnh: `seed=2` cho cặp lặp lại thí nghiệm cắt lượt, `algo.gamma=0.97` cho lượt γ. Lệnh nằm trong `experiments/run_wall_batch.sh`; thiết kế ghi trước khi chạy ở `docs/extension-directions.md`.
 - Lượt thử nối tiếp lấy mạng 2 màn (1-1 và 4-1) ở bước 2.904.064 rồi cho học 8 màn 1-1, 4-1, 2-1, 3-1, 3-2, 5-1, 6-1, 8-1, mỗi màn một môi trường, tốc độ học 1,4e-4. Nó bị dừng tay sau 372.736 bước; chỉ còn `progress.csv` và `summary.txt`, checkpoint đã xóa.
 
 ## 3. Đường cong học
@@ -42,6 +58,7 @@ Hình vẽ bằng `python experiments/level_curves.py 2-1`.
 - **Ở 2-1 số lúc huấn luyện và số chấm lệch nhau rất xa.** Ở bước 9.003.008, số lúc huấn luyện là 3% (x trung bình 2497) trong khi số chấm là 42/100 (x trung bình 2495). Hai loại số đo khác nhau ở chỗ lúc huấn luyện lượt bị cắt sau 200 bước không tiến, và 100 lượt gần nhất trải qua nhiều lần cập nhật mạng; chưa biết điều nào gây ra độ lệch.
 - **Màn 2-1 nhận nhiều bước nhất mà vẫn thấp nhất.** Nó nhận 2.039.849 bước riêng, gấp khoảng 1,6 lần 3-1 (1.244.155) và hơn gấp đôi 1-1, 4-1, 3-2, 6-1 (0,95–1,0 triệu). Phần bước của nó tăng dần từ 14% (triệu bước thứ 3) lên chạm trần 30% (triệu bước thứ 10) vì tỉ lệ hỏng không giảm.
 - **Hai lượt thí nghiệm chỉ học 2-1 cũng không tới ngưỡng lúc huấn luyện.** Nhánh cắt 2000 cao nhất 20% (bước 7.643.136), cuối lượt 9%; nhánh cắt 200 cao nhất 8% (bước 7.135.232), cuối lượt 0%. Số chấm của nhánh cắt 200 ở cuối lượt lại là 39/100 (Mục 4): mọi lượt chạm cờ khi chấm đều đứng ở tường quá 200 bước, tức là loại lượt bị cắt lúc huấn luyện.
+- **Lượt γ = 0,97 là lượt đầu tiên mà số lúc huấn luyện của 2-1 lên quá 50%.** Nó đạt cao nhất 76% (bước 7.614.464) và 69% ở cuối lượt. Vì lượt bị cắt sau 200 bước không tiến, mỗi lượt chạm cờ lúc huấn luyện đều là lượt qua tường nhanh. Cặp seed 2 cao nhất 40% (cắt 200) và 32% (cắt 2000, ở cuối lượt).
 - Lượt thử nối tiếp (mạng đã học 1-1 và 4-1) và lượt 8 màn ở cùng 46.592 bước riêng trên 2-1 (bước 372.736 của lượt 8 màn): x trung bình lúc huấn luyện 1133 so với 814, cả hai chưa chạm cờ.
 
 Giới hạn: mỗi lượt chỉ một seed, và trong lượt 8 màn phần bước của từng màn đổi theo thời gian cùng lúc với tốc độ học và hệ số entropy. Các nhận xét trên là quan sát, chưa phải kết luận về nguyên nhân.
@@ -81,7 +98,29 @@ Giới hạn: mỗi lượt chỉ một seed, và trong lượt 8 màn phần b�
 - **Không nhánh nào qua tường ngay khi tới nơi:** 3 trên 44 lượt tới tường (cắt 2000) và 0 trên 60 lượt (cắt 200) qua trong 200 bước đầu.
 - Cả hai nhánh đi tới tường nhiều hơn điểm xuất phát (44 và 60 lượt so với 11) và chết vì địch ít hơn (46 và 34 so với 67).
 - **Xác suất bấm "trái" phụ thuộc vào vị trí bức tường trên màn hình, không phụ thuộc đồng hồ.** Khi Mario ép vào tường, màn hình vẫn cuộn dần sang phải và bức tường trôi từ cột 41–44 về cột 31 của khung hình 84x84. Ở nhánh cắt 200, xác suất "trái" là 0,002 khi bức tường ở cột 41–43 và 0,108 khi ở cột 31; ở nhánh cắt 2000 là 0,008 (cột 43) và 0,009 (cột 31); ở lượt 8 màn bước 9.003.008 là 0,005 (cột 43) và 0,176 (cột 31). Dán vùng đồng hồ khác vào khung hình không đổi xác suất này, và chấm 100 lượt với đồng hồ bị giữ đứng yên vẫn cho 37 lượt chạm cờ (so với 39). Đo bằng `experiments/clock_swap.py` và `experiments/wall_scroll.py`; tệp ở `runs/2-1/wall-cut-200/eval/clock/`.
-- Mỗi nhánh một seed huấn luyện. Bảng theo thời gian đứng ở tường, bảng theo cột của bức tường và phần bàn luận ở [`docs/extension-directions.md`](../extension-directions.md), mục "Kết quả cả hai nhánh".
+- Bảng theo thời gian đứng ở tường, bảng theo cột của bức tường và phần bàn luận ở [`docs/extension-directions.md`](../extension-directions.md), mục "Kết quả cả hai nhánh". Seed huấn luyện thứ hai của thí nghiệm này ở mục kế tiếp.
+
+### Đợt chạy 26/11/2026: seed 2 cho thí nghiệm cắt lượt, và γ = 0,97
+
+Năm nhánh cùng nối tiếp bước 6.303.744 và chỉ học 2-1. Mỗi ô ghi *chạm cờ /100 · qua sớm / tới tường*, trong đó "qua sớm" là qua tường sau không quá 200 bước ở tường. Đo bằng `experiments/value_trace.py`; ba chỉ số tính bằng `experiments/wall_metrics.py`, script này cho lại đúng các số của bảng trên.
+
+| Nhánh | γ | Cắt | Seed | 6.803.456 | 7.303.168 | 7.798.784, seed chấm 7 | 7.798.784, seed chấm 11 |
+|---|---|---|---|---|---|---|---|
+| `wall-cut-200` | 0,9 | 200 | 1 | 1 · 1/16 | 12 · 0/31 | 39 · 0/60 | 44 · 1/60 |
+| `wall-cut-2000` | 0,9 | 2000 | 1 | 1 · 0/14 | 2 · 0/8 | 10 · 3/44 | 8 · 0/45 |
+| `wall-cut-200-seed2` | 0,9 | 200 | 2 | 36 · 16/48 | 43 · 20/43 | 35 · 3/67 | 48 · 4/69 |
+| `wall-cut-2000-seed2` | 0,9 | 2000 | 2 | 3 · 1/10 | 6 · 1/23 | 26 · 8/38 | 38 · 6/49 |
+| **`gamma-0.97-cut-200`** | **0,97** | 200 | 1 | 17 · 1/39 | 62 · 61/70 | **78 · 78/78** | **71 · 70/71** |
+| **`gamma-0.97-cut-200-seed2`** | **0,97** | 200 | 2 | chưa chấm | 66 · 62/70 | **75 · 73/75** | **72 · 68/72** |
+
+- **γ = 0,97 giải được bức tường, ở seed này.**
+  - Ở checkpoint cuối, 148 trên 149 lượt tới tường qua ngay trong 200 bước đầu; ở nhánh γ = 0,9 cùng seed chỉ 1 trên 120.
+  - Chạm cờ gộp hai seed chấm: 149/200 so với 83/200 (kiểm định Fisher, p = 3·10⁻¹¹).
+  - Các lượt hỏng còn lại kết thúc trước tường.
+- **Lượt γ khởi đầu chậm** (17/100 ở 6.803.456). Lúc vừa đổi γ, critic sai lệch lớn: phép kiểm trước khi chạy cho thấy gradient của critic gấp khoảng 22 lần gradient của actor. Mất mát critic giảm từ 7,7 xuống khoảng 2 trong 60 lần cập nhật đầu, rồi lượt lên 62/100 ở 7.303.168.
+- **Thí nghiệm cắt lượt cùng chiều ở hai seed nhưng độ lớn không lặp lại.** Gộp hai seed chấm, cắt 200 so với cắt 2000: 83 so với 18 (seed 1, p = 3·10⁻¹⁴) và 83 so với 64 (seed 2, p = 0,06). Không nhánh γ = 0,9 nào học được cách qua tường khi vừa tới (0,8–16%).
+- **Đã lặp lại với seed 2 (27/11/2026).** Lượt γ = 0,97 seed 2 đạt 147/200 lượt chạm cờ, và qua sớm 141/147 lượt tới tường. Đối chứng γ = 0,9 seed 2 được 83/200 và 7/136. Hiệu ứng của γ vì vậy có ở cả hai seed huấn luyện.
+- **Các nhánh chỉ học 2-1 quên gần hết bảy màn kia.** Chạm cờ trung bình trên 1-1, 3-1, 3-2, 4-1, 5-1, 5-2, 6-1 giảm từ 71,9/100 (điểm xuất phát) xuống 7,3 và 14,9 (γ 0,9, seed 1 và 2), và 3,0 (γ 0,97, seed 1). Kết quả về γ vì vậy chỉ nói về 2-1, chưa nói về mạng nhiều màn. Bảng ở `docs/extension-directions.md`, mục "Đo độ quên".
 
 ### Lượt thử nối tiếp (`runs/multi-level/restart-test`)
 
@@ -165,11 +204,12 @@ Không mạng nào chạm cờ ở 2-1 khi chưa học màn này; x xa nhất l�
 
 - Vì sao số chấm ở 2-1 đổi mạnh giữa ba checkpoint cuối (Mục 4) khi tốc độ học đã rất nhỏ. Checkpoint tốt nhất (bước 9.003.008) chưa được chấm theo lệnh của đề (20 lượt, seed 2026).
 - Vì sao ở checkpoint cuối Mario đứng trước bức tường ở x = 3026 mà không dùng lò xo. Cách giải thích "do mẹo cắt lượt sau 200 bước không tiến" đã được kiểm bằng thí nghiệm (Mục 4) và không được ủng hộ: nhánh bỏ cắt lượt qua tường kém hơn nhánh giữ cắt 200.
-- Vì sao ở những cảnh được luyện nhiều thì mạng lại bấm "trái" rất ít (Mục 4). Cách hiểu chưa kiểm: bấm "trái" bị trừ thưởng ngay, còn phần thưởng qua tường tới sau hàng chục bước và gần như mất giá trị với γ = 0,9. Kiểm điều này cần huấn luyện với γ khác. Cách hiểu "mạng đọc đồng hồ" đã được kiểm và sai.
+- ~~Vì sao ở những cảnh được luyện nhiều thì mạng lại bấm "trái" rất ít.~~ **Đã kiểm một phần (27/11/2026).** Cách hiểu cũ: bấm "trái" bị trừ thưởng ngay, còn phần thưởng qua tường tới sau hàng chục bước nên gần như mất giá trị với γ = 0,9. Nhánh γ = 0,97 qua tường ngay ở 148/149 lượt tới tường, nên cách hiểu này được ủng hộ. Chưa đo trực tiếp xác suất "trái" ở tường của nhánh γ = 0,97, và mới có một seed. Cách hiểu "mạng đọc đồng hồ" đã được kiểm và sai.
+- Với γ = 0,97, chỗ chặn còn lại của 2-1 nằm trước tường. Chưa phân tích nhánh này chết ở đâu.
 - Vì sao 2-1 không học được dù nhận nhiều bước nhất: do năm chỗ chặn phải qua liên tiếp, do bức tường cần dùng lò xo, hay do điều khác. Chưa có thí nghiệm tách riêng.
 - Lượt thử nối tiếp (mạng đã học 1-1 và 4-1) đi xa hơn trên 2-1 ở cùng số bước riêng (x 1133 so với 814), nhưng chỉ chạy 46.592 bước riêng nên chưa biết khởi tạo như vậy có giúp chạm cờ không.
 - Một mạng chỉ học 2-1 từ đầu cần bao nhiêu bước để vượt ngưỡng: chưa có lượt nào như vậy. Hai lượt thí nghiệm chỉ học 2-1 nhưng nối tiếp mạng 8 màn, và sau 1,5 triệu bước riêng thêm vẫn chưa vượt ngưỡng (39/100 và 10/100).
-- Mọi kết quả mới có một seed huấn luyện.
+- Thí nghiệm cắt lượt và thí nghiệm γ đã có 2 seed huấn luyện, nhưng cả hai đều nối tiếp cùng một checkpoint 6.303.744. Chưa biết γ = 0,97 có giúp khi học 2-1 từ đầu, hay khi học cả 8 màn, hay không.
 
 Các hướng mở rộng chung cho mọi màn ở `docs/extension-directions.md`.
 
@@ -181,3 +221,5 @@ Các hướng mở rộng chung cho mọi màn ở `docs/extension-directions.md
 | 24/11/2026 | Thêm lần chấm kiểm tra 100 lượt seed 11 ở checkpoint cuối của lượt 8 màn (5/100, gộp hai seed 7/200) và đường dẫn video quay bằng lệnh chấm. |
 | 24/11/2026 | Thêm hai lượt thí nghiệm chỉ học 2-1 (`runs/2-1/wall-cut-2000`, `runs/2-1/wall-cut-200`): bảng số đo ở tường tại ba mốc mỗi nhánh, vẽ lại hình đường cong, sửa Mục 7. |
 | 24/11/2026 | Thêm phép kiểm đồng hồ và vị trí bức tường trên màn hình (chỉ đo): xác suất bấm "trái" đi theo việc màn hình cuộn, không theo đồng hồ; sửa Mục 7. |
+| 27/11/2026 | Thêm ba lượt của đợt chạy đêm 26/11/2026 (seed 2 cho thí nghiệm cắt lượt; γ = 0,97): bảng 5 nhánh × 4 lần chấm ở Mục 4, ba dòng ở Mục 1 và 2, vẽ lại hình đường cong, sửa Mục 7. |
+| 27/11/2026 | Thêm lượt γ = 0,97 seed 2 (lặp lại được kết quả seed 1) và phép đo độ quên trên bảy màn kia; sửa Mục 7. Hình đường cong chưa vẽ lại cho lượt này. |
