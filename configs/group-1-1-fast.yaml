@@ -1,0 +1,59 @@
+# Cấu hình nộp của màn 1-1 từ 29/11/2026 (submission/1-1.pt = runs/1-1/confirm/c1-e0-f1-g0-seed4, bước 614.400).
+#
+# Là configs/group-1-1-tuning.yaml cộng các khóa của cấu hình `c1-e0-f1-g0` chọn ở đợt tối ưu 1-1
+# (docs/optimize-1-1.md, Mục 9 và 14), seed 4. Giống từng khóa với runs/1-1/confirm/c1-e0-f1-g0-seed4/config.yaml,
+# trừ run_dir. Khác cấu hình nộp cũ (configs/group-1-1.yaml, 1.200.128 bước):
+#   - 16 môi trường × 256 bước trên GPU (vẫn 4.096 mẫu mỗi lần cập nhật);
+#   - tốc độ học tự chỉnh theo KL (algo.lr_control, trần 4e-4 giảm tuyến tính về 0);
+#   - λ = 0,95; hệ số entropy 0,01 giảm về 0,001;
+#   - 614.400 bước, khoảng nửa số bước của bản nộp cũ.
+# Chạy lại (cần mario_ppo/train_joint.py, env.py, wrappers.py của nhánh này):
+#   python -m mario_ppo.train_joint --config configs/group-1-1-fast.yaml run_dir=runs/1-1/confirm/c1-e0-f1-g0-seed4
+levels: ["1-1"]
+seed: 4
+device: cuda
+run_dir: null
+resume: null
+torch_threads: 6
+checkpoint_every: 102_400
+eval_episodes: 0
+eval_max_steps: 3000
+video: false
+
+env:
+  actions: simple
+  frame_skip: 4
+  frame_stack: 4
+  size: 84
+  weights: [1.0, 1.0, 2.0, 0.0, 0.0]
+  noop_max: 30
+  normalize_reward: false
+  max_no_progress_steps: 200
+  flag_bonus: 2.0
+
+model: {}
+
+algo:
+  num_envs: 16
+  num_steps: 256
+  num_minibatches: 16
+  update_epochs: 10
+  total_steps: 614_400
+  lr: 1.5e-4
+  anneal_lr: true
+  adam_eps: 1e-5
+  gamma: 0.9
+  gae_lambda: 0.95
+  clip_coef: 0.15
+  clip_vloss: false
+  norm_adv: true
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: 0.03
+  lr_control:
+    kl_target: 0.02
+    factor: 1.5
+    lr_min: 1e-5
+    lr_max: 4e-4
+  ent_coef_final: 0.001

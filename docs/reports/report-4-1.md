@@ -1,6 +1,6 @@
 # Báo cáo màn 4-1
 
-Cập nhật lần cuối: 24/11/2026, 10:30. Lượt 8 màn đã kết thúc ở bước 9.998.336; 10 checkpoint của nó đã được chấm 100 lượt seed 7 trên 4-1, 2 checkpoint đã được chấm theo lệnh của đề. Checkpoint cuối đã được chấm thêm 100 lượt seed 11.
+Cập nhật lần cuối: 29/11/2026, 03:00: **đổi bản nộp** sang lượt "ít bước" (`runs/4-1/tuning/fast-819k`). Lần trước: 28/11/2026, 12:35. Thêm lượt 4-1 "ít bước" (`runs/4-1/tuning/fast-819k`, 819.200 bước, GPU, Y 0,98). Trước đó: 28/11/2026, 07:05 (lượt `runs/4-1/tuning/best-seed1`, 614.400 bước); 24/11/2026, 10:30. Lượt 8 màn đã kết thúc ở bước 9.998.336; 10 checkpoint của nó đã được chấm 100 lượt seed 7 trên 4-1, 2 checkpoint đã được chấm theo lệnh của đề. Checkpoint cuối đã được chấm thêm 100 lượt seed 11.
 
 Quy ước: **bước** là bước tác tử. **Số chấm** là kết quả của `evaluate.py` (100 lượt seed 7 để ra quyết định, 20 lượt seed 2026 là đúng lệnh chấm của đề). **Số lúc huấn luyện** là tỉ lệ chạm cờ của 100 lượt huấn luyện gần nhất trong `progress.csv`; hai loại số có thể lệch nhau hơn 10 điểm. Cờ của 4-1 ở x = 3593; ngưỡng vượt màn là 0,8.
 
@@ -8,13 +8,21 @@ Quy ước: **bước** là bước tác tử. **Số chấm** là kết quả c
 
 | Mạng | Checkpoint | 100 lượt, seed 7 | 20 lượt, seed 2026 |
 |---|---|---|---|
-| Chỉ học 4-1 (**bản nộp**, `submission/4-1.pt`) | `runs/4-1/from-scratch`, bước 1.200.128 | 96/100 | 20/20 |
+| Chỉ học 4-1 (bản nộp cũ, tới 28/11/2026) | `runs/4-1/from-scratch`, bước 1.200.128 | 96/100 | 20/20 |
 | Chuyển giao từ mạng 1-1 | `runs/4-1/transfer`, bước 2.502.656 (1.302.528 bước trên 4-1) | 81/100 | 17/20 |
 | Một mạng 2 màn (1-1 và 4-1) | `runs/1-1+4-1/from-scratch`, bước 2.904.064 | 99/100 | 20/20 |
 | Một mạng 8 màn | `runs/8-levels/from-scratch-10m`, bước 9.900.032 | 100/100 | 20/20 |
 | Một mạng 8 màn (checkpoint cuối) | `runs/8-levels/from-scratch-10m`, bước 9.998.336 | 100/100 | 20/20 |
 
-Màn 4-1 đã vượt ngưỡng ở cả bốn mạng. Bản nộp vẫn là mạng chỉ học 4-1.
+| **Chỉ học 4-1, "ít bước" (`c1-e0-f1-g1`; bản nộp từ 29/11/2026, `submission/4-1.pt`, cấu hình `configs/group-4-1-fast.yaml`)** | `runs/4-1/tuning/fast-819k`, bước 819.200 | **96/100 (seed 11: 100/100)** | **19/20**; 10 seed chấm × 20 lượt: 197/200, cả 10 lần ≥ 19/20 |
+| Chỉ học 4-1, cấu hình tối ưu từ 1-1 (`c1-e0-f1-g0`) | `runs/4-1/tuning/best-seed1`, bước 614.400 | 83/100 (seed 11: 83/100) | chưa chấm |
+
+Màn 4-1 đã vượt ngưỡng ở cả sáu mạng.
+- **Bản nộp mới (29/11/2026, theo quyết định của Dũng):** mạng "ít bước". Nó bằng bản nộp cũ ở seed 7 (96 so với 96) với 68% số bước, và được 100/100 ở seed 11.
+- **Chấm lại bằng đúng lệnh của đề** trên `submission/4-1.pt`: 19/20, trùng với lần chấm seed 2026 trước đó. Kết quả ghi ở `submission/ket-qua-4-1.json` và `submission/4-1.mp4`.
+- **So với bản nộp cũ:** bản cũ được 20/20 ở lệnh của đề. Một lượt chênh lệch nằm trong độ nhiễu của 20 lượt. Gộp 10 seed chấm, mạng mới được 98,5%.
+- **Chạy lại được:** `train_joint.py`, `env.py` và `wrappers.py` được commit cùng lần đổi này. Các thay đổi sau lượt này chỉ chạy khi cấu hình có khóa tương ứng.
+- Bản nộp cũ vẫn ở `runs/4-1/from-scratch/checkpoints/step_001200128.pt`.
 
 ## 2. Các lượt chạy có huấn luyện 4-1
 
@@ -27,6 +35,8 @@ Mọi lượt đều dùng seed 1, 8 môi trường × 512 bước, γ = 0,9, b�
 | `runs/1-1+4-1/from-scratch` | 2 | 3.002.368 | 1.501.184 | 2e-4 giảm về 0 | 100% |
 | `runs/multi-level/restart-test` | 8 | 372.736 (nối tiếp mạng 2 màn) | 46.592 thêm | 1,4e-4 | 86% |
 | `runs/8-levels/from-scratch-10m` | 8 | 9.998.336 | 945.995 | 2e-4 giảm về 0 | 95% |
+| `runs/4-1/tuning/best-seed1` (GPU, 16 × 256, λ 0,95, entropy 0,01 → 0,001) | 1 | 614.400 | 614.400 | luật KL, trần 4e-4 giảm về 0 | 74% |
+| `runs/4-1/tuning/fast-819k` (GPU, 16 × 256, λ 0,95, entropy 0,01 → 0,001) | 1 | 819.200 | 819.200 | luật KL, trần **6e-4** giảm về 0 | 97% |
 
 - Lượt chuyển giao nạp checkpoint 1-1 ở bước 1.200.128 bằng `resume=`, nên nối tiếp cả bộ đếm bước và lịch tốc độ học (lịch tính cho 6,2 triệu bước). Nó không có lịch entropy. Trong báo cáo này "bước trên 4-1" của lượt đó bằng bộ đếm trừ 1.200.128.
 - Lượt học từ đầu khác lượt chuyển giao ở bốn thứ cùng lúc: cách khởi tạo, tốc độ học, độ dài lịch, lịch entropy (0,01 giảm về 0,002).
@@ -64,6 +74,45 @@ Giới hạn: mỗi lượt chỉ một seed và các lượt khác nhau nhiều
 
 Tệp `submission/ket-qua-4-1.json` ghi 20/20.
 
+### Lượt dùng cấu hình tối ưu từ 1-1 (`runs/4-1/tuning/best-seed1`)
+
+Cấu hình `c1-e0-f1-g0` của đợt tối ưu 1-1 (`docs/optimize-1-1.md`, Mục 9.5 và 10), chỉ đổi màn: `configs/group-4-1-tuning.yaml` cộng các khóa ghi đè trong `runs/transfer/choice.log`. Seed 1, GPU, 614.400 bước, 38 phút.
+
+| Bước | 102k | 205k | 307k | 410k | 512k | 614k | 614k, seed 11 |
+|---|---|---|---|---|---|---|---|
+| Lượt mới, chạm cờ /100 (seed 7) | 1 | 7 | 35 | 51 | 75 | **83** | **83** |
+| Bản nộp ở bước gần nhất | 0 | 2 | 4 | 14 | 22 | 53 | – |
+
+- Y (gộp 200 lượt) = **0,83**, qua ngưỡng 0,8 với khoảng nửa số bước của bản nộp. Bản nộp tới mức này ở khoảng 800k bước (84/100 ở 802.816).
+- Dự đoán ghi trước là 0,72, khoảng 0,55–0,90; giả thuyết "giảm nửa số bước" cho khoảng 0,90. Thực tế nằm giữa hai số.
+- Vùng ống có cây ăn thịt và gai Lakitu (x 1984–2272) giết 19/193 = 9,8% số lượt tới được. Dự đoán là ≤ 15%; bản nộp ở 602k là 27%. Hai vùng còn đáng kể: x 1760–1952 (7/200) và x 2592–2720 (7/173).
+- Quãng đường M = 18,1 (đã tính trước 18,4). Mô hình quãng đường đoán 55%, thực tế 83%. Cấu hình mới hiệu quả hơn trên mỗi bước đi, giống ở 1-1.
+
+### Lượt "ít bước" (`runs/4-1/tuning/fast-819k`, 28/11)
+
+Cấu hình `c1-e0-f1-g1` (trần tốc độ học 6e-4), 819.200 bước. Số bước chọn bằng mô hình hàm mũ ở `docs/optimize-1-1.md`, Mục 13. Seed 1, GPU, huấn luyện 63 phút.
+
+| Bước | 102k | 205k | 307k | 410k | 512k | 614k | 717k | 819k | 819k, seed 11 |
+|---|---|---|---|---|---|---|---|---|---|
+| Lượt "ít bước", chạm cờ /100 (seed 7) | 0 | 0 | 21 | 46 | 81 | 80 | 94 | **96** | **100** |
+| x trung bình (seed 7) | 1475 | 1942 | 2548 | 2857 | 3284 | 3290 | 3467 | 3508 | |
+| M | 2,7 | 6,5 | 10,3 | 14,1 | 17,8 | 21,5 | 24,7 | 26,5 | |
+| Lượt 614k (`best-seed1`) | 1 | 7 | 35 | 51 | 75 | 83 | | | |
+| Bản nộp ở bước gần nhất | 0 | 2 | 4 | 14 | 22 | 53 | 55 | 84 | |
+
+- **Y (gộp 200 lượt) = 0,98.** Dự đoán ghi trước là 0,96 (0,90–0,98). Theo cách đọc đã chốt (Y ≥ 0,95), lượt này đạt chất lượng bản nộp với 68% số bước.
+- **Vùng ống có cây ăn thịt và gai Lakitu (x 1984–2272): 0/198.** Dự đoán là ≤ 4%; lượt 614k là 9,8%, bản nộp ở 602k là 27%.
+- Chỉ có 4 lượt hỏng trên 200: hai lượt ở x = 535 (vùng 384–576), hai lượt ở x 2406–2417 (vùng 2368–2496).
+- KL mỗi đoạn 102k: 0,013 / 0,023 / 0,023 / 0,023 / 0,023 / 0,022 / 0,016 / 0,006. KL bão hòa ở 0,023 như dự kiến (Mục 9.4 của tài liệu tối ưu). Tốc độ học nằm sát trần (6e-4 giảm tuyến tính về 0) suốt lượt: trung bình từng đoạn 5,2e-4 / 4,9e-4 / 4,1e-4 / 3,4e-4 / 2,6e-4 / 1,9e-4 / 1,1e-4 / 3,9e-5.
+- **Chấm đúng lệnh của đề (20 lượt) với 10 seed chấm** (`experiments/eval_seeds.sh`, `runs/eval-seeds/4-1-fast-819k/`):
+
+  | Seed chấm | 2026 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | Gộp |
+  |---|---|---|---|---|---|---|---|---|---|---|---|
+  | Chạm cờ /20 | 19 | 20 | 20 | 19 | 20 | 20 | 20 | 19 | 20 | 20 | **197/200 (98,5%)** |
+
+  Cả 10 lần đều qua ngưỡng 16/20. Với tỉ lệ gộp 98,5%, xác suất một lần chấm 20 lượt đạt ≥ 16/20 là gần 1 (tính theo phân phối nhị thức). Video của lần chấm seed 2026 ở `runs/eval-seeds/4-1-fast-819k/4-1.mp4`.
+- Ở 512k–614k, lượt này thấp hơn lượt 614k một chút (80–81 so với 75–83) vì lịch của nó dài hơn: entropy và tốc độ học còn cao hơn ở cùng số bước.
+
 ### Một mạng 2 màn (`runs/1-1+4-1/from-scratch`), cột 4-1
 
 | Bước | 0,5M | 1,0M | 1,2M | 1,5M | 2,0M | 2,5M | 2,9M | 3,0M |
@@ -95,6 +144,14 @@ Bảng đủ 30 checkpoint ở Mục 10 của `docs/nhat-ky-trong-tu.md`.
 - Checkpoint cuối của mạng 8 màn đạt 100/100 với 945.995 bước riêng trên 4-1, ít hơn số bước của bản nộp (1.200.128). Hai mạng khác nhau ở nhiều thứ cùng lúc (số màn, cách chia bước, tổng số bước), nên đây chỉ là quan sát.
 
 ## 5. Mario hỏng ở đâu
+
+### Bản đồ và xác suất chết theo vị trí (2.500 lượt chấm của lượt học từ đầu và lượt chuyển giao)
+
+![Bản đồ 4-1 và xác suất chết theo vị trí](figures/4-1-map.png)
+
+- Hình vẽ bằng `python experiments/level_map.py --level 4-1 --runs runs/4-1/from-scratch runs/4-1/transfer`. Bản đồ có được bằng cách cho Mario bay ngang màn qua RAM; cách này chỉ dùng để vẽ.
+- Ở các checkpoint đã ≥ 80%, chỗ giết nhiều nhất là x 2048–2240 (4,4% số lượt tới được): ống có cây ăn thịt ở x ≈ 2050 cùng gai của Lakitu.
+- Tiếp theo là x 1824–1888 (3,3%, ống ở x ≈ 1840), rồi 1280–1344, 2592–2688, 384–544, 2784–2912, mỗi chỗ 1–1,6%.
 
 ### Lượt chuyển giao (bước 2.502.656, 100 lượt seed 7, 19 lượt hỏng)
 
@@ -162,3 +219,6 @@ Các hướng mở rộng chung cho mọi màn ở `docs/extension-directions.md
 |---|---|
 | 24/11/2026 | Tạo báo cáo từ năm lượt chạy có huấn luyện 4-1. Số của lượt 8 màn sau khi lượt kết thúc: 100 lượt seed 7 ở các bước 8,00M, 9,00M, 9,90M, 9,998M; lệnh chấm ở các bước 9,90M, 9,998M; vẽ lại hình. |
 | 24/11/2026 | Thêm lần chấm kiểm tra 100 lượt seed 11 ở checkpoint cuối của lượt 8 màn (99/100, gộp hai seed 199/200) và đường dẫn video quay bằng lệnh chấm. |
+| 28/11/2026 | Thêm lượt dùng cấu hình tối ưu từ 1-1 (614.400 bước, GPU, Y 0,83) vào Mục 1, 2 và 4. Thêm bản đồ 4-1 với xác suất chết theo vị trí (`figures/4-1-map.png`, `experiments/level_map.py`) vào Mục 5. |
+| 28/11/2026 | Thêm lượt "ít bước" `runs/4-1/tuning/fast-819k` (819.200 bước, trần 6e-4, Y 0,98) vào Mục 1, 2 và 4. |
+| 29/11/2026 | Đổi bản nộp sang `runs/4-1/tuning/fast-819k` (819.200 bước, lệnh của đề 19/20, cấu hình `configs/group-4-1-fast.yaml`): Mục 1. |
