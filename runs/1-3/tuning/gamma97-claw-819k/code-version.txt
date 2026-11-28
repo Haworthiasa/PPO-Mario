@@ -1,0 +1,188 @@
+468dcc498f8099c325e8d42b4eef1febc103d96c
+ M mario_ppo/env.py
+ M mario_ppo/train_joint.py
+ M mario_ppo/wrappers.py
+?? configs/group-1-1-tuning.yaml
+?? configs/group-1-3-tuning.yaml
+?? configs/group-2-3-tuning.yaml
+?? configs/group-4-1-tuning.yaml
+diff --git a/mario_ppo/env.py b/mario_ppo/env.py
+index 202d563..10d30bb 100755
+--- a/mario_ppo/env.py
++++ b/mario_ppo/env.py
+@@ -13,7 +13,8 @@ import gymnasium as gym
+ import mo_gymnasium as mo
+ 
+ from mario_ppo.wrappers import (ACTION_SETS, ButtonActions, DeathPenaltyFix, FlagBonus, FrameSkip, GrayResize,
+-                                NoProgressTruncation, RandomNoopStart, RecordFrames, ScalarizeReward, XPosWrapFix)
++                                NoProgressTruncation, PitFallClaw, RandomNoopStart, RecordFrames, ScalarizeReward,
++                                XPosWrapFix)
+ 
+ # [x_pos, time, death, coin, enemy]; môi trường đã co giãn mỗi thành phần theo hệ số 5/150.
+ DEFAULT_WEIGHTS = (1.0, 1.0, 2.0, 0.05, 0.05)
+@@ -46,6 +47,8 @@ def make_env(level="1-1", seed=None, actions="simple", frame_skip=4, frame_stack
+             env = NoProgressTruncation(env, tricks["max_no_progress_steps"])
+         if tricks.get("flag_bonus"):             # thưởng khi chạm cờ
+             env = FlagBonus(env, tricks["flag_bonus"])
++        if tricks.get("pit_fall_claw"):          # không cộng x đi được khi đang rơi rồi chết
++            env = PitFallClaw(env)
+         if noop_max:
+             env = RandomNoopStart(env, noop_max)
+     env = ScalarizeReward(env, weights)
+diff --git a/mario_ppo/train_joint.py b/mario_ppo/train_joint.py
+index 68c66a3..ca62a76 100644
+--- a/mario_ppo/train_joint.py
++++ b/mario_ppo/train_joint.py
+@@ -2,7 +2,7 @@
+ 
+     python -m mario_ppo.train_joint --config configs/group-1-1-and-4-1.yaml run_dir=runs/1-1+4-1/from-scratch
+ 
+-Khác train.py ở đúng năm chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
++Khác train.py ở đúng sáu chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
+ train.py:
+   1. Cấu hình có khóa `levels` (danh sách màn) thay cho `level`. Môi trường thứ i chơi màn levels[i % số màn],
+      nên mỗi màn nhận phần bước bằng nhau và MỖI lần cập nhật PPO đều có dữ liệu của mọi màn. Lợi thế (GAE)
+@@ -27,6 +27,19 @@ train.py:
+            min_episodes: 20   # màn có ít lượt hơn số này trong cửa sổ thì coi như tỉ lệ trượt bằng 1
+      Phần còn lại sau khi trừ sàn (1 - số màn * floor) chia theo tỉ lệ trượt. Số bước thật và phần mục tiêu của
+      từng đoạn thu được ghi vào allocation.csv; progress.csv giữ nguyên các cột.
++  6. Khóa tùy chọn `algo.lr_control` (mặc định không có = lịch tuyến tính của train.py): tốc độ học tự chỉnh theo KL,
++     theo luật phạt KL thích nghi của bài PPO gốc (Schulman và cộng sự, 2017, mục 4) áp cho tốc độ học:
++         algo:
++           lr: 1.5e-4            # tốc độ học của lần cập nhật đầu tiên
++           lr_control:
++             kl_target: 0.02     # approx_kl trung bình của một lần cập nhật mà luật nhắm tới
++             factor: 1.5         # KL > kl_target * factor: chia tốc độ học cho factor; KL < kl_target / factor: nhân
++             lr_max: 4.0e-4      # trần; với anneal_lr: true trần giảm tuyến tính về cap_final khi hết total_steps
++             lr_min: 1.0e-5      # sàn của luật (trần vẫn thắng sàn)
++             cap_final: 0.0      # tùy chọn, mặc định 0: trần ở cuối lượt (0 <= cap_final <= lr_max)
++     Lý do và số đo ở docs/config-math.md, Mục 1: KL ≈ S · lr² với độ nhạy S tăng 8–56 lần trong một lượt, nên lịch
++     tuyến tính cho bước quá ngắn ở đầu lượt. Khi bật khóa này, hệ số entropy (kể cả lịch ent_coef_final) tính thẳng từ
++     bộ đếm bước, vì scheduled_ent_coef trong ppo.py suy bước ngược từ tốc độ học và không còn đúng.
+ 
+ Mạng không được báo đang ở màn nào: đầu vào vẫn chỉ là khung hình (Quy định 3.5). `info` chỉ dùng để ghi nhật ký.
+ Với `levels` chỉ có một màn, tệp này cho đúng các con số của train.py (bài kiểm tra tests_group/test_train_joint.py).
+@@ -152,6 +165,19 @@ class LevelSwitchEnv(gym.Env):
+         self._envs = {}
+ 
+ 
++def kl_controlled_lr(lr, kl, target, factor, lr_min):
++    """Tốc độ học cho lần cập nhật kế tiếp (trước khi áp trần), từ tốc độ học `lr` vừa dùng và approx_kl `kl` nó tạo ra.
++
++    KL quá lớn (> target * factor) thì chia cho factor, quá nhỏ (< target / factor) thì nhân với factor, trong dải thì
++    giữ nguyên; không xuống dưới lr_min.
++    """
++    if kl > target * factor:
++        lr = lr / factor
++    elif kl < target / factor:
++        lr = lr * factor
++    return max(lr, lr_min)
++
++
+ def _make_vec_env(env_cfg, env_levels, seed, switch_levels=None):
+     """`switch_levels` (danh sách màn) bật LevelSwitchEnv: môi trường i bắt đầu ở env_levels[i] rồi đổi màn theo lượt."""
+     from mario_ppo.env import make_env
+@@ -210,6 +236,17 @@ def train(cfg):
+     alloc = cfg.get("allocation")  # dồn bước theo tỉ lệ trượt (mục 5 ở đầu tệp); None = mỗi môi trường một màn cố định
+     if alloc is not None:
+         level_shares(np.ones(len(levels)), alloc.floor, alloc.cap)  # báo lỗi cấu hình trước khi mở môi trường
++    lr_ctl = a.get("lr_control")  # tốc độ học tự chỉnh theo KL (mục 6 ở đầu tệp); None = lịch của train.py
++    if lr_ctl is not None:
++        cap_final = float(lr_ctl.get("cap_final", 0.0))
++        if not (lr_ctl.kl_target > 0 and lr_ctl.factor > 1 and 0 < lr_ctl.lr_min <= lr_ctl.lr_max and a.lr <= lr_ctl.lr_max
++                and 0 <= cap_final <= lr_ctl.lr_max):
++            raise ValueError("lr_control: cần kl_target > 0, factor > 1, 0 < lr_min <= lr_max, lr <= lr_max, "
++                             f"0 <= cap_final <= lr_max; nhận {lr_ctl}")
++        lr_next = opt.param_groups[0]["lr"]  # a.lr, hoặc tốc độ học đã lưu trong optimizer khi nối tiếp
++        # Cấu hình cho ppo_update: hệ số entropy cố định ở giá trị tính từ bộ đếm bước (xem mục 6).
++        upd_base = {k: v for k, v in OmegaConf.to_container(a, resolve=True).items()
++                    if k not in ("ent_coef_final", "lr_control")}
+ 
+     progress, evals = _CSV(run / "progress.csv"), _CSV(run / "evals.csv")
+     allocation = _CSV(run / "allocation.csv")
+@@ -247,7 +284,14 @@ def train(cfg):
+         obs = torch.as_tensor(obs)
+         t_start, step_start = time.perf_counter(), global_step
+         while global_step < last_step:
+-            lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
++            if lr_ctl is None:
++                lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
++            else:
++                cap = cap_final + linear_schedule(lr_ctl.lr_max - cap_final, global_step, a.total_steps) \
++                    if a.anneal_lr else lr_ctl.lr_max
++                lr = min(cap, lr_next)
++                ent_now = a.ent_coef if a.get("ent_coef_final") is None else \
++                    a.ent_coef + (a.ent_coef_final - a.ent_coef) * min(1.0, global_step / a.total_steps)
+             for g in opt.param_groups:
+                 g["lr"] = lr
+ 
+@@ -290,7 +334,12 @@ def train(cfg):
+                      "old_logp": b_logp.reshape(-1), "old_values": b_val.reshape(-1),
+                      "advantages": adv.reshape(-1), "returns": ret.reshape(-1)}
+             batch = {k: v.to(device) for k, v in batch.items()}
+-            stats = ppo_update(model, opt, batch, a)
++            if lr_ctl is None:
++                stats = ppo_update(model, opt, batch, a)
++            else:
++                stats = ppo_update(model, opt, batch, OmegaConf.create(dict(upd_base, ent_coef=ent_now)))
++                stats["ent_coef"] = ent_now
++                lr_next = kl_controlled_lr(lr, stats["approx_kl"], lr_ctl.kl_target, lr_ctl.factor, lr_ctl.lr_min)
+ 
+             # ---- ghi nhật ký ----
+             sps = (global_step - step_start) / (time.perf_counter() - t_start)
+diff --git a/mario_ppo/wrappers.py b/mario_ppo/wrappers.py
+index 1038916..68c1d42 100755
+--- a/mario_ppo/wrappers.py
++++ b/mario_ppo/wrappers.py
+@@ -206,7 +206,7 @@ class ScalarizeReward(gym.Wrapper):
+ # ---------------------------------------------------------------------------------------------------------
+ # Wrapper bổ sung của nhóm (tùy chọn) - thêm ở đây
+ # ---------------------------------------------------------------------------------------------------------
+-# Hai wrapper dưới đây chỉ được bật trong khối `if not eval_mode:` của make_env, tức chỉ khi huấn luyện.
++# Các wrapper dưới đây chỉ được bật trong khối `if not eval_mode:` của make_env, tức chỉ khi huấn luyện.
+ # Trong chuỗi wrapper chúng đứng trước ScalarizeReward, nên phần thưởng đi qua chúng còn là véc-tơ.
+ 
+ class NoProgressTruncation(gym.Wrapper):
+@@ -261,3 +261,42 @@ class FlagBonus(gym.Wrapper):
+             reward = np.array(reward, dtype=np.float32, copy=True)
+             reward[self.X_POS_INDEX] += self.bonus
+         return obs, reward, terminated, truncated, info
++
++
++class PitFallClaw(gym.Wrapper):
++    """Khi Mario chết, trừ lại phần thưởng x của quãng đã đi kể từ lần cuối Mario đứng trên nền.
++
++    Mục đích (docs/optimize-1-1.md, Mục 18): nhảy hụt xuống hố thì Mario vẫn trôi sang phải trong lúc rơi, và quãng
++    đó được cộng thưởng x như tiến thật. Ở 1-3, vì vậy nhảy hụt được nhiều thưởng hơn cú nhảy đúng lên bệ cao.
++    Wrapper này làm cho lượt chết chỉ được tính x tới chỗ Mario rời nền.
++    - "Đứng trên nền" đọc từ RAM 0x001D (0 = trên nền, 1 = đang nhảy, 2 = đang rơi, 3 = trượt cột cờ) ở cuối mỗi bước
++      tác tử. RAM chỉ dùng để tính phần thưởng lúc huấn luyện; đầu vào của mạng vẫn chỉ là khung hình (đề bài,
++      Mục 3.4 và 3.5.2). Dấu hiệu chỉ dựa trên info (y_pos không đổi) sai ở 19/60 lượt chết khi kiểm
++      (experiments/pit_claw_check.py), nên không dùng.
++    - Lượt chạm cờ hoặc bị cắt (truncated) không bị trừ.
++    """
++
++    X_POS_INDEX = 0
++    FLOAT_STATE = 0x001D
++
++    def __init__(self, env):
++        super().__init__(env)
++        self.scale = env.unwrapped.reward_space.shape[0] / 150.0  # cùng hệ số co giãn với thành phần x_pos
++        self._ground_x = None
++
++    def reset(self, **kwargs):
++        obs, info = self.env.reset(**kwargs)
++        self._ground_x = info.get("x_pos")
++        return obs, info
++
++    def step(self, action):
++        obs, reward, terminated, truncated, info = self.env.step(action)
++        x = info.get("x_pos")
++        if self._ground_x is None or int(self.env.unwrapped.ram[self.FLOAT_STATE]) == 0:
++            self._ground_x = x  # cả ở bước chết: chết khi đang đứng trên nền (chạm địch) thì không trừ gì
++        if terminated and not info.get("flag_get", False):
++            if x is not None and self._ground_x is not None and x > self._ground_x:
++                reward = np.array(reward, dtype=np.float32, copy=True)
++                reward[self.X_POS_INDEX] -= (x - self._ground_x) * self.scale
++                info = dict(info, pit_fall_claw=int(x - self._ground_x))
++        return obs, reward, terminated, truncated, info

@@ -1,0 +1,50 @@
+{
+  "ckpt": "runs/1-1/run-1/checkpoints/step_000401408.pt",
+  "global_step": 401408,
+  "level": "1-1",
+  "rollouts": 8,
+  "train_flag_rate": 0.0763888888888889,
+  "episodes": 144,
+  "estimators": {
+    "γ 0.9, λ 1, thưởng x1": {
+      "B_simple_within": 31418.24694945482,
+      "B_simple_between": 22855.02196815138,
+      "signal_fraction_one_rollout": 0.15197939450460668,
+      "cos_with_first": 1.0,
+      "explained_var_of_targets": 0.7144432961940765,
+      "raw_adv_std_over_s": 0.6616728901863098
+    },
+    "γ 0.9, λ 0.95, thưởng x1": {
+      "B_simple_within": 23007.699253635106,
+      "B_simple_between": 20593.965494592252,
+      "signal_fraction_one_rollout": 0.16589735619100526,
+      "cos_with_first": 0.9932177662849426,
+      "explained_var_of_targets": 0.7727693617343903,
+      "raw_adv_std_over_s": 0.56623175740242
+    },
+    "γ 0.9, λ 0.8, thưởng x1": {
+      "B_simple_within": 17932.827781007385,
+      "B_simple_between": 20191.093434843046,
+      "signal_fraction_one_rollout": 0.1686492461927843,
+      "cos_with_first": 0.9551066756248474,
+      "explained_var_of_targets": 0.8503227457404137,
+      "raw_adv_std_over_s": 0.4397691637277603
+    },
+    "γ 0.97, λ 1, thưởng x0.3": {
+      "B_simple_within": 58493.394334870085,
+      "B_simple_between": 98271.97849121412,
+      "signal_fraction_one_rollout": 0.04001251231459597,
+      "cos_with_first": 0.6971699595451355,
+      "explained_var_of_targets": 0.3971308767795563,
+      "raw_adv_std_over_s": 2.948785036802292
+    },
+    "γ 0.97, λ 0.95, thưởng x0.3": {
+      "B_simple_within": 25068.615131012284,
+      "B_simple_between": 47015.05945155622,
+      "signal_fraction_one_rollout": 0.08013921143392158,
+      "cos_with_first": 0.8568499088287354,
+      "explained_var_of_targets": 0.6160493716597557,
+      "raw_adv_std_over_s": 2.241355448961258
+    }
+  }
+}

@@ -170,6 +170,21 @@ Trên CPU, lượt 8 màn sẽ lâu hơn khoảng 4–5 lần nếu dùng IMPALA
 - Ước tính, chưa đo: phần cập nhật cần khoảng 1,1 nghìn tỉ phép nhân-cộng mỗi vòng, trên GPU có thể chỉ còn 1–2 giây. Khi đó mỗi vòng còn khoảng 15–19 giây thay vì 30, tức nhanh khoảng 1,6–2 lần. Phần còn lại bị giới hạn bởi trình giả lập.
 - Muốn dùng GPU phải cài bản torch có CUDA, nên cài vào một venv riêng để không đụng môi trường đã sinh ra các bản nộp. Kết quả sẽ lệch chút ít so với CPU; điều này đề cho phép ("sai khác do ngẫu nhiên").
 
+**Đã đo (27/11/2026).** Bản torch có CUDA được cài vào venv riêng `~/.venvs/mario-ppo-gpu` (torch 2.14.1+cu126; driver 560.70 chỉ hợp các bản CUDA 12.6, và bản mới nhất cho CUDA 12.6 là 2.14.1). Venv cũ `~/.venvs/mario-ppo` không bị đụng tới.
+
+| Phép đo | CPU, 6 luồng | GPU GTX 1650 Ti |
+|---|---|---|
+| Một lần cập nhật đủ 160 bước gradient (`experiments/gpu_bench.py`, cùng venv mới) | 17,8 s | 3,0 s |
+| Cùng phép đo ở venv cũ (torch 2.15.0+cpu) | 20,3 s | – |
+| `model.act` trên 8 quan sát, mỗi lần gọi | 2,5 ms | 2,7 ms |
+| Cả vòng thật: `train.py`, cấu hình `group-1-1.yaml`, 8.192 bước, tắt chấm và video | 139,4 bước/giây | 244,9 bước/giây |
+
+- **Cả vòng nhanh 1,76 lần** (29,4 s xuống 16,7 s mỗi 4.096 bước) khi mọi lần cập nhật chạy đủ 10 epoch, khớp với ước tính 1,6–2 lần ở trên. Riêng bước cập nhật nhanh khoảng 6 lần.
+- **Sau khi dùng GPU, khoảng 82% thời gian mỗi vòng là thu dữ liệu** (13,7 s trên 16,7 s), tức trình giả lập. Muốn nhanh hơn nữa phải sửa ở phía môi trường, không phải ở mạng.
+- **Ở lượt nhiều màn lợi ít hơn**, vì `target_kl` đã dừng sớm phần lớn lần cập nhật: với 17,5 s thu và 100 bước gradient mỗi vòng, ước tính từ 25 s xuống khoảng 19,5 s, tức 1,3 lần (suy từ số trên, chưa đo).
+- **Nhiệt độ card** cao nhất 60 °C trong lượt chạy GPU (mức dùng tới 72%, bộ nhớ cao nhất 276 MB trên 4 GB).
+- **Giới hạn.** Mỗi thiết bị chỉ đo 2 vòng thu ở đầu lượt huấn luyện. GPU lấy mẫu hành động bằng bộ sinh số ngẫu nhiên khác CPU, nên cùng seed vẫn cho lượt chạy khác (lợi tức vòng đầu 13,1 so với 15,0); hai nhánh của một thí nghiệm phải chạy trên cùng một thiết bị. 16.384 bước của hai lượt đo nằm ở thư mục tạm và đã xóa.
+
 ## 6. Rủi ro điểm của ba bản nộp
 
 `evaluate.py` cố định mọi seed. Vì vậy chạy lại trên cùng máy với cùng phiên bản thư viện sẽ ra đúng 19/20, 20/20 và 18/20. Trên máy khác, sai số dấu phẩy động có thể làm khác các hành động được lấy mẫu. Khi đó nên coi lần chấm của thầy là một lần bốc mới:

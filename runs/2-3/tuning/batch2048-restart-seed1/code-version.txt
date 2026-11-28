@@ -1,0 +1,427 @@
+468dcc498f8099c325e8d42b4eef1febc103d96c
+ M mario_ppo/env.py
+ M mario_ppo/train_joint.py
+ M mario_ppo/wrappers.py
+?? configs/group-1-1-tuning.yaml
+?? configs/group-1-3-tuning.yaml
+?? configs/group-2-3-tuning.yaml
+?? configs/group-4-1-tuning.yaml
+diff --git a/mario_ppo/env.py b/mario_ppo/env.py
+index 202d563..18b49b9 100755
+--- a/mario_ppo/env.py
++++ b/mario_ppo/env.py
+@@ -12,8 +12,9 @@ sẽ nhận đầu vào khác với lúc học.
+ import gymnasium as gym
+ import mo_gymnasium as mo
+ 
+-from mario_ppo.wrappers import (ACTION_SETS, ButtonActions, DeathPenaltyFix, FlagBonus, FrameSkip, GrayResize,
+-                                NoProgressTruncation, RandomNoopStart, RecordFrames, ScalarizeReward, XPosWrapFix)
++from mario_ppo.wrappers import (ACTION_SETS, ButtonActions, DeathPenaltyFix, FailureRestart, FlagBonus, FrameSkip,
++                                GrayResize, NoProgressTruncation, PitFallClaw, RandomNoopStart, RecordFrames,
++                                ScalarizeReward, XPosWrapFix)
+ 
+ # [x_pos, time, death, coin, enemy]; môi trường đã co giãn mỗi thành phần theo hệ số 5/150.
+ DEFAULT_WEIGHTS = (1.0, 1.0, 2.0, 0.05, 0.05)
+@@ -42,11 +43,27 @@ def make_env(level="1-1", seed=None, actions="simple", frame_skip=4, frame_stack
+         # ---- mẹo huấn luyện của nhóm (tùy chọn), ví dụ: ----
+         # if tricks.get("max_no_progress_steps"):
+         #     env = NoProgressTruncation(env, tricks["max_no_progress_steps"])
+-        if tricks.get("max_no_progress_steps"):  # cắt lượt khi Mario không tiến
+-            env = NoProgressTruncation(env, tricks["max_no_progress_steps"])
+-        if tricks.get("flag_bonus"):             # thưởng khi chạm cờ
+-            env = FlagBonus(env, tricks["flag_bonus"])
+-        if noop_max:
++        def add_tricks(env):
++            if tricks.get("max_no_progress_steps"):  # cắt lượt khi Mario không tiến
++                env = NoProgressTruncation(env, tricks["max_no_progress_steps"])
++            if tricks.get("flag_bonus"):             # thưởng khi chạm cờ
++                env = FlagBonus(env, tricks["flag_bonus"])
++            if tricks.get("pit_fall_claw"):          # không cộng x đi được khi đang rơi rồi chết
++                env = PitFallClaw(env)
++            return env
++
++        env = add_tricks(env)
++        restart = tricks.get("failure_restart")
++        if restart:  # một phần lượt bắt đầu lại ngay trước chỗ vừa chết; thay cho RandomNoopStart
++
++            def make_chain():  # trình giả lập mới đứng ở đầu màn, cùng chuỗi wrapper như trên
++                chain = mo.make("mo-supermario-v0", target=parse_level(level))
++                chain = FrameSkip(ButtonActions(XPosWrapFix(DeathPenaltyFix(chain)), ACTION_SETS[actions]),
++                                  skip=frame_skip)
++                return add_tricks(chain)
++
++            env = FailureRestart(env, make_chain, noop_max, **(restart if isinstance(restart, dict) else {}))
++        elif noop_max:
+             env = RandomNoopStart(env, noop_max)
+     env = ScalarizeReward(env, weights)
+     env = GrayResize(env, size=size)
+diff --git a/mario_ppo/train_joint.py b/mario_ppo/train_joint.py
+index 68c66a3..ae25088 100644
+--- a/mario_ppo/train_joint.py
++++ b/mario_ppo/train_joint.py
+@@ -2,7 +2,7 @@
+ 
+     python -m mario_ppo.train_joint --config configs/group-1-1-and-4-1.yaml run_dir=runs/1-1+4-1/from-scratch
+ 
+-Khác train.py ở đúng năm chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
++Khác train.py ở đúng sáu chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
+ train.py:
+   1. Cấu hình có khóa `levels` (danh sách màn) thay cho `level`. Môi trường thứ i chơi màn levels[i % số màn],
+      nên mỗi màn nhận phần bước bằng nhau và MỖI lần cập nhật PPO đều có dữ liệu của mọi màn. Lợi thế (GAE)
+@@ -27,6 +27,19 @@ train.py:
+            min_episodes: 20   # màn có ít lượt hơn số này trong cửa sổ thì coi như tỉ lệ trượt bằng 1
+      Phần còn lại sau khi trừ sàn (1 - số màn * floor) chia theo tỉ lệ trượt. Số bước thật và phần mục tiêu của
+      từng đoạn thu được ghi vào allocation.csv; progress.csv giữ nguyên các cột.
++  6. Khóa tùy chọn `algo.lr_control` (mặc định không có = lịch tuyến tính của train.py): tốc độ học tự chỉnh theo KL,
++     theo luật phạt KL thích nghi của bài PPO gốc (Schulman và cộng sự, 2017, mục 4) áp cho tốc độ học:
++         algo:
++           lr: 1.5e-4            # tốc độ học của lần cập nhật đầu tiên
++           lr_control:
++             kl_target: 0.02     # approx_kl trung bình của một lần cập nhật mà luật nhắm tới
++             factor: 1.5         # KL > kl_target * factor: chia tốc độ học cho factor; KL < kl_target / factor: nhân
++             lr_max: 4.0e-4      # trần; với anneal_lr: true trần giảm tuyến tính về cap_final khi hết total_steps
++             lr_min: 1.0e-5      # sàn của luật (trần vẫn thắng sàn)
++             cap_final: 0.0      # tùy chọn, mặc định 0: trần ở cuối lượt (0 <= cap_final <= lr_max)
++     Lý do và số đo ở docs/config-math.md, Mục 1: KL ≈ S · lr² với độ nhạy S tăng 8–56 lần trong một lượt, nên lịch
++     tuyến tính cho bước quá ngắn ở đầu lượt. Khi bật khóa này, hệ số entropy (kể cả lịch ent_coef_final) tính thẳng từ
++     bộ đếm bước, vì scheduled_ent_coef trong ppo.py suy bước ngược từ tốc độ học và không còn đúng.
+ 
+ Mạng không được báo đang ở màn nào: đầu vào vẫn chỉ là khung hình (Quy định 3.5). `info` chỉ dùng để ghi nhật ký.
+ Với `levels` chỉ có một màn, tệp này cho đúng các con số của train.py (bài kiểm tra tests_group/test_train_joint.py).
+@@ -152,6 +165,19 @@ class LevelSwitchEnv(gym.Env):
+         self._envs = {}
+ 
+ 
++def kl_controlled_lr(lr, kl, target, factor, lr_min):
++    """Tốc độ học cho lần cập nhật kế tiếp (trước khi áp trần), từ tốc độ học `lr` vừa dùng và approx_kl `kl` nó tạo ra.
++
++    KL quá lớn (> target * factor) thì chia cho factor, quá nhỏ (< target / factor) thì nhân với factor, trong dải thì
++    giữ nguyên; không xuống dưới lr_min.
++    """
++    if kl > target * factor:
++        lr = lr / factor
++    elif kl < target / factor:
++        lr = lr * factor
++    return max(lr, lr_min)
++
++
+ def _make_vec_env(env_cfg, env_levels, seed, switch_levels=None):
+     """`switch_levels` (danh sách màn) bật LevelSwitchEnv: môi trường i bắt đầu ở env_levels[i] rồi đổi màn theo lượt."""
+     from mario_ppo.env import make_env
+@@ -210,9 +236,26 @@ def train(cfg):
+     alloc = cfg.get("allocation")  # dồn bước theo tỉ lệ trượt (mục 5 ở đầu tệp); None = mỗi môi trường một màn cố định
+     if alloc is not None:
+         level_shares(np.ones(len(levels)), alloc.floor, alloc.cap)  # báo lỗi cấu hình trước khi mở môi trường
++    lr_ctl = a.get("lr_control")  # tốc độ học tự chỉnh theo KL (mục 6 ở đầu tệp); None = lịch của train.py
++    if lr_ctl is not None:
++        cap_final = float(lr_ctl.get("cap_final", 0.0))
++        if not (lr_ctl.kl_target > 0 and lr_ctl.factor > 1 and 0 < lr_ctl.lr_min <= lr_ctl.lr_max and a.lr <= lr_ctl.lr_max
++                and 0 <= cap_final <= lr_ctl.lr_max):
++            raise ValueError("lr_control: cần kl_target > 0, factor > 1, 0 < lr_min <= lr_max, lr <= lr_max, "
++                             f"0 <= cap_final <= lr_max; nhận {lr_ctl}")
++        lr_next = opt.param_groups[0]["lr"]  # a.lr, hoặc tốc độ học đã lưu trong optimizer khi nối tiếp
++        # Cấu hình cho ppo_update: hệ số entropy cố định ở giá trị tính từ bộ đếm bước (xem mục 6).
++        upd_base = {k: v for k, v in OmegaConf.to_container(a, resolve=True).items()
++                    if k not in ("ent_coef_final", "lr_control")}
+ 
+     progress, evals = _CSV(run / "progress.csv"), _CSV(run / "evals.csv")
+     allocation = _CSV(run / "allocation.csv")
++    # mẹo env.failure_restart (wrappers.FailureRestart): lượt bắt đầu lại không tính vào tỉ lệ chạm cờ; mọi lượt
++    # (cả hai loại) ghi vào episodes.csv để đếm số lần tới từng vùng
++    restart_on = bool(env_cfg.get("failure_restart"))
++    if restart_on and alloc is not None:
++        raise ValueError("env.failure_restart chưa hỗ trợ cùng allocation")
++    episodes_log = _CSV(run / "episodes.csv")
+     envs = _make_vec_env(env_cfg, env_levels, cfg.seed, switch_levels=levels if alloc is not None else None)
+     playing = np.array([levels.index(level) for level in env_levels])  # chỉ số màn mỗi môi trường đang chơi
+     level_steps = np.zeros(len(levels), dtype=np.int64)                # số bước của từng màn trong đoạn thu hiện tại
+@@ -243,19 +286,29 @@ def train(cfg):
+         return path
+ 
+     try:
+-        obs, _ = envs.reset(seed=cfg.seed)
++        obs, info0 = envs.reset(seed=cfg.seed)
+         obs = torch.as_tensor(obs)
++        in_restart = np.asarray(info0.get("restart_episode", np.zeros(N, dtype=bool)), dtype=bool)
+         t_start, step_start = time.perf_counter(), global_step
+         while global_step < last_step:
+-            lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
++            if lr_ctl is None:
++                lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
++            else:
++                cap = cap_final + linear_schedule(lr_ctl.lr_max - cap_final, global_step, a.total_steps) \
++                    if a.anneal_lr else lr_ctl.lr_max
++                lr = min(cap, lr_next)
++                ent_now = a.ent_coef if a.get("ent_coef_final") is None else \
++                    a.ent_coef + (a.ent_coef_final - a.ent_coef) * min(1.0, global_step / a.total_steps)
+             for g in opt.param_groups:
+                 g["lr"] = lr
+ 
+             # ---- thu một đoạn T bước trên N môi trường (như train.py) ----
+             model.eval()
+             b_final.zero_()
++            restart_steps = restart_eps = start_eps = 0
+             for t in range(T):
+                 action, logp, value = model.act(obs)
++                restart_steps += int(in_restart.sum())
+                 next_obs, reward, term, trunc, info = envs.step(action.numpy())
+                 b_obs[t], b_act[t], b_logp[t], b_val[t] = obs, action, logp, value
+                 b_rew[t] = torch.as_tensor(reward, dtype=torch.float32)
+@@ -270,6 +323,17 @@ def train(cfg):
+                         played = (int(fin["world"][i]), int(fin["stage"][i]))
+                         if played != parse_level(level):  # tự kiểm tra: môi trường i phải chơi đúng màn đang ghi cho nó
+                             raise RuntimeError(f"môi trường {i} được ghi là màn {level} nhưng đang chơi {played}")
++                        if restart_on:
++                            is_restart = bool(fin["restart_episode"][i])
++                            episodes_log.write({"global_step": global_step + (t + 1) * N, "env": int(i),
++                                                "restart": int(is_restart), "x0": int(fin["episode_x0"][i]),
++                                                "x_end": int(fin["x_pos"][i]), "flag": int(bool(fin["flag_get"][i])),
++                                                "length": int(fin["episode"]["l"][i]),
++                                                "return": round(float(fin["episode"]["r"][i]), 3)})
++                            restart_eps += is_restart
++                            start_eps += not is_restart
++                            if is_restart:  # tỉ lệ chạm cờ chỉ tính trên lượt từ đầu màn, như lúc chấm
++                                continue
+                         recent[level].append((float(fin["episode"]["r"][i]), int(fin["episode"]["l"][i]),
+                                               int(fin["x_pos"][i]), bool(fin["flag_get"][i])))
+                     cut = np.flatnonzero(np.logical_and(trunc, ~term))
+@@ -279,9 +343,13 @@ def train(cfg):
+                         b_final[t, cut] = v_fin
+                 if alloc is not None:  # môi trường vừa hết lượt có thể đã sang màn khác
+                     playing = np.asarray(info["level_index"], dtype=np.int64)
++                if restart_on:  # loại lượt của quan sát kế tiếp (sau tự reset là lượt mới)
++                    in_restart = np.asarray(info["restart_episode"], dtype=bool)
+                 obs = torch.as_tensor(next_obs)
+             global_step += T * N
+             _, _, last_value = model.act(obs)
++            if restart_on and hasattr(envs, "call_async"):  # tạo sẵn trình giả lập ở đầu màn trong lúc GPU cập nhật
++                envs.call_async("prepare_restart_chains")
+ 
+             # ---- lợi thế (riêng từng môi trường) + cập nhật trên mẫu trộn của mọi màn ----
+             adv, ret = compute_gae(b_rew, b_val, b_term, b_trunc, b_final, last_value, a.gamma, a.gae_lambda)
+@@ -290,7 +358,15 @@ def train(cfg):
+                      "old_logp": b_logp.reshape(-1), "old_values": b_val.reshape(-1),
+                      "advantages": adv.reshape(-1), "returns": ret.reshape(-1)}
+             batch = {k: v.to(device) for k, v in batch.items()}
+-            stats = ppo_update(model, opt, batch, a)
++            if lr_ctl is None:
++                stats = ppo_update(model, opt, batch, a)
++            else:
++                stats = ppo_update(model, opt, batch, OmegaConf.create(dict(upd_base, ent_coef=ent_now)))
++                stats["ent_coef"] = ent_now
++                lr_next = kl_controlled_lr(lr, stats["approx_kl"], lr_ctl.kl_target, lr_ctl.factor, lr_ctl.lr_min)
++            if restart_on:
++                envs.call_wait() if hasattr(envs, "call_async") else envs.call("prepare_restart_chains")
++                pool = envs.call("restart_pool_size")
+ 
+             # ---- ghi nhật ký ----
+             sps = (global_step - step_start) / (time.perf_counter() - t_start)
+@@ -308,6 +384,9 @@ def train(cfg):
+                 row.update({f"episodes_{level}": len(recent[level]), f"ep_return_{level}": round(float(m[0]), 3),
+                             f"ep_length_{level}": round(float(m[1]), 1), f"x_pos_{level}": round(float(m[2]), 1),
+                             f"flag_rate_{level}": round(float(m[3]), 3)})
++            if restart_on:
++                row.update({"restart_step_share": round(restart_steps / (T * N), 4), "restart_episodes": restart_eps,
++                            "start_episodes": start_eps, "restart_points": int(np.sum(pool))})
+             progress.write(row)
+             by_level = "".join(f"  | {level} x {row[f'x_pos_{level}']:7.1f} flag {row[f'flag_rate_{level}']:.2f}"
+                                for level in levels)
+@@ -341,6 +420,7 @@ def train(cfg):
+         progress.close()
+         evals.close()
+         allocation.close()
++        episodes_log.close()
+     return run
+ 
+ 
+diff --git a/mario_ppo/wrappers.py b/mario_ppo/wrappers.py
+index 1038916..19a0842 100755
+--- a/mario_ppo/wrappers.py
++++ b/mario_ppo/wrappers.py
+@@ -206,7 +206,7 @@ class ScalarizeReward(gym.Wrapper):
+ # ---------------------------------------------------------------------------------------------------------
+ # Wrapper bổ sung của nhóm (tùy chọn) - thêm ở đây
+ # ---------------------------------------------------------------------------------------------------------
+-# Hai wrapper dưới đây chỉ được bật trong khối `if not eval_mode:` của make_env, tức chỉ khi huấn luyện.
++# Các wrapper dưới đây chỉ được bật trong khối `if not eval_mode:` của make_env, tức chỉ khi huấn luyện.
+ # Trong chuỗi wrapper chúng đứng trước ScalarizeReward, nên phần thưởng đi qua chúng còn là véc-tơ.
+ 
+ class NoProgressTruncation(gym.Wrapper):
+@@ -261,3 +261,177 @@ class FlagBonus(gym.Wrapper):
+             reward = np.array(reward, dtype=np.float32, copy=True)
+             reward[self.X_POS_INDEX] += self.bonus
+         return obs, reward, terminated, truncated, info
++
++
++class PitFallClaw(gym.Wrapper):
++    """Khi Mario chết, trừ lại phần thưởng x của quãng đã đi kể từ lần cuối Mario đứng trên nền.
++
++    Mục đích (docs/optimize-1-1.md, Mục 18): nhảy hụt xuống hố thì Mario vẫn trôi sang phải trong lúc rơi, và quãng
++    đó được cộng thưởng x như tiến thật. Ở 1-3, vì vậy nhảy hụt được nhiều thưởng hơn cú nhảy đúng lên bệ cao.
++    Wrapper này làm cho lượt chết chỉ được tính x tới chỗ Mario rời nền.
++    - "Đứng trên nền" đọc từ RAM 0x001D (0 = trên nền, 1 = đang nhảy, 2 = đang rơi, 3 = trượt cột cờ) ở cuối mỗi bước
++      tác tử. RAM chỉ dùng để tính phần thưởng lúc huấn luyện; đầu vào của mạng vẫn chỉ là khung hình (đề bài,
++      Mục 3.4 và 3.5.2). Dấu hiệu chỉ dựa trên info (y_pos không đổi) sai ở 19/60 lượt chết khi kiểm
++      (experiments/pit_claw_check.py), nên không dùng.
++    - Lượt chạm cờ hoặc bị cắt (truncated) không bị trừ.
++    """
++
++    X_POS_INDEX = 0
++    FLOAT_STATE = 0x001D
++
++    def __init__(self, env):
++        super().__init__(env)
++        self.scale = env.unwrapped.reward_space.shape[0] / 150.0  # cùng hệ số co giãn với thành phần x_pos
++        self._ground_x = None
++
++    def reset(self, **kwargs):
++        obs, info = self.env.reset(**kwargs)
++        self._ground_x = info.get("x_pos")
++        return obs, info
++
++    def step(self, action):
++        obs, reward, terminated, truncated, info = self.env.step(action)
++        x = info.get("x_pos")
++        if self._ground_x is None or int(self.env.unwrapped.ram[self.FLOAT_STATE]) == 0:
++            self._ground_x = x  # cả ở bước chết: chết khi đang đứng trên nền (chạm địch) thì không trừ gì
++        if terminated and not info.get("flag_get", False):
++            if x is not None and self._ground_x is not None and x > self._ground_x:
++                reward = np.array(reward, dtype=np.float32, copy=True)
++                reward[self.X_POS_INDEX] -= (x - self._ground_x) * self.scale
++                info = dict(info, pit_fall_claw=int(x - self._ground_x))
++        return obs, reward, terminated, truncated, info
++
++
++class FailureRestart(gym.Wrapper):
++    """Một phần lượt huấn luyện bắt đầu lại ngay trước chỗ Mario vừa chết (docs/optimize-1-1.md, Mục 21–23).
++
++    Mục đích: tỉ lệ chết của mỗi vùng giảm theo số lần Mario tới vùng đó, mà các vùng cuối màn được tới ít nhất. Bắt
++    đầu lại từ ngay trước chỗ hỏng cho chính sách gặp lại đúng tình huống vừa thua (cùng vị trí cá) mà không phải chạy
++    lại cả đoạn đầu màn. Đây là học theo chương trình (đề bài, Mục 3.4); lúc chấm vẫn đi từ đầu màn.
++
++    Trình giả lập của nes_py chỉ có MỘT ô lưu, và ô đó cũng là điểm reset. Vì vậy:
++    - Mỗi lượt từ đầu màn chạy trên một chuỗi wrapper (môi trường gốc -> ... -> các mẹo) mà trình giả lập còn đứng ở
++      đầu màn. `make_chain()` tạo chuỗi mới; `prepare_restart_chains()` tạo sẵn vài chuỗi, train_joint gọi nó trong
++      lúc GPU cập nhật để các môi trường khác không phải chờ.
++    - Trong lượt đó, mỗi khi Mario đứng trên nền (RAM 0x001D = 0) ở trạng thái bình thường (RAM 0x000E = 8), đồng hồ
++      còn ít nhất `min_time` và bản lưu trước đã cũ từ `backup_every` bước trở lên: lưu trạng thái vào ô lưu của chính
++      trình giả lập đó.
++    - Lượt kết thúc vì chết (không chạm cờ, không bị cắt) mà bản lưu cũ `min_age`..`max_age` bước: giữ chuỗi đó làm
++      một điểm bắt đầu lại, tối đa `pool` điểm, điểm mới thay điểm cũ nhất. Lượt chưa lưu lần nào thì chuỗi vẫn đứng ở
++      đầu màn và được dùng lại; các trường hợp khác thì đóng chuỗi.
++    - Khi reset: nếu kho có điểm thì với xác suất `prob` bắt đầu lại từ một điểm chọn đều. reset() của chuỗi đó khôi
++      phục ô lưu; không thêm NOOP; trong lượt này không lưu gì nên điểm giữ nguyên. Mỗi điểm dùng tối đa `max_uses`
++      lần. Còn lại: lượt từ đầu màn với 0..noop_max bước NOOP, như RandomNoopStart.
++    - info["restart_episode"] (bool) và info["episode_x0"] (x lúc bắt đầu lượt) có ở mọi bước và ở reset, để
++      train_joint tính tỉ lệ chạm cờ chỉ trên lượt từ đầu màn.
++    RAM chỉ dùng để chọn lúc lưu; đầu vào của mạng vẫn chỉ là khung hình (đề bài, Mục 3.5.2).
++    """
++
++    NOOP = 0
++    FLOAT_STATE = 0x001D
++    PLAYER_STATE = 0x000E
++    PLAYER_NORMAL = 0x08
++
++    def __init__(self, env, make_chain, noop_max=0, prob=0.5, pool=4, max_uses=4, backup_every=16, min_age=6,
++                 max_age=48, min_time=100, spares=3):
++        super().__init__(env)
++        if not (0 <= prob <= 1 and pool >= 1 and max_uses >= 1 and backup_every >= 1 and 0 <= min_age <= max_age
++                and spares >= 0):
++            raise ValueError("failure_restart: cần 0 <= prob <= 1, pool >= 1, max_uses >= 1, backup_every >= 1, "
++                             "0 <= min_age <= max_age, spares >= 0")
++        self.make_chain, self.noop_max, self.prob = make_chain, int(noop_max), float(prob)
++        self.pool_size, self.max_uses, self.backup_every = int(pool), int(max_uses), int(backup_every)
++        self.min_age, self.max_age, self.min_time, self.n_spares = int(min_age), int(max_age), int(min_time), int(spares)
++        self._rng = np.random.default_rng()
++        self._spares = [env]      # chuỗi đứng ở đầu màn; chuỗi make_env vừa tạo là chuỗi đầu tiên
++        self._pool = []           # [chuỗi, số lần đã dùng], cũ nhất trước
++        self._entry = None        # mục của kho đang dùng (lượt bắt đầu lại)
++        self._restart = False
++        self._ended = True
++        self._t = 0
++        self._backup_step = None  # bước trong lượt của bản lưu gần nhất; None = chưa lưu
++        self._backup_time = 0
++        self._x0 = 0
++        self.created = 0          # số chuỗi đã tạo thêm (cho kiểm tra và nhật ký)
++
++    def _new_chain(self):
++        self.created += 1
++        return self.make_chain()
++
++    @staticmethod
++    def _close(chain):
++        try:
++            chain.close()
++        except Exception:  # noqa: BLE001 - nes_py báo lỗi nếu đóng hai lần
++            pass
++
++    def prepare_restart_chains(self):
++        """Tạo sẵn chuỗi đứng ở đầu màn cho tới khi đủ `spares`; trả số chuỗi sẵn có."""
++        while len(self._spares) < self.n_spares:
++            self._spares.append(self._new_chain())
++        return len(self._spares)
++
++    def restart_pool_size(self):
++        return len(self._pool)
++
++    def _end_episode(self, keep):
++        if self._ended:
++            return
++        self._ended = True
++        if self._restart:
++            if self._entry[1] >= self.max_uses:
++                self._pool.remove(self._entry)
++                self._close(self._entry[0])
++            return
++        if keep:
++            self._pool.append([self.env, 0])
++            if len(self._pool) > self.pool_size:
++                self._close(self._pool.pop(0)[0])
++        elif self._backup_step is None:
++            self._spares.append(self.env)  # ô lưu vẫn là đầu màn
++        else:
++            self._close(self.env)
++
++    def reset(self, *, seed=None, options=None):
++        if seed is not None:
++            self._rng = np.random.default_rng(seed)
++        self._end_episode(keep=False)  # lượt trước bị bỏ dở (hoặc chưa có lượt nào): không giữ làm điểm
++        self._ended, self._t, self._backup_step, self._backup_time = False, 0, None, 0
++        if self._pool and self._rng.random() < self.prob:
++            self._entry = self._pool[int(self._rng.integers(len(self._pool)))]
++            self._entry[1] += 1
++            self.env, self._restart = self._entry[0], True
++            obs, info = self.env.reset(options=options)
++        else:
++            self.env = self._spares.pop() if self._spares else self._new_chain()
++            self._entry, self._restart = None, False
++            obs, info = self.env.reset(seed=seed, options=options)
++            for _ in range(int(self._rng.integers(0, self.noop_max + 1))):
++                obs, _, terminated, truncated, info = self.env.step(self.NOOP)
++                if terminated or truncated:
++                    obs, info = self.env.reset()
++                    break
++        self._x0 = int(getattr(self.env.unwrapped, "_x_position", 0))
++        return obs, dict(info, restart_episode=self._restart, episode_x0=self._x0)
++
++    def step(self, action):
++        obs, reward, terminated, truncated, info = self.env.step(action)
++        self._t += 1
++        info = dict(info, restart_episode=self._restart, episode_x0=self._x0)
++        if terminated or truncated:
++            died = terminated and not truncated and not info.get("flag_get", False)
++            age = None if self._backup_step is None else self._t - self._backup_step
++            self._end_episode(keep=(not self._restart and died and age is not None
++                                    and self.min_age <= age <= self.max_age and self._backup_time >= self.min_time))
++        elif not self._restart and self._t - (self._backup_step or 0) >= self.backup_every:
++            ram = self.env.unwrapped.ram
++            time_left = int(info.get("time", 0))
++            if (int(ram[self.FLOAT_STATE]) == 0 and int(ram[self.PLAYER_STATE]) == self.PLAYER_NORMAL
++                    and time_left >= self.min_time):
++                self.env.unwrapped._backup()
++                self._backup_step, self._backup_time = self._t, time_left
++        return obs, reward, terminated, truncated, info
++
++    def close(self):
++        for chain in {id(c): c for c in [self.env, *self._spares, *(e[0] for e in self._pool)]}.values():
++            self._close(chain)

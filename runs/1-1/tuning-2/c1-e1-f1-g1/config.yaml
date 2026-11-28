@@ -1,0 +1,53 @@
+levels:
+- 1-1
+seed: 2
+device: cuda
+run_dir: runs/1-1/tuning-2/c1-e1-f1-g1
+resume: null
+torch_threads: 6
+checkpoint_every: 102400
+eval_episodes: 0
+eval_max_steps: 3000
+video: false
+env:
+  actions: simple
+  frame_skip: 4
+  frame_stack: 4
+  size: 84
+  weights:
+  - 1.0
+  - 1.0
+  - 2.0
+  - 0.0
+  - 0.0
+  noop_max: 30
+  normalize_reward: false
+  max_no_progress_steps: 200
+  flag_bonus: 2.0
+model: {}
+algo:
+  num_envs: 16
+  num_steps: 256
+  num_minibatches: 16
+  update_epochs: 10
+  total_steps: 614400
+  lr: 0.00015
+  anneal_lr: true
+  adam_eps: 1.0e-05
+  gamma: 0.9
+  gae_lambda: 0.95
+  clip_coef: 0.15
+  clip_vloss: false
+  norm_adv: true
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: 0.03
+  lr_control:
+    kl_target: 0.02
+    factor: 1.5
+    lr_min: 1.0e-05
+    lr_max: 0.0006
+    cap_final: 0.0001
+  ent_coef_final: 0.001
+level: 1-1

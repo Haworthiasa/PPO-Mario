@@ -1,0 +1,5 @@
+=== 1-3 với runs/1-3/tuning/first-819k/checkpoints/step_000819200.pt: 40 lượt ===
+lý do: pit 40
+x trung bình 783
+  x   700-  799:  40  (pit 40)
+deaths-x700.png: các hàng từ trên xuống là lượt 24 (x 781, pit); 38 (x 782, pit); 0 (x 783, pit); 1 (x 783, pit)

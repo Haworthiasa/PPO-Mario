@@ -1,0 +1,20 @@
+{
+ "level": "1-3",
+ "checkpoint": "runs/1-3/tuning/first-819k/checkpoints/step_000819200.pt",
+ "global_step": 819200,
+ "seed": 2026,
+ "episodes": 1,
+ "flag_rate": 0.0,
+ "x_pos": [
+  783
+ ],
+ "steps": [
+  66
+ ],
+ "noop_steps": [
+  26
+ ],
+ "mean_x_pos": 783.0,
+ "threshold": 0.8,
+ "solved": false
+}
