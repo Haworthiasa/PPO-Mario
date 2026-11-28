@@ -1,0 +1,49 @@
+# Mang cấu hình tốt nhất của đợt tối ưu 1-1 sang màn 2-3 (docs/optimize-1-1.md, Mục 9). KHÔNG phải bản nộp.
+#
+# Giống hệt configs/group-1-1-tuning.yaml, chỉ khác màn và số bước: 1.228.800 bước (300 lần cập nhật × 4.096,
+# 12 checkpoint × 102.400), gần bằng lượt cũ runs/2-3/from-scratch (1.200.128 bước, 55/100). Khi chạy, cấu hình được
+# chọn ở 1-1 được thêm bằng các khóa ghi đè trên dòng lệnh (experiments/run_transfer_batch.sh), ví dụ:
+#   python -m mario_ppo.train_joint --config configs/group-2-3-tuning.yaml run_dir=runs/2-3/tuning/<lượt> <khóa ghi đè>
+# Mốc so sánh: runs/2-3/from-scratch (55/100 ở 1.200.128) và runs/2-3/from-scratch-3m (bản nộp, 86/100 ở 2.801.664).
+levels: ["2-3"]
+seed: 1
+device: cuda
+run_dir: null
+resume: null
+torch_threads: 6
+checkpoint_every: 102_400
+eval_episodes: 0
+eval_max_steps: 3000
+video: false
+
+env:
+  actions: simple
+  frame_skip: 4
+  frame_stack: 4
+  size: 84
+  weights: [1.0, 1.0, 2.0, 0.0, 0.0]
+  noop_max: 30
+  normalize_reward: false
+  max_no_progress_steps: 200
+  flag_bonus: 2.0
+
+model: {}
+
+algo:
+  num_envs: 8
+  num_steps: 512
+  num_minibatches: 16
+  update_epochs: 10
+  total_steps: 1_228_800
+  lr: 1.5e-4
+  anneal_lr: true
+  adam_eps: 1e-5
+  gamma: 0.9
+  gae_lambda: 1.0
+  clip_coef: 0.15
+  clip_vloss: false
+  norm_adv: true
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: 0.03

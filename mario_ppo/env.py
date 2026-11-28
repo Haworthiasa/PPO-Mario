@@ -12,8 +12,9 @@ sẽ nhận đầu vào khác với lúc học.
 import gymnasium as gym
 import mo_gymnasium as mo
 
-from mario_ppo.wrappers import (ACTION_SETS, ButtonActions, DeathPenaltyFix, FlagBonus, FrameSkip, GrayResize,
-                                NoProgressTruncation, RandomNoopStart, RecordFrames, ScalarizeReward, XPosWrapFix)
+from mario_ppo.wrappers import (ACTION_SETS, ButtonActions, DeathPenaltyFix, FailureRestart, FlagBonus, FrameSkip,
+                                GrayResize, NoProgressTruncation, PitFallClaw, RandomNoopStart, RecordFrames,
+                                ScalarizeReward, XPosWrapFix)
 
 # [x_pos, time, death, coin, enemy]; môi trường đã co giãn mỗi thành phần theo hệ số 5/150.
 DEFAULT_WEIGHTS = (1.0, 1.0, 2.0, 0.05, 0.05)
@@ -42,11 +43,27 @@ def make_env(level="1-1", seed=None, actions="simple", frame_skip=4, frame_stack
         # ---- mẹo huấn luyện của nhóm (tùy chọn), ví dụ: ----
         # if tricks.get("max_no_progress_steps"):
         #     env = NoProgressTruncation(env, tricks["max_no_progress_steps"])
-        if tricks.get("max_no_progress_steps"):  # cắt lượt khi Mario không tiến
-            env = NoProgressTruncation(env, tricks["max_no_progress_steps"])
-        if tricks.get("flag_bonus"):             # thưởng khi chạm cờ
-            env = FlagBonus(env, tricks["flag_bonus"])
-        if noop_max:
+        def add_tricks(env):
+            if tricks.get("max_no_progress_steps"):  # cắt lượt khi Mario không tiến
+                env = NoProgressTruncation(env, tricks["max_no_progress_steps"])
+            if tricks.get("flag_bonus"):             # thưởng khi chạm cờ
+                env = FlagBonus(env, tricks["flag_bonus"])
+            if tricks.get("pit_fall_claw"):          # không cộng x đi được khi đang rơi rồi chết
+                env = PitFallClaw(env)
+            return env
+
+        env = add_tricks(env)
+        restart = tricks.get("failure_restart")
+        if restart:  # một phần lượt bắt đầu lại ngay trước chỗ vừa chết; thay cho RandomNoopStart
+
+            def make_chain():  # trình giả lập mới đứng ở đầu màn, cùng chuỗi wrapper như trên
+                chain = mo.make("mo-supermario-v0", target=parse_level(level))
+                chain = FrameSkip(ButtonActions(XPosWrapFix(DeathPenaltyFix(chain)), ACTION_SETS[actions]),
+                                  skip=frame_skip)
+                return add_tricks(chain)
+
+            env = FailureRestart(env, make_chain, noop_max, **(restart if isinstance(restart, dict) else {}))
+        elif noop_max:
             env = RandomNoopStart(env, noop_max)
     env = ScalarizeReward(env, weights)
     env = GrayResize(env, size=size)

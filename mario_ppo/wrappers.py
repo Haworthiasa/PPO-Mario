@@ -206,7 +206,7 @@ class ScalarizeReward(gym.Wrapper):
 # ---------------------------------------------------------------------------------------------------------
 # Wrapper bổ sung của nhóm (tùy chọn) - thêm ở đây
 # ---------------------------------------------------------------------------------------------------------
-# Hai wrapper dưới đây chỉ được bật trong khối `if not eval_mode:` của make_env, tức chỉ khi huấn luyện.
+# Các wrapper dưới đây chỉ được bật trong khối `if not eval_mode:` của make_env, tức chỉ khi huấn luyện.
 # Trong chuỗi wrapper chúng đứng trước ScalarizeReward, nên phần thưởng đi qua chúng còn là véc-tơ.
 
 class NoProgressTruncation(gym.Wrapper):
@@ -261,3 +261,177 @@ class FlagBonus(gym.Wrapper):
             reward = np.array(reward, dtype=np.float32, copy=True)
             reward[self.X_POS_INDEX] += self.bonus
         return obs, reward, terminated, truncated, info
+
+
+class PitFallClaw(gym.Wrapper):
+    """Khi Mario chết, trừ lại phần thưởng x của quãng đã đi kể từ lần cuối Mario đứng trên nền.
+
+    Mục đích (docs/optimize-1-1.md, Mục 18): nhảy hụt xuống hố thì Mario vẫn trôi sang phải trong lúc rơi, và quãng
+    đó được cộng thưởng x như tiến thật. Ở 1-3, vì vậy nhảy hụt được nhiều thưởng hơn cú nhảy đúng lên bệ cao.
+    Wrapper này làm cho lượt chết chỉ được tính x tới chỗ Mario rời nền.
+    - "Đứng trên nền" đọc từ RAM 0x001D (0 = trên nền, 1 = đang nhảy, 2 = đang rơi, 3 = trượt cột cờ) ở cuối mỗi bước
+      tác tử. RAM chỉ dùng để tính phần thưởng lúc huấn luyện; đầu vào của mạng vẫn chỉ là khung hình (đề bài,
+      Mục 3.4 và 3.5.2). Dấu hiệu chỉ dựa trên info (y_pos không đổi) sai ở 19/60 lượt chết khi kiểm
+      (experiments/pit_claw_check.py), nên không dùng.
+    - Lượt chạm cờ hoặc bị cắt (truncated) không bị trừ.
+    """
+
+    X_POS_INDEX = 0
+    FLOAT_STATE = 0x001D
+
+    def __init__(self, env):
+        super().__init__(env)
+        self.scale = env.unwrapped.reward_space.shape[0] / 150.0  # cùng hệ số co giãn với thành phần x_pos
+        self._ground_x = None
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        self._ground_x = info.get("x_pos")
+        return obs, info
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        x = info.get("x_pos")
+        if self._ground_x is None or int(self.env.unwrapped.ram[self.FLOAT_STATE]) == 0:
+            self._ground_x = x  # cả ở bước chết: chết khi đang đứng trên nền (chạm địch) thì không trừ gì
+        if terminated and not info.get("flag_get", False):
+            if x is not None and self._ground_x is not None and x > self._ground_x:
+                reward = np.array(reward, dtype=np.float32, copy=True)
+                reward[self.X_POS_INDEX] -= (x - self._ground_x) * self.scale
+                info = dict(info, pit_fall_claw=int(x - self._ground_x))
+        return obs, reward, terminated, truncated, info
+
+
+class FailureRestart(gym.Wrapper):
+    """Một phần lượt huấn luyện bắt đầu lại ngay trước chỗ Mario vừa chết (docs/optimize-1-1.md, Mục 21–23).
+
+    Mục đích: tỉ lệ chết của mỗi vùng giảm theo số lần Mario tới vùng đó, mà các vùng cuối màn được tới ít nhất. Bắt
+    đầu lại từ ngay trước chỗ hỏng cho chính sách gặp lại đúng tình huống vừa thua (cùng vị trí cá) mà không phải chạy
+    lại cả đoạn đầu màn. Đây là học theo chương trình (đề bài, Mục 3.4); lúc chấm vẫn đi từ đầu màn.
+
+    Trình giả lập của nes_py chỉ có MỘT ô lưu, và ô đó cũng là điểm reset. Vì vậy:
+    - Mỗi lượt từ đầu màn chạy trên một chuỗi wrapper (môi trường gốc -> ... -> các mẹo) mà trình giả lập còn đứng ở
+      đầu màn. `make_chain()` tạo chuỗi mới; `prepare_restart_chains()` tạo sẵn vài chuỗi, train_joint gọi nó trong
+      lúc GPU cập nhật để các môi trường khác không phải chờ.
+    - Trong lượt đó, mỗi khi Mario đứng trên nền (RAM 0x001D = 0) ở trạng thái bình thường (RAM 0x000E = 8), đồng hồ
+      còn ít nhất `min_time` và bản lưu trước đã cũ từ `backup_every` bước trở lên: lưu trạng thái vào ô lưu của chính
+      trình giả lập đó.
+    - Lượt kết thúc vì chết (không chạm cờ, không bị cắt) mà bản lưu cũ `min_age`..`max_age` bước: giữ chuỗi đó làm
+      một điểm bắt đầu lại, tối đa `pool` điểm, điểm mới thay điểm cũ nhất. Lượt chưa lưu lần nào thì chuỗi vẫn đứng ở
+      đầu màn và được dùng lại; các trường hợp khác thì đóng chuỗi.
+    - Khi reset: nếu kho có điểm thì với xác suất `prob` bắt đầu lại từ một điểm chọn đều. reset() của chuỗi đó khôi
+      phục ô lưu; không thêm NOOP; trong lượt này không lưu gì nên điểm giữ nguyên. Mỗi điểm dùng tối đa `max_uses`
+      lần. Còn lại: lượt từ đầu màn với 0..noop_max bước NOOP, như RandomNoopStart.
+    - info["restart_episode"] (bool) và info["episode_x0"] (x lúc bắt đầu lượt) có ở mọi bước và ở reset, để
+      train_joint tính tỉ lệ chạm cờ chỉ trên lượt từ đầu màn.
+    RAM chỉ dùng để chọn lúc lưu; đầu vào của mạng vẫn chỉ là khung hình (đề bài, Mục 3.5.2).
+    """
+
+    NOOP = 0
+    FLOAT_STATE = 0x001D
+    PLAYER_STATE = 0x000E
+    PLAYER_NORMAL = 0x08
+
+    def __init__(self, env, make_chain, noop_max=0, prob=0.5, pool=4, max_uses=4, backup_every=16, min_age=6,
+                 max_age=48, min_time=100, spares=3):
+        super().__init__(env)
+        if not (0 <= prob <= 1 and pool >= 1 and max_uses >= 1 and backup_every >= 1 and 0 <= min_age <= max_age
+                and spares >= 0):
+            raise ValueError("failure_restart: cần 0 <= prob <= 1, pool >= 1, max_uses >= 1, backup_every >= 1, "
+                             "0 <= min_age <= max_age, spares >= 0")
+        self.make_chain, self.noop_max, self.prob = make_chain, int(noop_max), float(prob)
+        self.pool_size, self.max_uses, self.backup_every = int(pool), int(max_uses), int(backup_every)
+        self.min_age, self.max_age, self.min_time, self.n_spares = int(min_age), int(max_age), int(min_time), int(spares)
+        self._rng = np.random.default_rng()
+        self._spares = [env]      # chuỗi đứng ở đầu màn; chuỗi make_env vừa tạo là chuỗi đầu tiên
+        self._pool = []           # [chuỗi, số lần đã dùng], cũ nhất trước
+        self._entry = None        # mục của kho đang dùng (lượt bắt đầu lại)
+        self._restart = False
+        self._ended = True
+        self._t = 0
+        self._backup_step = None  # bước trong lượt của bản lưu gần nhất; None = chưa lưu
+        self._backup_time = 0
+        self._x0 = 0
+        self.created = 0          # số chuỗi đã tạo thêm (cho kiểm tra và nhật ký)
+
+    def _new_chain(self):
+        self.created += 1
+        return self.make_chain()
+
+    @staticmethod
+    def _close(chain):
+        try:
+            chain.close()
+        except Exception:  # noqa: BLE001 - nes_py báo lỗi nếu đóng hai lần
+            pass
+
+    def prepare_restart_chains(self):
+        """Tạo sẵn chuỗi đứng ở đầu màn cho tới khi đủ `spares`; trả số chuỗi sẵn có."""
+        while len(self._spares) < self.n_spares:
+            self._spares.append(self._new_chain())
+        return len(self._spares)
+
+    def restart_pool_size(self):
+        return len(self._pool)
+
+    def _end_episode(self, keep):
+        if self._ended:
+            return
+        self._ended = True
+        if self._restart:
+            if self._entry[1] >= self.max_uses:
+                self._pool.remove(self._entry)
+                self._close(self._entry[0])
+            return
+        if keep:
+            self._pool.append([self.env, 0])
+            if len(self._pool) > self.pool_size:
+                self._close(self._pool.pop(0)[0])
+        elif self._backup_step is None:
+            self._spares.append(self.env)  # ô lưu vẫn là đầu màn
+        else:
+            self._close(self.env)
+
+    def reset(self, *, seed=None, options=None):
+        if seed is not None:
+            self._rng = np.random.default_rng(seed)
+        self._end_episode(keep=False)  # lượt trước bị bỏ dở (hoặc chưa có lượt nào): không giữ làm điểm
+        self._ended, self._t, self._backup_step, self._backup_time = False, 0, None, 0
+        if self._pool and self._rng.random() < self.prob:
+            self._entry = self._pool[int(self._rng.integers(len(self._pool)))]
+            self._entry[1] += 1
+            self.env, self._restart = self._entry[0], True
+            obs, info = self.env.reset(options=options)
+        else:
+            self.env = self._spares.pop() if self._spares else self._new_chain()
+            self._entry, self._restart = None, False
+            obs, info = self.env.reset(seed=seed, options=options)
+            for _ in range(int(self._rng.integers(0, self.noop_max + 1))):
+                obs, _, terminated, truncated, info = self.env.step(self.NOOP)
+                if terminated or truncated:
+                    obs, info = self.env.reset()
+                    break
+        self._x0 = int(getattr(self.env.unwrapped, "_x_position", 0))
+        return obs, dict(info, restart_episode=self._restart, episode_x0=self._x0)
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        self._t += 1
+        info = dict(info, restart_episode=self._restart, episode_x0=self._x0)
+        if terminated or truncated:
+            died = terminated and not truncated and not info.get("flag_get", False)
+            age = None if self._backup_step is None else self._t - self._backup_step
+            self._end_episode(keep=(not self._restart and died and age is not None
+                                    and self.min_age <= age <= self.max_age and self._backup_time >= self.min_time))
+        elif not self._restart and self._t - (self._backup_step or 0) >= self.backup_every:
+            ram = self.env.unwrapped.ram
+            time_left = int(info.get("time", 0))
+            if (int(ram[self.FLOAT_STATE]) == 0 and int(ram[self.PLAYER_STATE]) == self.PLAYER_NORMAL
+                    and time_left >= self.min_time):
+                self.env.unwrapped._backup()
+                self._backup_step, self._backup_time = self._t, time_left
+        return obs, reward, terminated, truncated, info
+
+    def close(self):
+        for chain in {id(c): c for c in [self.env, *self._spares, *(e[0] for e in self._pool)]}.values():
+            self._close(chain)

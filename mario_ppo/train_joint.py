@@ -2,7 +2,7 @@
 
     python -m mario_ppo.train_joint --config configs/group-1-1-and-4-1.yaml run_dir=runs/1-1+4-1/from-scratch
 
-Khác train.py ở đúng năm chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
+Khác train.py ở đúng sáu chỗ, phần còn lại (thu dữ liệu, GAE, ppo_update, lịch tốc độ học, checkpoint) chép theo
 train.py:
   1. Cấu hình có khóa `levels` (danh sách màn) thay cho `level`. Môi trường thứ i chơi màn levels[i % số màn],
      nên mỗi màn nhận phần bước bằng nhau và MỖI lần cập nhật PPO đều có dữ liệu của mọi màn. Lợi thế (GAE)
@@ -27,6 +27,19 @@ train.py:
            min_episodes: 20   # màn có ít lượt hơn số này trong cửa sổ thì coi như tỉ lệ trượt bằng 1
      Phần còn lại sau khi trừ sàn (1 - số màn * floor) chia theo tỉ lệ trượt. Số bước thật và phần mục tiêu của
      từng đoạn thu được ghi vào allocation.csv; progress.csv giữ nguyên các cột.
+  6. Khóa tùy chọn `algo.lr_control` (mặc định không có = lịch tuyến tính của train.py): tốc độ học tự chỉnh theo KL,
+     theo luật phạt KL thích nghi của bài PPO gốc (Schulman và cộng sự, 2017, mục 4) áp cho tốc độ học:
+         algo:
+           lr: 1.5e-4            # tốc độ học của lần cập nhật đầu tiên
+           lr_control:
+             kl_target: 0.02     # approx_kl trung bình của một lần cập nhật mà luật nhắm tới
+             factor: 1.5         # KL > kl_target * factor: chia tốc độ học cho factor; KL < kl_target / factor: nhân
+             lr_max: 4.0e-4      # trần; với anneal_lr: true trần giảm tuyến tính về cap_final khi hết total_steps
+             lr_min: 1.0e-5      # sàn của luật (trần vẫn thắng sàn)
+             cap_final: 0.0      # tùy chọn, mặc định 0: trần ở cuối lượt (0 <= cap_final <= lr_max)
+     Lý do và số đo ở docs/config-math.md, Mục 1: KL ≈ S · lr² với độ nhạy S tăng 8–56 lần trong một lượt, nên lịch
+     tuyến tính cho bước quá ngắn ở đầu lượt. Khi bật khóa này, hệ số entropy (kể cả lịch ent_coef_final) tính thẳng từ
+     bộ đếm bước, vì scheduled_ent_coef trong ppo.py suy bước ngược từ tốc độ học và không còn đúng.
 
 Mạng không được báo đang ở màn nào: đầu vào vẫn chỉ là khung hình (Quy định 3.5). `info` chỉ dùng để ghi nhật ký.
 Với `levels` chỉ có một màn, tệp này cho đúng các con số của train.py (bài kiểm tra tests_group/test_train_joint.py).
@@ -152,6 +165,19 @@ class LevelSwitchEnv(gym.Env):
         self._envs = {}
 
 
+def kl_controlled_lr(lr, kl, target, factor, lr_min):
+    """Tốc độ học cho lần cập nhật kế tiếp (trước khi áp trần), từ tốc độ học `lr` vừa dùng và approx_kl `kl` nó tạo ra.
+
+    KL quá lớn (> target * factor) thì chia cho factor, quá nhỏ (< target / factor) thì nhân với factor, trong dải thì
+    giữ nguyên; không xuống dưới lr_min.
+    """
+    if kl > target * factor:
+        lr = lr / factor
+    elif kl < target / factor:
+        lr = lr * factor
+    return max(lr, lr_min)
+
+
 def _make_vec_env(env_cfg, env_levels, seed, switch_levels=None):
     """`switch_levels` (danh sách màn) bật LevelSwitchEnv: môi trường i bắt đầu ở env_levels[i] rồi đổi màn theo lượt."""
     from mario_ppo.env import make_env
@@ -210,9 +236,26 @@ def train(cfg):
     alloc = cfg.get("allocation")  # dồn bước theo tỉ lệ trượt (mục 5 ở đầu tệp); None = mỗi môi trường một màn cố định
     if alloc is not None:
         level_shares(np.ones(len(levels)), alloc.floor, alloc.cap)  # báo lỗi cấu hình trước khi mở môi trường
+    lr_ctl = a.get("lr_control")  # tốc độ học tự chỉnh theo KL (mục 6 ở đầu tệp); None = lịch của train.py
+    if lr_ctl is not None:
+        cap_final = float(lr_ctl.get("cap_final", 0.0))
+        if not (lr_ctl.kl_target > 0 and lr_ctl.factor > 1 and 0 < lr_ctl.lr_min <= lr_ctl.lr_max and a.lr <= lr_ctl.lr_max
+                and 0 <= cap_final <= lr_ctl.lr_max):
+            raise ValueError("lr_control: cần kl_target > 0, factor > 1, 0 < lr_min <= lr_max, lr <= lr_max, "
+                             f"0 <= cap_final <= lr_max; nhận {lr_ctl}")
+        lr_next = opt.param_groups[0]["lr"]  # a.lr, hoặc tốc độ học đã lưu trong optimizer khi nối tiếp
+        # Cấu hình cho ppo_update: hệ số entropy cố định ở giá trị tính từ bộ đếm bước (xem mục 6).
+        upd_base = {k: v for k, v in OmegaConf.to_container(a, resolve=True).items()
+                    if k not in ("ent_coef_final", "lr_control")}
 
     progress, evals = _CSV(run / "progress.csv"), _CSV(run / "evals.csv")
     allocation = _CSV(run / "allocation.csv")
+    # mẹo env.failure_restart (wrappers.FailureRestart): lượt bắt đầu lại không tính vào tỉ lệ chạm cờ; mọi lượt
+    # (cả hai loại) ghi vào episodes.csv để đếm số lần tới từng vùng
+    restart_on = bool(env_cfg.get("failure_restart"))
+    if restart_on and alloc is not None:
+        raise ValueError("env.failure_restart chưa hỗ trợ cùng allocation")
+    episodes_log = _CSV(run / "episodes.csv")
     envs = _make_vec_env(env_cfg, env_levels, cfg.seed, switch_levels=levels if alloc is not None else None)
     playing = np.array([levels.index(level) for level in env_levels])  # chỉ số màn mỗi môi trường đang chơi
     level_steps = np.zeros(len(levels), dtype=np.int64)                # số bước của từng màn trong đoạn thu hiện tại
@@ -243,19 +286,29 @@ def train(cfg):
         return path
 
     try:
-        obs, _ = envs.reset(seed=cfg.seed)
+        obs, info0 = envs.reset(seed=cfg.seed)
         obs = torch.as_tensor(obs)
+        in_restart = np.asarray(info0.get("restart_episode", np.zeros(N, dtype=bool)), dtype=bool)
         t_start, step_start = time.perf_counter(), global_step
         while global_step < last_step:
-            lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
+            if lr_ctl is None:
+                lr = linear_schedule(a.lr, global_step, a.total_steps) if a.anneal_lr else a.lr
+            else:
+                cap = cap_final + linear_schedule(lr_ctl.lr_max - cap_final, global_step, a.total_steps) \
+                    if a.anneal_lr else lr_ctl.lr_max
+                lr = min(cap, lr_next)
+                ent_now = a.ent_coef if a.get("ent_coef_final") is None else \
+                    a.ent_coef + (a.ent_coef_final - a.ent_coef) * min(1.0, global_step / a.total_steps)
             for g in opt.param_groups:
                 g["lr"] = lr
 
             # ---- thu một đoạn T bước trên N môi trường (như train.py) ----
             model.eval()
             b_final.zero_()
+            restart_steps = restart_eps = start_eps = 0
             for t in range(T):
                 action, logp, value = model.act(obs)
+                restart_steps += int(in_restart.sum())
                 next_obs, reward, term, trunc, info = envs.step(action.numpy())
                 b_obs[t], b_act[t], b_logp[t], b_val[t] = obs, action, logp, value
                 b_rew[t] = torch.as_tensor(reward, dtype=torch.float32)
@@ -270,6 +323,17 @@ def train(cfg):
                         played = (int(fin["world"][i]), int(fin["stage"][i]))
                         if played != parse_level(level):  # tự kiểm tra: môi trường i phải chơi đúng màn đang ghi cho nó
                             raise RuntimeError(f"môi trường {i} được ghi là màn {level} nhưng đang chơi {played}")
+                        if restart_on:
+                            is_restart = bool(fin["restart_episode"][i])
+                            episodes_log.write({"global_step": global_step + (t + 1) * N, "env": int(i),
+                                                "restart": int(is_restart), "x0": int(fin["episode_x0"][i]),
+                                                "x_end": int(fin["x_pos"][i]), "flag": int(bool(fin["flag_get"][i])),
+                                                "length": int(fin["episode"]["l"][i]),
+                                                "return": round(float(fin["episode"]["r"][i]), 3)})
+                            restart_eps += is_restart
+                            start_eps += not is_restart
+                            if is_restart:  # tỉ lệ chạm cờ chỉ tính trên lượt từ đầu màn, như lúc chấm
+                                continue
                         recent[level].append((float(fin["episode"]["r"][i]), int(fin["episode"]["l"][i]),
                                               int(fin["x_pos"][i]), bool(fin["flag_get"][i])))
                     cut = np.flatnonzero(np.logical_and(trunc, ~term))
@@ -279,9 +343,13 @@ def train(cfg):
                         b_final[t, cut] = v_fin
                 if alloc is not None:  # môi trường vừa hết lượt có thể đã sang màn khác
                     playing = np.asarray(info["level_index"], dtype=np.int64)
+                if restart_on:  # loại lượt của quan sát kế tiếp (sau tự reset là lượt mới)
+                    in_restart = np.asarray(info["restart_episode"], dtype=bool)
                 obs = torch.as_tensor(next_obs)
             global_step += T * N
             _, _, last_value = model.act(obs)
+            if restart_on and hasattr(envs, "call_async"):  # tạo sẵn trình giả lập ở đầu màn trong lúc GPU cập nhật
+                envs.call_async("prepare_restart_chains")
 
             # ---- lợi thế (riêng từng môi trường) + cập nhật trên mẫu trộn của mọi màn ----
             adv, ret = compute_gae(b_rew, b_val, b_term, b_trunc, b_final, last_value, a.gamma, a.gae_lambda)
@@ -290,7 +358,15 @@ def train(cfg):
                      "old_logp": b_logp.reshape(-1), "old_values": b_val.reshape(-1),
                      "advantages": adv.reshape(-1), "returns": ret.reshape(-1)}
             batch = {k: v.to(device) for k, v in batch.items()}
-            stats = ppo_update(model, opt, batch, a)
+            if lr_ctl is None:
+                stats = ppo_update(model, opt, batch, a)
+            else:
+                stats = ppo_update(model, opt, batch, OmegaConf.create(dict(upd_base, ent_coef=ent_now)))
+                stats["ent_coef"] = ent_now
+                lr_next = kl_controlled_lr(lr, stats["approx_kl"], lr_ctl.kl_target, lr_ctl.factor, lr_ctl.lr_min)
+            if restart_on:
+                envs.call_wait() if hasattr(envs, "call_async") else envs.call("prepare_restart_chains")
+                pool = envs.call("restart_pool_size")
 
             # ---- ghi nhật ký ----
             sps = (global_step - step_start) / (time.perf_counter() - t_start)
@@ -308,6 +384,9 @@ def train(cfg):
                 row.update({f"episodes_{level}": len(recent[level]), f"ep_return_{level}": round(float(m[0]), 3),
                             f"ep_length_{level}": round(float(m[1]), 1), f"x_pos_{level}": round(float(m[2]), 1),
                             f"flag_rate_{level}": round(float(m[3]), 3)})
+            if restart_on:
+                row.update({"restart_step_share": round(restart_steps / (T * N), 4), "restart_episodes": restart_eps,
+                            "start_episodes": start_eps, "restart_points": int(np.sum(pool))})
             progress.write(row)
             by_level = "".join(f"  | {level} x {row[f'x_pos_{level}']:7.1f} flag {row[f'flag_rate_{level}']:.2f}"
                                for level in levels)
@@ -341,6 +420,7 @@ def train(cfg):
         progress.close()
         evals.close()
         allocation.close()
+        episodes_log.close()
     return run
 
 

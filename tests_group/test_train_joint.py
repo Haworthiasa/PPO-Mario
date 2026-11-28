@@ -192,3 +192,57 @@ def test_allocation_run_logs_the_split_and_keeps_progress_columns(tmp_path):
 
     with pytest.raises(ValueError):  # sàn 0,6 cho hai màn là quá 1: báo lỗi trước khi mở môi trường
         train_joint(_tiny_cfg(tmp_path, "bad-alloc", levels=["1-1", "4-1"], allocation={"floor": 0.6, "cap": 0.9}))
+
+
+def test_kl_controlled_lr_follows_the_band_rule():
+    from mario_ppo.train_joint import kl_controlled_lr
+    assert kl_controlled_lr(1e-4, 0.05, 0.02, 1.5, 1e-6) == pytest.approx(1e-4 / 1.5)  # KL quá lớn: giảm
+    assert kl_controlled_lr(1e-4, 0.005, 0.02, 1.5, 1e-6) == pytest.approx(1.5e-4)    # KL quá nhỏ: tăng
+    assert kl_controlled_lr(1e-4, 0.02, 0.02, 1.5, 1e-6) == 1e-4                       # trong dải: giữ
+    assert kl_controlled_lr(1e-5, 0.05, 0.02, 1.5, 1e-5) == 1e-5                       # không xuống dưới sàn
+
+
+def test_lr_control_sets_each_lr_from_the_previous_kl_and_resumes(tmp_path):
+    """Mỗi lần cập nhật dùng min(trần giảm tuyến tính, luật KL áp lên tốc độ học vừa dùng); entropy theo bộ đếm bước."""
+    from mario_ppo.train_joint import kl_controlled_lr, train as train_joint
+    ctl = {"kl_target": 0.02, "factor": 1.5, "lr_max": 4e-4, "lr_min": 1e-5}
+    base = OmegaConf.load("configs/group-4-1.yaml").algo
+    first = train_joint(_tiny_cfg(tmp_path, "ctl", levels=["1-1"], stop_at_step=128,
+                                  algo={"lr_control": ctl, "update_epochs": 4}))
+    second = train_joint(_tiny_cfg(tmp_path, "ctl2", levels=["1-1"], algo={"lr_control": ctl, "update_epochs": 4},
+                                   resume=str(first / "checkpoints" / "step_000000128.pt")))
+    rows = _rows(first) + _rows(second)
+    assert [int(r["global_step"]) for r in rows] == [64, 128, 192, 256]
+    lr = [float(r["lr"]) for r in rows]
+    kl = [float(r["approx_kl"]) for r in rows]
+    assert lr[0] == pytest.approx(float(base.lr))
+    for i in range(1, 4):
+        cap = 4e-4 * (1 - 64 * i / 256)
+        # nhật ký làm tròn KL tới 5 chữ số; bỏ qua lần so nếu KL nằm sát mép dải
+        if min(abs(kl[i - 1] - 0.03), abs(kl[i - 1] - 0.02 / 1.5)) > 1e-4:
+            assert lr[i] == pytest.approx(min(cap, kl_controlled_lr(lr[i - 1], kl[i - 1], 0.02, 1.5, 1e-5)), rel=1e-4)
+        assert lr[i] <= cap + 1e-12
+    expected_ent = [float(base.ent_coef) + (float(base.ent_coef_final) - float(base.ent_coef)) * s / 256
+                    for s in (0, 64, 128, 192)]
+    np.testing.assert_allclose([float(r["ent_coef"]) for r in rows], expected_ent, rtol=1e-6)
+
+    with pytest.raises(ValueError):  # lr ban đầu lớn hơn trần
+        train_joint(_tiny_cfg(tmp_path, "bad-ctl", levels=["1-1"], algo={"lr_control": dict(ctl, lr_max=1e-5)}))
+
+
+def test_lr_control_cap_final_keeps_a_floor_under_the_cap(tmp_path):
+    """Với cap_final, trần giảm tuyến tính từ lr_max về cap_final thay vì về 0."""
+    from mario_ppo.train_joint import kl_controlled_lr, train as train_joint
+    ctl = {"kl_target": 0.02, "factor": 1.5, "lr_max": 4e-4, "lr_min": 1e-5, "cap_final": 2e-4}
+    run = train_joint(_tiny_cfg(tmp_path, "cap", levels=["1-1"], algo={"lr_control": ctl, "update_epochs": 4}))
+    rows = _rows(run)
+    lr = [float(r["lr"]) for r in rows]
+    kl = [float(r["approx_kl"]) for r in rows]
+    for i in range(1, 4):
+        cap = 2e-4 + 2e-4 * (1 - 64 * i / 256)
+        if min(abs(kl[i - 1] - 0.03), abs(kl[i - 1] - 0.02 / 1.5)) > 1e-4:
+            assert lr[i] == pytest.approx(min(cap, kl_controlled_lr(lr[i - 1], kl[i - 1], 0.02, 1.5, 1e-5)), rel=1e-4)
+        assert lr[i] <= cap + 1e-12
+
+    with pytest.raises(ValueError):  # trần cuối lớn hơn lr_max
+        train_joint(_tiny_cfg(tmp_path, "bad-cap", levels=["1-1"], algo={"lr_control": dict(ctl, cap_final=5e-4)}))

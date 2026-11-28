@@ -1,0 +1,53 @@
+# Thí nghiệm tối ưu cấu hình ở màn 1-1 (docs/optimize-1-1.md). KHÔNG phải bản nộp.
+#
+# Giống hệt configs/group-1-1.yaml (cấu hình nộp của 1-1), chỉ khác:
+#   - chạy bằng mario_ppo/train_joint.py với một màn (cho đúng các con số của train.py, xem tests_group/), để dùng
+#     được khóa algo.lr_control;
+#   - total_steps 614.400 (150 đoạn thu x 4.096), bằng nửa số bước của checkpoint nộp 1.200.128;
+#   - checkpoint mỗi 102.400 bước, tắt chấm và video trong lúc huấn luyện (chấm sau bằng evaluate.py);
+#   - device: cuda (venv ~/.venvs/mario-ppo-gpu). Mọi nhánh của thí nghiệm chạy trên cùng thiết bị.
+#
+# Các nhánh chỉ khác nhau ở những khóa ghi đè trên dòng lệnh, liệt kê trong docs/optimize-1-1.md, ví dụ:
+#   python -m mario_ppo.train_joint --config configs/group-1-1-tuning.yaml run_dir=runs/1-1/tuning/a0-b0-c0
+levels: ["1-1"]
+seed: 1
+device: cuda
+run_dir: null
+resume: null
+torch_threads: 6
+checkpoint_every: 102_400
+eval_episodes: 0
+eval_max_steps: 3000
+video: false
+
+env:
+  actions: simple
+  frame_skip: 4
+  frame_stack: 4
+  size: 84
+  weights: [1.0, 1.0, 2.0, 0.0, 0.0]
+  noop_max: 30
+  normalize_reward: false
+  max_no_progress_steps: 200
+  flag_bonus: 2.0
+
+model: {}
+
+algo:
+  num_envs: 8
+  num_steps: 512
+  num_minibatches: 16
+  update_epochs: 10
+  total_steps: 614_400
+  lr: 1.5e-4
+  anneal_lr: true
+  adam_eps: 1e-5
+  gamma: 0.9
+  gae_lambda: 1.0
+  clip_coef: 0.15
+  clip_vloss: false
+  norm_adv: true
+  ent_coef: 0.01
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  target_kl: 0.03
